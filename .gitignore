@@ -2,7 +2,6 @@
 # compiled source #
 ###################
 *.com
-.vs
 *.class
 *.dll
 *.exe
@@ -23,6 +22,7 @@ _UpgradeReport_Files/
 ###############
 # Directories #
 ###############
+.vs
 bin/
 obj/
 TestResults/
