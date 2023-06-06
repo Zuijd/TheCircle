@@ -2,6 +2,8 @@
     ViewData["Title"] = "Stream Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Stream page</h1>
-</div>
+<video id="gum-local" autoplay playsinline></video>
+<button id="startStream">Start stream</button>
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/stream.js"></script>

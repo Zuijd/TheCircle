@@ -17,4 +17,9 @@ public class StreamController : Controller
     {
         return View();
     }
+
+    public IActionResult Watch()
+    {
+        return View();
+    }
 }
