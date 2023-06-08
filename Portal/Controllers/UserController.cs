@@ -1,6 +1,4 @@
-﻿using Portal.Models.User;
-
-namespace Portal.Controllers
+﻿namespace Portal.Controllers
 {
     public class UserController : Controller
     {
