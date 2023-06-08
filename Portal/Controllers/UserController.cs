@@ -26,7 +26,7 @@
                 ModelState.AddModelError(e.Message, e.Message);
             }
 
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
 
@@ -48,7 +48,7 @@
                 ModelState.AddModelError(e.Message, e.Message);
             }
 
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         [Authorize]
@@ -57,6 +57,7 @@
         {
             try
             {
+                Console.WriteLine("WAT");
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.SignUserOutAsync();
@@ -67,7 +68,7 @@
                 ModelState.AddModelError(e.Message, e.Message);
             }
 
-            return View();
+            return RedirectToAction("Index", "Home");
         }
     }
 }
