@@ -32,9 +32,10 @@
 
         public async Task<bool> RegisterUserAsync(string username, string emailAddress, string password)
         {
-            var userExists = await _userManager.FindByNameAsync(username);
+            var userExistsUsername = await _userManager.FindByNameAsync(username);
+            var userExistsEmailAddress = await _userManager.FindByEmailAsync(emailAddress);
 
-            if (userExists == null)
+            if (userExistsUsername == null && userExistsEmailAddress == null)
             {
                 var user = new IdentityUser
                 {
@@ -47,9 +48,12 @@
 
                 return result.Succeeded;
             }
-            else
+            else if (userExistsUsername != null)
             {
                 throw new InvalidOperationException($"Username '{username}' is already taken. Please choose a different username.");
+            } else
+            {
+                throw new InvalidOperationException($"Email address '{emailAddress}' is already taken. Please choose a different email address.");
             }
         }
 
