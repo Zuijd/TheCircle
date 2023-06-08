@@ -1,26 +1,26 @@
-/*
- *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
 "use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/streamHub").build();
+var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-connection.on("ReceiveStream", function (stream) {
-    const video = document.querySelector('img');
+document.getElementById("sendButton").disabled = true;
 
-    video.src = stream
+connection.on("ReceiveMessage", function (user, message) {
+    var li = document.createElement("li");
+    document.getElementById("messagesList").appendChild(li);
+    li.textContent = `${user} says ${message}`;
 });
 
-
 connection.start().then(function () {
-    console.log("Connected to stream");
-    // connection.invoke("SendStreamServer", "Follower connected to stream").catch(function (err) {
-    //     return console.error(err.toString());
-    // });
+    document.getElementById("sendButton").disabled = false;
 }).catch(function (err) {
     return console.error(err.toString());
+});
+
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    var user = document.getElementById("userInput").value;
+    var message = document.getElementById("messageInput").value;
+    connection.invoke("SendMessage", user, message).catch(function (err) {
+        return console.error(err.toString());
+    });
+    event.preventDefault();
 });
