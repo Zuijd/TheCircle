@@ -34,7 +34,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseMiddleware<PreventAccessFilterAttribute>();
+void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    app.UseMiddleware<PreventAccessFilterAttribute>();
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
