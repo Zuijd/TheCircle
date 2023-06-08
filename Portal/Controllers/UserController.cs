@@ -1,5 +1,3 @@
-﻿using Portal.Models.User;
-
 namespace Portal.Controllers
 {
     public class UserController : Controller
@@ -11,6 +9,7 @@ namespace Portal.Controllers
             _userService = userService;
         }
 
+        [PreventAccessFilter]
         public IActionResult Login() => View();
 
         [HttpPost]
@@ -36,7 +35,7 @@ namespace Portal.Controllers
             return View(loginViewModel);
         }
 
-
+        [PreventAccessFilter]
         public IActionResult Register() => View();
 
 
