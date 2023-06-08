@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System.Text.RegularExpressions;
 
 namespace Portal.Controllers
@@ -16,6 +16,7 @@ namespace Portal.Controllers
             _signInManager = signInManager;
         }
 
+        [PreventAccessFilter]
         public IActionResult Login() => View();
 
         [HttpPost]
@@ -26,6 +27,11 @@ namespace Portal.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.LoginUserAsync(loginViewModel.Username!, loginViewModel.Password!);
+
+                    if(user)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
             }
             catch (Exception e)
@@ -33,10 +39,10 @@ namespace Portal.Controllers
                 ModelState.AddModelError(e.Message, e.Message);
             }
 
-            return View();
+            return View(loginViewModel);
         }
 
-
+        [PreventAccessFilter]
         public IActionResult Register() => View();
 
 
@@ -91,12 +97,9 @@ namespace Portal.Controllers
                     await _signInManager.PasswordSignInAsync(user, registerViewModel.Password, false, false);
                     return RedirectToAction("Index", "Home");
                 }
-
                 return View(registerViewModel);
             }
-         
             return View(registerViewModel);
-
         }
 
         [Authorize]
@@ -115,7 +118,7 @@ namespace Portal.Controllers
                 ModelState.AddModelError(e.Message, e.Message);
             }
 
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         public bool PasswordValidation(string password)
