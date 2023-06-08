@@ -1,4 +1,6 @@
-﻿namespace Portal.Controllers
+﻿using Portal.Models.User;
+
+namespace Portal.Controllers
 {
     public class UserController : Controller
     {
@@ -19,6 +21,11 @@
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.LoginUserAsync(loginViewModel.Username!, loginViewModel.Password!);
+
+                    if(user)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
             }
             catch (Exception e)
@@ -26,7 +33,7 @@
                 ModelState.AddModelError(e.Message, e.Message);
             }
 
-            return RedirectToAction("Index", "Home");
+            return View(loginViewModel);
         }
 
 
@@ -41,6 +48,11 @@
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.RegisterUserAsync(registerViewModel.Username!, registerViewModel.EmailAddress!, registerViewModel.Password!);
+
+                    if (user)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
             }
             catch (Exception e)
@@ -48,7 +60,7 @@
                 ModelState.AddModelError(e.Message, e.Message);
             }
 
-            return RedirectToAction("Index", "Home");
+            return View(registerViewModel);
         }
 
         [Authorize]
@@ -57,7 +69,6 @@
         {
             try
             {
-                Console.WriteLine("WAT");
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.SignUserOutAsync();
