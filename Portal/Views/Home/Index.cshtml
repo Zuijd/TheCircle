@@ -2,7 +2,31 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-left">
+    <h1 class="display-4">Streams</h1>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <select id="streamers" name="streamers" multiple size="5">
+                <option value="streamer1">Streamer 1</option>
+                <option value="streamer2">Streamer 2</option>
+                <option value="streamer3">Streamer 3</option>
+                <option value="streamer4">Streamer 4</option>
+                <option value="streamer5">Streamer 5</option>
+                <option value="streamer6">Streamer 6</option>
+
+                <option value="streamer6">Streamer 6</option>
+                <option value="streamer6">Streamer 6</option>
+                <!-- Add more options as needed -->
+            </select>
+
+            <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
+        </div>
+    </div>
+
+    <div class="row mt-4" id="streamsContainer">
+        <!-- Streams will be dynamically added here -->
+    </div>
 </div>
