@@ -13,8 +13,12 @@
     <div>
         <label asp-for="Password">Password:</label>
         <input asp-for="Password">
+        <div><span asp-validation-for="Password" class="text-danger"></span></div>
     </div>
     <div>
         <input type="submit" value="Register">
     </div>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+    
 </form>
