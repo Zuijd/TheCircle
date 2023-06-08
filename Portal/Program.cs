@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Options;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationConnectionString")));
@@ -12,8 +10,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireDigit = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
-})
-    .AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<IdentityUser>>().AddDefaultTokenProviders();
+}).AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<IdentityUser>>().AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<IdentityUser>>().AddDefaultTokenProviders();
@@ -37,10 +34,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-    app.UseMiddleware<PreventAccessFilterAttribute>();
-}
+app.UseMiddleware<PreventAccessFilterAttribute>();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
