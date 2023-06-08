@@ -1,11 +1,25 @@
 using Microsoft.AspNetCore.SignalR;
-
+using System.Threading.Tasks;
 namespace Portal.Hubs;
 
 public class StreamHub : Hub
 {
-    public async Task SendStream(string message)
+    public class SignalingHub : Hub
     {
-        await Clients.All.SendAsync("ReceiveStream", message);
+        public async Task SendOffer(string offer)
+        {
+            await Clients.Others.SendAsync("OfferReceived", offer);
+        }
+
+        public async Task SendAnswer(string answer)
+        {
+            await Clients.Others.SendAsync("AnswerReceived", answer);
+        }
+
+        public async Task SendIceCandidate(string candidate)
+        {
+            await Clients.Others.SendAsync("IceCandidateReceived", candidate);
+        }
     }
 }
+

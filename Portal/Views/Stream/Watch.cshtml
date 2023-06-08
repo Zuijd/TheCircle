@@ -2,9 +2,16 @@
     ViewData["Title"] = "Watch Stream Page";
 }
 
-Watch stream
-<video id="gum-local" autoplay playsinline></video>
-
-<img src="" alt="">
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="/js/watch.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Watch Stream</title>
+  <!-- Include necessary libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+  <script src="/js/watch.js"></script>
+</head>
+<body>
+  <video id="video" autoplay playsinline></video>
+</body>
+</html>

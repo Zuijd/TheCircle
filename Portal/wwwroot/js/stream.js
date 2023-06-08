@@ -1,81 +1,119 @@
-/*
- *  Copyright (c) 2015 The WebRTC project authors. All Rights Reserved.
- *
- *  Use of this source code is governed by a BSD-style license
- *  that can be found in the LICENSE file in the root of the source
- *  tree.
- */
-"use strict";
-
-var connection = new signalR.HubConnectionBuilder().withUrl("/streamHub").build();
-
-// Put variables in global scope to make them available to the browser console.
-const constraints = window.constraints = {
-    audio: true,
-    video: true
-};
-
-connection.start();
-
-function handleSuccess(stream) {
-    const video = document.querySelector('video');
-    
-    // const videoTracks = stream.getVideoTracks();
-    // console.log('Got stream with constraints:', constraints);
-    // console.log(`Using video device: ${videoTracks[0].label}`);
-
-    // video.srcObject = stream;
-
-    navigator.mediaDevices.getUserMedia(constraints).then((stream) => video.srcObject = stream);
-
-    const getFrame = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0);
-        const data = canvas.toDataURL('image/png');
-        return data;
-    }
-
-    const FPS = 60;
-    setInterval(() => {
-        console.log("Sending stream")
-        connection.invoke("SendStream", getFrame()).catch(function (err) {
-            return console.error(err);
+document.addEventListener('DOMContentLoaded', () => {
+    const startButton = document.getElementById('startButton');
+    const stopButton = document.getElementById('stopButton');
+    const videoElement = document.getElementById('video');
+  
+    let mediaRecorder;
+    let recordedChunks = [];
+  
+    startButton.addEventListener('click', () => {
+      startStreaming();
+    });
+  
+    stopButton.addEventListener('click', () => {
+      stopStreaming();
+    });
+  
+    const signalingConnection = new signalR.HubConnectionBuilder()
+      .withUrl('/streamHub') // Adjust the URL to match your server endpoint
+      .build();
+  
+    signalingConnection.on('OfferReceived', handleOffer);
+    signalingConnection.on('IceCandidateReceived', handleIceCandidate);
+  
+    signalingConnection.start()
+      .then(() => {
+        // Connection is established, ready to send/receive signaling messages
+      })
+      .catch(error => {
+        console.error('Error starting the signaling connection:', error);
+      });
+  
+    function startStreaming() {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+          videoElement.srcObject = stream;
+  
+          mediaRecorder = new MediaRecorder(stream);
+  
+          mediaRecorder.addEventListener('dataavailable', event => {
+            recordedChunks.push(event.data);
+          });
+  
+          mediaRecorder.addEventListener('stop', () => {
+            const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(recordedBlob);
+  
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'stream.webm';
+            document.body.appendChild(a);
+            a.click();
+  
+            recordedChunks = [];
+            URL.revokeObjectURL(url);
+          });
+  
+          mediaRecorder.start();
+          console.log('Recording started.');
+        })
+        .catch(error => {
+          console.error('Error accessing media devices:', error);
         });
-    }, 1000 / FPS);
-
-}
-
-function handleError(error) {
-    if (error.name === 'OverconstrainedError') {
-        const v = constraints.video;
-        errorMsg(`The resolution ${v.width.exact}x${v.height.exact} px is not supported by your device.`);
-    } else if (error.name === 'NotAllowedError') {
-        errorMsg('Permissions have not been granted to use your camera and ' +
-            'microphone, you need to allow the page access to your devices in ' +
-            'order for the demo to work.');
     }
-    errorMsg(`getUserMedia error: ${error.name}`, error);
-}
-
-function errorMsg(msg, error) {
-    const errorElement = document.querySelector('#errorMsg');
-    console.log(msg)
-    errorElement.innerHTML += `<p>${msg}</p>`;
-    if (typeof error !== 'undefined') {
-        console.error(error);
+  
+    function stopStreaming() {
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+          mediaRecorder.stop();
+          console.log('Recording stopped.');
+      
+          const tracks = videoElement.srcObject.getTracks();
+          tracks.forEach(track => track.stop());
+          videoElement.srcObject = null;
+        }
+      }
+      
+  
+    function handleOffer(offer) {
+      const peerConnection = new RTCPeerConnection();
+  
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+          stream.getTracks().forEach(track => {
+            peerConnection.addTrack(track, stream);
+          });
+  
+          peerConnection.addEventListener('icecandidate', event => {
+            if (event.candidate) {
+              signalingConnection.invoke('SendIceCandidate', event.candidate)
+                .catch(error => {
+                  console.error('Error sending ICE candidate:', error);
+                });
+            }
+          });
+  
+          peerConnection.createOffer()
+            .then(offer => peerConnection.setLocalDescription(offer))
+            .then(() => {
+              signalingConnection.invoke('SendOffer', peerConnection.localDescription)
+                .catch(error => {
+                  console.error('Error sending offer:', error);
+                });
+            })
+            .catch(error => {
+              console.error('Error creating offer:', error);
+            });
+        })
+        .catch(error => {
+          console.error('Error accessing media devices:', error);
+        });
     }
-}
-
-async function init(e) {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        handleSuccess(stream);
-        e.target.disabled = true;
-    } catch (e) {
-        handleError(e);
+  
+    function handleIceCandidate(candidate) {
+      peerConnection.addIceCandidate(new RTCIceCandidate(candidate))
+        .catch(error => {
+          console.error('Error adding ICE candidate:', error);
+        });
     }
-}
-
-document.querySelector('#startStream').addEventListener('click', e => init(e));
+  });
+  
