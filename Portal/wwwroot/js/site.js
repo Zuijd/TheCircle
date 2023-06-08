@@ -1,102 +1,78 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿// JavaScript code
+$(document).ready(function () {
+    $('#viewStreamsBtn').click(function () {
+        $('#streamsContainer').empty();
 
-// Write your JavaScript code.
-const viewStreamsBtn = document.getElementById('viewStreamsBtn');
-const streamsContainer = document.getElementById('streamsContainer');
-const streamersSelect = document.getElementById('streamers');
+        const selectedStreamers = $('.streams-container input[type="checkbox"]:checked')
+            .map(function () {
+                return this.value;
+            })
+            .get();
 
-viewStreamsBtn.addEventListener('click', function () {
-    streamsContainer.innerHTML = '';
-
-    const selectedStreamers = Array.from(streamersSelect.selectedOptions, option => option.value);
-
-    if (selectedStreamers.length > 4) {
-        alert('Please select a maximum of 4 streamers.');
-        return;
-    }
-
-    for (let i = 0; i < selectedStreamers.length; i += 2) {
-        const videoRow = document.createElement('div');
-        videoRow.classList.add('row');
-
-        const streamer1 = selectedStreamers[i];
-        const videoContainer1 = createVideoContainer(streamer1);
-        const chatbox1 = createChatbox(streamer1);
-        videoRow.appendChild(videoContainer1);
-        videoRow.appendChild(chatbox1);
-
-        if (i + 1 < selectedStreamers.length) {
-            const streamer2 = selectedStreamers[i + 1];
-            const videoContainer2 = createVideoContainer(streamer2);
-            const chatbox2 = createChatbox(streamer2);
-            videoRow.appendChild(videoContainer2);
-            videoRow.appendChild(chatbox2);
+        if (selectedStreamers.length > 4) {
+            alert('Please select a maximum of 4 streamers.');
+            return;
         }
 
-        streamsContainer.appendChild(videoRow);
+        for (let i = 0; i < selectedStreamers.length; i += 2) {
+            const videoRow = $('<div class="row"></div>');
+
+            const streamer1 = selectedStreamers[i];
+            const videoContainer1 = createVideoContainer(streamer1);
+            const chatbox1 = createChatbox(streamer1);
+            videoRow.append(videoContainer1);
+            videoRow.append(chatbox1);
+
+            if (i + 1 < selectedStreamers.length) {
+                const streamer2 = selectedStreamers[i + 1];
+                const videoContainer2 = createVideoContainer(streamer2);
+                const chatbox2 = createChatbox(streamer2);
+                videoRow.append(videoContainer2);
+                videoRow.append(chatbox2);
+            }
+
+            $('#streamsContainer').append(videoRow);
+        }
+    });
+
+    function createVideoContainer(streamer) {
+        const videoContainer = $('<div class="col-md-6 mb-4"></div>');
+        videoContainer.css({ width: '700px', height: '450px' });
+
+        const videoElement = $('<video></video>').attr({
+            src: `${streamer}.mp4`,
+            type: 'video/mp4',
+            controls: true,
+        });
+        videoElement.css({ width: '100%', height: '100%' });
+
+        videoContainer.append(videoElement);
+        return videoContainer;
     }
-});
 
-function createVideoContainer(streamer) {
-    const videoContainer = document.createElement('div');
-    videoContainer.classList.add('col-md-6');
-    videoContainer.classList.add('mb-4');
-    videoContainer.style.width = '700px';
-    videoContainer.style.height = '450px';
+    function createChatbox(streamer) {
+        const chatboxContainer = $('<div class="col-md-6 mb-4 chatbox-container"></div>');
 
-    const videoElement = document.createElement('video');
-    videoElement.src = `${streamer}.mp4`;
-    videoElement.type = 'video/mp4';
-    videoElement.controls = true;
-    videoElement.style.width = '100%';
-    videoElement.style.height = '100%';
+        const chatboxTitle = $('<div class="chatbox-title"></div>').text(`Chatbox for ${streamer}`);
+        const chatboxMessages = $('<div class="chatbox-messages"></div>');
+        const chatboxInput = $('<div class="chatbox-input"></div>');
 
-    videoContainer.appendChild(videoElement);
-    return videoContainer;
-}
+        const inputText = $('<input type="text" placeholder="Type your message...">').addClass('chatbox-input-text');
+        const sendButton = $('<button>Send</button>').addClass('chatbox-input-button');
 
-function createChatbox(streamer) {
-    const chatboxContainer = document.createElement('div');
-    chatboxContainer.classList.add('col-md-6');
-    chatboxContainer.classList.add('mb-4');
-    chatboxContainer.classList.add('chatbox-container');
+        chatboxInput.append(inputText);
+        chatboxInput.append(sendButton);
 
-    const chatboxTitle = document.createElement('div');
-    chatboxTitle.classList.add('chatbox-title');
-    chatboxTitle.textContent = `Chatbox for ${streamer}`;
+        chatboxContainer.append(chatboxTitle);
+        chatboxContainer.append(chatboxMessages);
+        chatboxContainer.append(chatboxInput);
 
-    const chatboxMessages = document.createElement('div');
-    chatboxMessages.classList.add('chatbox-messages');
-
-    const chatboxInput = document.createElement('div');
-    chatboxInput.classList.add('chatbox-input');
-
-    const inputText = document.createElement('input');
-    inputText.type = 'text';
-    inputText.placeholder = 'Type your message...';
-    inputText.classList.add('chatbox-input-text');
-
-    const sendButton = document.createElement('button');
-    sendButton.textContent = 'Send';
-    sendButton.classList.add('chatbox-input-button');
-
-    chatboxInput.appendChild(inputText);
-    chatboxInput.appendChild(sendButton);
-
-    chatboxContainer.appendChild(chatboxTitle);
-    chatboxContainer.appendChild(chatboxMessages);
-    chatboxContainer.appendChild(chatboxInput);
-
-    return chatboxContainer;
-}
-
-// Restrict the maximum number of selected streamers to 4
-streamersSelect.addEventListener('change', function () {
-    const selectedOptions = Array.from(this.selectedOptions);
-    if (selectedOptions.length > 4) {
-        const lastSelectedOption = selectedOptions[selectedOptions.length - 1];
-        lastSelectedOption.selected = false;
+        return chatboxContainer;
     }
-});
 
+    $('.streams-container input[type="checkbox"]').on('change', function () {
+        if ($('.streams-container input[type="checkbox"]:checked').length > 4) {
+            this.checked = false;
+        }
+    });
+});

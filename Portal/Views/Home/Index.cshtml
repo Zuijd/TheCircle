@@ -1,32 +1,40 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-left">
-    <h1 class="display-4">Streams</h1>
-</div>
-
-<div class="container">
+﻿<div class="container">
     <div class="row">
-        <div class="col">
-            <select id="streamers" name="streamers" multiple size="5">
-                <option value="streamer1">Streamer 1</option>
-                <option value="streamer2">Streamer 2</option>
-                <option value="streamer3">Streamer 3</option>
-                <option value="streamer4">Streamer 4</option>
-                <option value="streamer5">Streamer 5</option>
-                <option value="streamer6">Streamer 6</option>
-
-                <option value="streamer6">Streamer 6</option>
-                <option value="streamer6">Streamer 6</option>
-                <!-- Add more options as needed -->
-            </select>
-
+        <div id="streamSelectorBox" class="col">
             <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
+            <div class="streams-container">
+                <div class="stream">
+                    <input type="checkbox" id="streamer1" value="streamer1">
+                    <label for="streamer1">Streamer 1</label>
+                </div>
+                <div class="stream">
+                    <input type="checkbox" id="streamer2" value="streamer2">
+                    <label for="streamer2">Streamer 2</label>
+                </div>
+                <div class="stream">
+                    <input type="checkbox" id="streamer3" value="streamer3">
+                    <label for="streamer3">Streamer 3</label>
+                </div>
+                <div class="stream">
+                    <input type="checkbox" id="streamer3" value="streamer3">
+                    <label for="streamer3">Streamer 3</label>
+                </div>
+                <div class="stream">
+                    <input type="checkbox" id="streamer3" value="streamer3">
+                    <label for="streamer3">Streamer 3</label>
+                </div>
+                <div class="stream">
+                    <input type="checkbox" id="streamer3" value="streamer3">
+                    <label for="streamer3">Streamer 3</label>
+                </div>
+                <!-- Add more streams as needed -->
+            </div>
         </div>
-    </div>
-
-    <div class="row mt-4" id="streamsContainer">
-        <!-- Streams will be dynamically added here -->
+        <div class="separator"></div>
+        <div class="col">
+            <div class="row mt-4" id="streamsContainer">
+                <!-- Streams will be dynamically added here -->
+            </div>
+        </div>
     </div>
 </div>
