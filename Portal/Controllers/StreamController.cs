@@ -22,4 +22,27 @@ public class StreamController : Controller
     {
         return View();
     }
+
+    [HttpPost]
+    public IActionResult Message([FromBody] ChatViewModel chatViewModel)
+    {
+        Debug.WriteLine("eee");
+        try
+        {
+            Debug.WriteLine(chatViewModel.Username);
+
+            if (ModelState.IsValid)
+            {
+                Debug.WriteLine("Hier ben ik");
+                Debug.WriteLine(chatViewModel.Username);
+                Debug.WriteLine(chatViewModel.Message);
+            }
+        }
+        catch (Exception e)
+        {
+            ModelState.AddModelError(e.Message, e.Message);
+        }
+
+        return PartialView("_Chat");
+    }
 }
