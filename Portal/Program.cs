@@ -1,4 +1,6 @@
 using Microsoft.Extensions.Options;
+using Portal.Hubs;
+using SignalRChat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +28,10 @@ builder.Services.AddAuthentication("CookieAuth")
     });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR(options => {
+    options.EnableDetailedErrors = true;
+    options.MaximumReceiveMessageSize = null;
+});
 
 var app = builder.Build();
 
@@ -52,5 +58,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<StreamHub>("/streamHub");
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
