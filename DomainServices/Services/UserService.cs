@@ -21,13 +21,9 @@
                 {
                     return true;
                 }
+            }
 
-                throw new InvalidOperationException("Incorrect password. Please try again.");
-            }
-            else
-            {
-                throw new KeyNotFoundException("The username you provided does not match any registered user.");
-            }
+            throw new InvalidOperationException("Incorrect username and password combination.");
         }
 
         public async Task<bool> RegisterUserAsync(string username, string emailAddress, string password)

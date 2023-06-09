@@ -36,7 +36,7 @@ namespace Portal.Controllers
             }
             catch (Exception e)
             {
-                ModelState.AddModelError(e.Message, e.Message);
+                ModelState.AddModelError(nameof(loginViewModel.Password), e.Message);
             }
 
             return View(loginViewModel);
@@ -44,7 +44,6 @@ namespace Portal.Controllers
 
         [PreventAccessFilter]
         public IActionResult Register() => View();
-
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
