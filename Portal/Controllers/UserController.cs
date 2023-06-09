@@ -1,14 +1,21 @@
-﻿using Portal.Models.User;
+﻿using DomainServices.Logger;
+using Portal.Models.User;
 
 namespace Portal.Controllers
 {
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ILogger<UserController> _logger;
+        private readonly ILoggerProvider _loggerProvider;
 
-        public UserController(IUserService userService)
+
+        public UserController(IUserService userService, ILogger<UserController> logger, ILoggerProvider loggerProvider)
         {
             _userService = userService;
+            _logger = logger;
+            _loggerProvider = loggerProvider;
+          
         }
 
         public IActionResult Login() => View();
@@ -24,6 +31,8 @@ namespace Portal.Controllers
 
                     if(user)
                     {
+                    
+                        _logger.LogInformation($"{loginViewModel.Username} has logged in!");
                         return RedirectToAction("Index", "Home");
                     }
                 }

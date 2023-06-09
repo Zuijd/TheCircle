@@ -5,6 +5,7 @@
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
+
         public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;
@@ -19,6 +20,7 @@
             {
                 if ((await _signInManager.PasswordSignInAsync(user, password, false, false)).Succeeded)
                 {
+
                     return true;
                 }
 
