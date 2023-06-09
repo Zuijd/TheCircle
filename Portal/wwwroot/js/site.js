@@ -1,6 +1,13 @@
-﻿// JavaScript code
-$(document).ready(function () {
+﻿$(document).ready(function () {
+    // Add an h1 element to show "Please select a streamer" initially
+    const selectStreamerTitle = $('<h1 id="selectStreamText"></h1>').text('Please select a streamer');
+    $('#streamsContainer').append(selectStreamerTitle);
+
+    // Show the circle image in the center of the website initially
+    $('#circleImage').show();
+
     $('#viewStreamsBtn').click(function () {
+        // Clear the streamsContainer before adding new streamers
         $('#streamsContainer').empty();
 
         const selectedStreamers = $('.streams-container input[type="checkbox"]:checked')
@@ -8,6 +15,21 @@ $(document).ready(function () {
                 return this.value;
             })
             .get();
+
+        if (selectedStreamers.length === 0) {
+            // Show "Please select a streamer" if no streamers are selected
+            const selectStreamerTitle = $('<h1 id="selectStreamText"></h1>').text('Please select a streamer');
+            $('#streamsContainer').append(selectStreamerTitle);
+
+            // Show the circle image in the center of the website
+            $('#circleImage').show();
+
+            return;
+        }
+
+        // Remove the selectStreamerTitle if streamers are selected
+        $('#streamerSelectionTitle').remove();
+        $('#circleImage').hide();
 
         if (selectedStreamers.length > 4) {
             alert('Please select a maximum of 4 streamers.');
