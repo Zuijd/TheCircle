@@ -97,13 +97,6 @@ body {
     width: 500px;
 }
 
-#smallCircleImage {
-    display: center;
-    position: absolute;
-    top: 25%;
-    left: 4.5%;
-    width: 180px;
-}
 
 #selectStreamText {
     transform: translate(27%);

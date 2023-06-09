@@ -31,10 +31,6 @@
         $('#streamerSelectionTitle').remove();
         $('#circleImage').hide();
 
-        if (selectedStreamers.length > 4) {
-            alert('Please select a maximum of 4 streamers.');
-            return;
-        }
 
         for (let i = 0; i < selectedStreamers.length; i += 2) {
             const videoRow = $('<div class="row"></div>');
