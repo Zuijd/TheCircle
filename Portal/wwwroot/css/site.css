@@ -86,18 +86,33 @@ body {
 .container {
     margin-left: 2%;
     margin-right: 2%;
-    max-width: 1480px;
+    max-width: 1400px;
 }
 
 #circleImage {
-    display: none;
+    display: center;
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -40%);
+    top: 22%;
+    left: 35%;
     width: 500px;
 }
 
-#selectStreamText {
-    transform: translate(23%);
+#smallCircleImage {
+    display: center;
+    position: absolute;
+    top: 25%;
+    left: 4.5%;
+    width: 180px;
 }
+
+#selectStreamText {
+    transform: translate(27%);
+}
+
+#videoBox {
+    display: none;
+    width: 800px;
+    height: 500px;
+
+}
+

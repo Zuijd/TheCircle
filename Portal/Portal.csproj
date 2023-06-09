@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\js\circle.png" />
+    <None Include="wwwroot\assets\circle.png" />
   </ItemGroup>
 
 </Project>

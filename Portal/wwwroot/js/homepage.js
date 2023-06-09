@@ -62,7 +62,6 @@
         videoContainer.css({ width: '700px', height: '450px' });
 
         const videoElement = $('<video></video>').attr({
-            src: `${streamer}.mp4`,
             type: 'video/mp4',
             controls: true,
         });
