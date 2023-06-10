@@ -1,19 +1,22 @@
 @{
-    ViewData["Title"] = "Stream Page";
+  ViewData["Title"] = "Stream";
 }
 
-<!-- index.cshtml -->
-<!DOCTYPE html>
-<html>
 <head>
-    <title>Stream Page</title>
-    <script src="https://cdn.jsdelivr.net/npm/fetch-stream@1.3.2/dist/fetch-stream.min.js"></script>
-    <script src="/js/stream.js"></script>
+    <meta charset="UTF-8">
+    <title>Stream</title>
+    <!-- Include necessary libraries -->
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
 </head>
+
 <body>
-    <h1>Stream Page</h1>
-    <button id="startButton" onclick="startStreaming()">Start Streaming</button>
-    <button id="stopButton" onclick="stopStreaming()">Stop Streaming</button>
     <video id="video" width="640" height="480" autoplay></video>
+
+    <button onclick="startStreaming()">Start Streaming</button>
+    <button onclick="stopStreaming()">Stop Streaming</button>
+
+    <!-- Include the stream.js file -->
+    <script src="/js/stream.js"></script>
 </body>
-</html>
+
+

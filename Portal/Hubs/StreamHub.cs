@@ -1,25 +1,25 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
-namespace Portal.Hubs;
 
 public class StreamHub : Hub
 {
-    public class SignalingHub : Hub
+    public async Task SendChunk(byte[] chunk)
     {
-        public async Task SendOffer(string offer)
-        {
-            await Clients.Others.SendAsync("OfferReceived", offer);
-        }
+        await Clients.Others.SendAsync("ReceiveChunk", chunk);
+    }
 
-        public async Task SendAnswer(string answer)
-        {
-            await Clients.Others.SendAsync("AnswerReceived", answer);
-        }
+    public async Task SendIceCandidate(object iceCandidate)
+    {
+        await Clients.Others.SendAsync("IceCandidateReceived", iceCandidate);
+    }
 
-        public async Task SendIceCandidate(string candidate)
-        {
-            await Clients.Others.SendAsync("IceCandidateReceived", candidate);
-        }
+    public async Task SendOffer(object offer)
+    {
+        await Clients.Others.SendAsync("OfferReceived", offer);
+    }
+
+    public async Task SendAnswer(object answer)
+    {
+        await Clients.Others.SendAsync("AnswerReceived", answer);
     }
 }
-
