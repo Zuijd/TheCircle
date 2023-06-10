@@ -23,15 +23,42 @@
                 }
             }
 
-            throw new InvalidOperationException("Incorrect username and password combination.");
+            throw new KeyException("Password", "Incorrect username and password combination.");
         }
 
         public async Task<bool> RegisterUserAsync(string username, string emailAddress, string password)
         {
+            var exceptions = new List<Exception>();
+
             var userExistsUsername = await _userManager.FindByNameAsync(username);
             var userExistsEmailAddress = await _userManager.FindByEmailAsync(emailAddress);
 
-            if (userExistsUsername == null && userExistsEmailAddress == null)
+            if (userExistsUsername != null)
+            {
+                exceptions.Add(new KeyException("Username", $"Username '{username}' is already taken. Please choose a different username."));
+            }
+
+            if (userExistsEmailAddress != null)
+            {
+                exceptions.Add(new KeyException("EmailAddress", $"Email address '{emailAddress}' is already taken. Please choose a different email address."));
+            }
+
+            if (username.Length < 6)
+            {
+                exceptions.Add(new KeyException("Username", "The username should be a at least 6 characters long!"));
+            }
+
+            if (!PasswordValidation(password))
+            {
+                exceptions.Add(new KeyException("Password", "The password should be at least 8 characters long and contrain at least 1 uppercase letter and 1 number!"));
+            }
+
+            if (!EmailValidation(emailAddress))
+            {
+                exceptions.Add(new KeyException("EmailAddress", "The emailaddress is not valid!"));
+            }
+
+            if (exceptions.Count == 0)
             {
                 var user = new IdentityUser
                 {
@@ -44,20 +71,36 @@
 
                 return result.Succeeded;
             }
-            else if (userExistsUsername != null)
-            {
-                throw new InvalidOperationException($"Username '{username}' is already taken. Please choose a different username.");
-            } else
-            {
-                throw new InvalidOperationException($"Email address '{emailAddress}' is already taken. Please choose a different email address.");
-            }
+
+            throw new MultipleExceptions(exceptions);
         }
 
         public async Task<bool> SignUserOutAsync()
         {
             await _signInManager.SignOutAsync();
 
-            return (_signInManager.Context.User.Identity!.IsAuthenticated) ? true : throw new InvalidOperationException("Failed to sign out.");
+            if (_signInManager.Context.User.Identity!.IsAuthenticated)
+            {
+                return true;
+            }
+
+            throw new KeyException("SignOut", "Failed to sign out.");
+        }
+
+        public bool PasswordValidation(string password)
+        {
+            var hasNumber = new Regex(@"[0-9]+");
+            var hasUpperChar = new Regex(@"[A-Z]+");
+            var hasMinimum8Chars = new Regex(@".{8,}");
+
+            return hasNumber.IsMatch(password) && hasUpperChar.IsMatch(password) && hasMinimum8Chars.IsMatch(password);
+        }
+
+        public bool EmailValidation(string email)
+        {
+            var mailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+
+            return mailRegex.IsMatch(email);
         }
     }
 }
