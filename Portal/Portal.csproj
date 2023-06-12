@@ -35,4 +35,8 @@
     <Folder Include="Certificates\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>
