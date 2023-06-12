@@ -10,13 +10,13 @@ namespace Portal.Controllers
         private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly IloggerService _customLogger;
+        private readonly IloggerService _logger;
 
-        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor, IloggerService customLogger)
+        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor, IloggerService logger)
         {
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
-            _customLogger = customLogger;
+            _logger = logger;
         }
 
         [PreventAccessFilter]
@@ -32,7 +32,7 @@ namespace Portal.Controllers
                     if (user)
                     {
                         HttpContext.Session.SetString("Username", loginViewModel.Username!);
-                        _customLogger.Info("User has logged in!");
+                        _logger.Info("User has logged in!");
                         
                         return RedirectToAction("Index", "Home");
                     }
@@ -84,7 +84,7 @@ namespace Portal.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.SignUserOutAsync();
-                    _customLogger.Info("User has logged out");
+                    _logger.Info("User has logged out");
                     HttpContext.Session.Remove("Username"); 
                  
                 }

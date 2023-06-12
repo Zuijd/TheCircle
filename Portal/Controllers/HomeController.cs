@@ -9,29 +9,20 @@ namespace Portal.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ISatoshiCompensation _compensationService;
-        private readonly IStreamRepository _streamRepository;
+     
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly IloggerService _customLogger;
+        private readonly IloggerService _logger;
 
-        public HomeController(ISatoshiCompensation compensationService, IStreamRepository streamRepository, IHttpContextAccessor httpContextAccessor, IloggerService customLogger)
+        public HomeController(ISatoshiCompensation compensationService, IStreamRepository streamRepository, IHttpContextAccessor httpContextAccessor, IloggerService logger)
         {
-            
-            _compensationService = compensationService;
-            _streamRepository = streamRepository;
             _httpContextAccessor = httpContextAccessor;
-            _customLogger = customLogger;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
-     
-            _customLogger.Info("User has accessed the home page!");
-            
-            var compensation = _compensationService.CalculateCompensation(new TimeSpan(6, 20, 10));
-            //_streamRepository.SaveCompensation(compensation, 1);
-
+            _logger.Info("User has accessed the home page!");
             return View();
         }
 

@@ -41,7 +41,7 @@ namespace DomainServices.Services
 
         public void Info(string message, params object[] args)
         {
-           _logger.LogWarning(message);
+           _logger.LogInformation(message);
         }
 
         public void Trace(string message, params object[] args)

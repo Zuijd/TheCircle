@@ -14,13 +14,13 @@ namespace DomainServices.Services
         private const decimal InitialCompensation = 0.00000001M;
         private const double CompensationMultiplier = 2;
 
-        private readonly IloggerService _customLogger;
+        private readonly IloggerService _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SatoshiCompensation(IHttpContextAccessor httpContextAccessor, IloggerService customLogger)
+        public SatoshiCompensation(IHttpContextAccessor httpContextAccessor, IloggerService Logger)
         {
             _httpContextAccessor = httpContextAccessor;
-            _customLogger = customLogger;
+            _logger = Logger;
         }
 
         public decimal CalculateCompensation(TimeSpan streamDuration)
@@ -34,7 +34,7 @@ namespace DomainServices.Services
 
             decimal compensation = InitialCompensation * (decimal)Math.Pow(CompensationMultiplier, consecutiveHours - 1);
 
-            _customLogger.Info($"calculated {compensation} Satoshi from {consecutiveHours} consecutive hours streamed ");
+            _logger.Info($"calculated {compensation} Satoshi from {consecutiveHours} consecutive hours streamed ");
 
             return compensation;
 
