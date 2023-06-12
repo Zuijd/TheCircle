@@ -7,12 +7,12 @@
 <form asp-action="Login" asp-controller="User" method="post">
     <div>
         <label asp-for="Username">Username:</label>
-        <input asp-for="Username" required>
+        <input asp-for="Username">
         <div><span asp-validation-for="Username" class="text-danger"></span></div>
     </div>
     <div>
         <label asp-for="Password">Password:</label>
-        <input asp-for="Password" type="password" required>
+        <input asp-for="Password" type="password">
         <div><span asp-validation-for="Password" class="text-danger"></span></div>
     </div>
     <div>
