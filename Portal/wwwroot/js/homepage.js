@@ -57,9 +57,8 @@ $(document).ready(function () {
 
     function updateWatcherCountUI() {
         const watcherCountElement = document.getElementById('watcherCount');
-        watcherCountElement.textContent = watcherCount.toString();
+        watcherCountElement.textContent = (watcherCount - 1).toString();
     }
-
 
     function base64ToBytes(base64) {
         const base64abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
