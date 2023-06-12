@@ -31,16 +31,22 @@ public class StreamController : Controller
     [HttpPost]
     public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
     {
+
+        Debug.WriteLine("dedede1");
+
+
         try
         {
 
             if (ModelState.IsValid)
             {
+
                 Message message = new()
                 {
-                    User = await _userService.GetUserByName(chatViewModel.Username!),
+                    User = await _userService.GetUserByName(User.Identity?.Name!),
                     MessageBody = chatViewModel.Message!
                 };
+
 
                 await _messageService.CreateMessage(message);
 
@@ -48,6 +54,7 @@ public class StreamController : Controller
         }
         catch (Exception e)
         {
+
             ModelState.AddModelError(e.Message, e.Message);
         }
 

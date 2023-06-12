@@ -56,12 +56,14 @@ namespace DomainServices.Services
             if (username == null)
             {
                 exceptions.Add(new KeyException("Username", "Username is required!"));
-            } else
+            }
+            else
             {
                 if (username.Length < 6)
                 {
                     exceptions.Add(new KeyException("Username", "The username should be a at least 6 characters long!"));
-                } else
+                }
+                else
                 {
                     var userExistsUsername = await _userManager.FindByNameAsync(username);
 
@@ -71,16 +73,18 @@ namespace DomainServices.Services
                     }
                 }
             }
-            
+
             if (emailAddress == null)
             {
                 exceptions.Add(new KeyException("EmailAddress", "Email address is required!"));
-            } else
+            }
+            else
             {
                 if (!EmailValidation(emailAddress))
                 {
                     exceptions.Add(new KeyException("EmailAddress", "The emailaddress is not valid!"));
-                } else
+                }
+                else
                 {
                     var userExistsEmailAddress = await _userManager.FindByEmailAsync(emailAddress);
 
@@ -94,7 +98,8 @@ namespace DomainServices.Services
             if (password == null)
             {
                 exceptions.Add(new KeyException("Password", "Password is required!"));
-            } else
+            }
+            else
             {
                 if (!PasswordValidation(password))
                 {
@@ -112,6 +117,10 @@ namespace DomainServices.Services
                 };
 
                 var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    await _userRepository.CreateUser(new User { Name = username, Email = emailAddress });
+                }
 
                 return result.Succeeded;
             }
@@ -147,6 +156,6 @@ namespace DomainServices.Services
             return mailRegex.IsMatch(email);
         }
         public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
-        
+
     }
 }

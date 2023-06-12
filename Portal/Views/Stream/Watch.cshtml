@@ -9,10 +9,6 @@ Watch stream
 @* chat *@
 <div class="container">
     <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" /></div>
-    </div>
-    <div class="row p-1">
         <div class="col-1">Message</div>
         <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
     </div>
@@ -48,10 +44,10 @@ Watch stream
 
         document.getElementById("sendButton").disabled = true;
 
-        connection.on("ReceiveMessage", function (user, message) {
+        connection.on("ReceiveMessage", function (message) {
             var li = document.createElement("li");
             document.getElementById("messagesList").appendChild(li);
-            li.textContent = `${user} says ${message}`;
+            li.textContent = `${message}`;
         });
 
         connection.start().then(function () {
@@ -61,9 +57,8 @@ Watch stream
         });
 
         document.getElementById("sendButton").addEventListener("click", function (event) {
-            var user = document.getElementById("userInput").value;
             var message = document.getElementById("messageInput").value;
-            connection.invoke("SendMessage", user, message).catch(function (err) {
+            connection.invoke("SendMessage", message).catch(function (err) {
                 return console.error(err.toString());
             });
             event.preventDefault();
@@ -72,10 +67,8 @@ Watch stream
         $(function () {
             $("#sendButton").click(function () {
                 var ChatViewModel = {
-                    Username: $("#userInput").val(),
                     Message: $("#messageInput").val()
                 };
-                console.log('Button clicked')
 
                 var JSONData = JSON.stringify(ChatViewModel);
 
