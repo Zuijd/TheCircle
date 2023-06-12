@@ -61,6 +61,7 @@ namespace Portal.Controllers
                 if (result)
                 {
                     await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
+                    _logger.Info($"Registered user: {registerViewModel.Username}");
                     
                     return RedirectToAction("Index", "Home");
                 }
