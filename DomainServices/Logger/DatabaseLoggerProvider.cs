@@ -15,7 +15,9 @@ namespace DomainServices.Logger
         private readonly string _tableName;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DatabaseLogger(string applicationConnectionString, IHttpContextAccessor httpContextAccessor)
+     
+
+        public DatabaseLoggerProvider(string applicationConnectionString, IHttpContextAccessor httpContextAccessor)
         {
             _connectionString = applicationConnectionString;
             _tableName = "Logs";
