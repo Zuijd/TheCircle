@@ -4,10 +4,16 @@ let mediaRecorder;
 let recordedChunks = [];
 let timer;
 const timerInterval = 5000;
+let watcherCount = 0;
 
 const connection = new signalR.HubConnectionBuilder()
     .withUrl('/streamHub') // Adjust the URL to match your server endpoint
     .build();
+
+connection.on('UpdateWatcherCount', (count) => {
+    watcherCount = count;
+    updateWatcherCountUI();
+})
 
 function startStreaming() {
 
@@ -123,3 +129,7 @@ connection.start()
 //     return result;
 // }
 
+function updateWatcherCountUI() {
+    const watcherCountElement = document.getElementById('watcherCount');
+    watcherCountElement.textContent = (watcherCount-1).toString();
+}

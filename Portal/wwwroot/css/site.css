@@ -20,3 +20,10 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.viewerCount{
+    background-color: black;
+    width: fit-content;
+    color: white;
+    padding: 5px;
+}

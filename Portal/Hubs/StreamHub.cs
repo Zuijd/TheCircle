@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 
 public class StreamHub : Hub
 {
+    static int watcherCount = 0;
+
     public async Task SendChunk(byte[] chunk)
     {
         await Clients.Others.SendAsync("ReceiveChunk", chunk);
@@ -21,5 +23,19 @@ public class StreamHub : Hub
     public async Task SendAnswer(object answer)
     {
         await Clients.Others.SendAsync("AnswerReceived", answer);
+    }
+    public override Task OnConnectedAsync()
+    {
+        watcherCount++;
+        Clients.All.SendAsync("UpdateWatcherCount", watcherCount);
+
+        return base.OnConnectedAsync();
+    }
+    public override Task OnDisconnectedAsync(Exception exception)
+    {
+        watcherCount--;
+        Clients.All.SendAsync("UpdateWatcherCount", watcherCount);
+
+        return base.OnDisconnectedAsync(exception);
     }
 }

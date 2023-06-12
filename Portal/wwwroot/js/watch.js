@@ -7,6 +7,7 @@ const connection = new signalR.HubConnectionBuilder()
 let mediaSource;
 let sourceBuffer;
 let receivedChunks = [];
+let watcherCount = 0;
 
 connection.on("ReceiveChunk", (chunk) => {
     const videoElement = document.getElementById('video');
@@ -25,6 +26,11 @@ connection.on("ReceiveChunk", (chunk) => {
         appendNextChunk();
     }
 });
+
+connection.on('UpdateWatcherCount', (count) => {
+    watcherCount = count;
+    updateWatcherCountUI();
+})
 
 connection.start()
     .then(() => {
@@ -46,6 +52,10 @@ function appendNextChunk() {
         const chunkData = new Uint8Array(uint8Array.buffer);
         sourceBuffer.appendBuffer(chunkData);
     }
+}
+function updateWatcherCountUI() {
+    const watcherCountElement = document.getElementById('watcherCount');
+    watcherCountElement.textContent = (watcherCount - 1).toString();
 }
 
 function base64ToBytes(base64) {
