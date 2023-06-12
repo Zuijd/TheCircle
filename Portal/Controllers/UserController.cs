@@ -17,6 +17,7 @@ namespace Portal.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
+        [PreventAccessFilter]
         public IActionResult Login() => View();
 
         [HttpPost]
@@ -24,9 +25,7 @@ namespace Portal.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    var user = await _userService.LoginUserAsync(loginViewModel.Username!, loginViewModel.Password!);
+                var user = await _userService.LoginUserAsync(loginViewModel.Username!, loginViewModel.Password!);
 
                     if (user)
                     {
@@ -37,39 +36,39 @@ namespace Portal.Controllers
                         }
                         return RedirectToAction("Index", "Home");
                     }
-                }
             }
-            catch (Exception e)
+            catch (MultipleExceptions e)
             {
-                ModelState.AddModelError(e.Message, e.Message);
+                foreach (var innerExc in e.InnerExceptions)
+                {
+                    ModelState.AddModelError((((KeyException)innerExc).Key), (((KeyException)innerExc).Message));
+                }
             }
 
             return View(loginViewModel);
         }
 
-
-
+        [PreventAccessFilter]
         public IActionResult Register() => View();
-
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    var user = await _userService.RegisterUserAsync(registerViewModel.Username!, registerViewModel.EmailAddress!, registerViewModel.Password!);
+                var result = await _userService.RegisterUserAsync(registerViewModel.Username!, registerViewModel.EmailAddress!, registerViewModel.Password!);
 
-                    if (user)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                if (result)
+                {
+                    await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
+                    return RedirectToAction("Index", "Home");
                 }
-            }
-            catch (Exception e)
+            } catch (MultipleExceptions e)
             {
-                ModelState.AddModelError(e.Message, e.Message);
+                foreach (var innerExc in e.InnerExceptions)
+                {
+                    ModelState.AddModelError((((KeyException) innerExc).Key), (((KeyException) innerExc).Message));
+                }
             }
 
             return View(registerViewModel);
@@ -88,9 +87,9 @@ namespace Portal.Controllers
 
                 }
             }
-            catch (Exception e)
+            catch (KeyException e)
             {
-                ModelState.AddModelError(e.Message, e.Message);
+                ModelState.AddModelError(e.Key, e.Message);
             }
 
             return RedirectToAction("Index", "Home");
