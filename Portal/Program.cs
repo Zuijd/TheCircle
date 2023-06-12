@@ -1,3 +1,5 @@
+using DomainServices.Interfaces.Repositories;
+using Infrastructure.Repositories;
 using Microsoft.Extensions.Options;
 using Portal.Hubs;
 using SignalRChat.Hubs;
@@ -18,7 +20,13 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 }).AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<IdentityUser>>().AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+//Repositories
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+
+//Services 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>

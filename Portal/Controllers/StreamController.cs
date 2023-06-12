@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
 
@@ -7,10 +8,12 @@ namespace Portal.Controllers;
 public class StreamController : Controller
 {
     private readonly ILogger<StreamController> _logger;
+    private readonly IMessageService _messageService;
 
-    public StreamController(ILogger<StreamController> logger)
+    public StreamController(ILogger<StreamController> logger, IMessageService messageService)
     {
         _logger = logger;
+        _messageService = messageService;
     }
 
     public IActionResult Index()
@@ -24,18 +27,21 @@ public class StreamController : Controller
     }
 
     [HttpPost]
-    public IActionResult Message([FromBody] ChatViewModel chatViewModel)
+    public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
     {
-        Debug.WriteLine("eee");
         try
         {
-            Debug.WriteLine(chatViewModel.Username);
 
             if (ModelState.IsValid)
             {
-                Debug.WriteLine("Hier ben ik");
-                Debug.WriteLine(chatViewModel.Username);
-                Debug.WriteLine(chatViewModel.Message);
+                Message message = new()
+                {
+                    Username = chatViewModel.Username!,
+                    MessageBody = chatViewModel.Message!
+                };
+
+                await _messageService.CreateMessage(message);
+
             }
         }
         catch (Exception e)
