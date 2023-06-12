@@ -2,40 +2,49 @@
 using DomainServices.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
+using Microsoft.Extensions.Logging;
 
-namespace Portal.Controllers;
-
-public class HomeController : Controller
+namespace Portal.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly ISatoshiCompensation _compensationService;
-    private readonly IStreamRepository _streamRepository;
-
-    public HomeController(ILogger<HomeController> logger, ISatoshiCompensation compensationService, IStreamRepository streamRepository)
+    public class HomeController : Controller
     {
-        _logger = logger;
-        _compensationService = compensationService;
-        _streamRepository = streamRepository;
-    }
+        private readonly ILogger<HomeController> _logger;
+        private readonly ISatoshiCompensation _compensationService;
+        private readonly IStreamRepository _streamRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public IActionResult Index()
-    {
-        // Test for logging and Satoshi compensation --> Uncomment below to run
-        _logger.LogInformation("Executing MyAction");
-        var compensation = _compensationService.CalculateCompensation(new TimeSpan(6, 20, 10));
-        //_streamRepository.SaveCompensation(compensation, 1);
+        public HomeController(ILogger<HomeController> logger, ISatoshiCompensation compensationService, IStreamRepository streamRepository, IHttpContextAccessor httpContextAccessor)
+        {
+            _logger = logger;
+            _compensationService = compensationService;
+            _streamRepository = streamRepository;
+            _httpContextAccessor = httpContextAccessor;
+        }
 
-        return View();
-    }
+        public IActionResult Index()
+        {
+            // Test for logging and Satoshi compensation --> Uncomment below to run
+            string username = _httpContextAccessor.HttpContext?.Session.GetString("Username") ?? "System";
+            using (_logger.BeginScope(username))
+            {
+                _logger.LogInformation($"{username} has accessed the Index page!");
+            }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+            var compensation = _compensationService.CalculateCompensation(new TimeSpan(6, 20, 10));
+            //_streamRepository.SaveCompensation(compensation, 1);
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }

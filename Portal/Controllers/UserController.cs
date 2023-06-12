@@ -1,4 +1,5 @@
 ﻿using DomainServices.Logger;
+using Microsoft.Extensions.Logging;
 using Portal.Models.User;
 
 namespace Portal.Controllers
@@ -6,16 +7,14 @@ namespace Portal.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        private readonly ILogger<UserController> _logger;
-        private readonly ILoggerProvider _loggerProvider;
+        private readonly ILogger<UserController> _logger;  // Use ILogger<UserController> instead of DatabaseLogger
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-        public UserController(IUserService userService, ILogger<UserController> logger, ILoggerProvider loggerProvider)
+        public UserController(IUserService userService, ILogger<UserController> logger, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
             _logger = logger;
-            _loggerProvider = loggerProvider;
-          
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Login() => View();
@@ -29,10 +28,13 @@ namespace Portal.Controllers
                 {
                     var user = await _userService.LoginUserAsync(loginViewModel.Username!, loginViewModel.Password!);
 
-                    if(user)
+                    if (user)
                     {
-                    
-                        _logger.LogInformation($"{loginViewModel.Username} has logged in!");
+                        HttpContext.Session.SetString("Username", loginViewModel.Username!);
+                        using (_logger.BeginScope(loginViewModel.Username!))  // Use _logger instead of _databaseLogger
+                        {
+                            _logger.LogInformation($"{loginViewModel.Username} has logged in!");
+                        }
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -44,6 +46,7 @@ namespace Portal.Controllers
 
             return View(loginViewModel);
         }
+
 
 
         public IActionResult Register() => View();
@@ -81,6 +84,8 @@ namespace Portal.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.SignUserOutAsync();
+                    HttpContext.Session.Remove("Username"); // Clear the username from the session
+
                 }
             }
             catch (Exception e)

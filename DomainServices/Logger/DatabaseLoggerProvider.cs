@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,6 @@ namespace DomainServices.Logger
         private readonly string _connectionString;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-
         public DatabaseLoggerProvider(string connectionString, IHttpContextAccessor httpContextAccessor)
         {
             _connectionString = connectionString;
@@ -22,20 +22,12 @@ namespace DomainServices.Logger
 
         public ILogger CreateLogger(string categoryName)
         {
-            var logger = new DatabaseLogger(_connectionString);
-            logger.SetUserName(GetUserNameFromIdentity());
+            var logger = new DatabaseLogger(_connectionString, _httpContextAccessor);
             return logger;
         }
 
         public void Dispose()
         {
-
-        }
-
-        private string GetUserNameFromIdentity()
-        {
-            var userName = _httpContextAccessor?.HttpContext?.User?.Identity?.Name;
-            return userName ?? "System";
         }
     }
 }
