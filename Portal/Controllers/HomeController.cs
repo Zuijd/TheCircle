@@ -11,10 +11,9 @@ namespace Portal.Controllers
     {
      
         private readonly IHttpContextAccessor _httpContextAccessor;
-
         private readonly IloggerService _logger;
 
-        public HomeController(ISatoshiCompensation compensationService, IStreamRepository streamRepository, IHttpContextAccessor httpContextAccessor, IloggerService logger)
+        public HomeController(IHttpContextAccessor httpContextAccessor, IloggerService logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
