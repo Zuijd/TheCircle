@@ -7,3 +7,6 @@ global using Microsoft.AspNetCore.Authorization;
 global using System.ComponentModel.DataAnnotations;
 global using Portal.Models.User;
 global using DomainServices.Services;
+global using Portal.Middleware;
+global using Microsoft.AspNetCore.Mvc.Filters;
+global using DomainServices.Exceptions;

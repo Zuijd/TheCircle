@@ -1,3 +1,4 @@
 ﻿global using DomainServices.Interfaces.Services;
 global using Microsoft.AspNetCore.Identity;
-global using Microsoft.Extensions.Configuration;
+global using DomainServices.Exceptions;
+global using System.Text.RegularExpressions;
