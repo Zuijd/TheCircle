@@ -1,47 +1,47 @@
-﻿<div class="container">
-    <div class="row">
-        <div id="streamSelectorBox" class="col">
-            <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
-            <div class="streams-container">
-                <div class="stream">
-                    <input type="checkbox" id="streamer 1" value="streamer 1">
-                    <label for="streamer 1">Streamer 1</label>
+﻿
+<div class="container">
+        <div class="row">
+            <div id="streamSelectorBox" class="col">
+                <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
+                <div class="streams-container">
+                    <div class="stream">
+                        <input type="checkbox" id="streamer 1" value="streamer 1">
+                        <label for="streamer 1">Streamer 1</label>
+
+                    <div id="watcherCountContainer" class="viewerCount">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill m-1" viewBox="0 0 16 16">
+                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                        </svg>
+                        <span id="watcherCount"></span> viewer(s)
+                    </div>
+
+                    </div>
+                    <div class="stream">
+                        <input type="checkbox" id="streamer 2" value="streamer 2">
+                        <label for="streamer 2">Streamer 2</label>
+                    </div>
+                    <div class="stream">
+                        <input type="checkbox" id="streamer 3" value="streamer 3">
+                        <label for="streamer 3">Streamer 3</label>
+                    </div>
+        
+                    <!-- Add more streams as needed -->
                 </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 2" value="streamer 2">
-                    <label for="streamer 2">Streamer 2</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 3" value="streamer 3">
-                    <label for="streamer 3">Streamer 3</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 4" value="streamer 4">
-                    <label for="streamer 4">Streamer 4</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 5" value="streamer 5">
-                    <label for="streamer 5">Streamer 5</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 6" value="streamer 6">
-                    <label for="streamer 6">Streamer 6</label>
-                </div>
-                <!-- Add more streams as needed -->
             </div>
-        </div>
 
-        <div class="col">
-            <div class="row mt-4" id="streamsContainer">
-                <!-- Streams will be dynamically added here -->
+            <div class="col">
+                <div class="row mt-4" id="streamsContainer">
+                    <!-- Streams will be dynamically added here -->
+                </div>
             </div>
+
+            <img id="circleImage" src="./assets/circle.png" alt="Circle">
+
         </div>
-
-        <img id="circleImage" src="./assets/circle.png" alt="Circle">
-
     </div>
-</div>
 
-@section Scripts {
-    <script src="~/js/homepage.js" asp-append-version="true"></script>
-}
+    @section Scripts {
+        <script src="~/js/homepage.js" asp-append-version="true"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    }

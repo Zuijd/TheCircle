@@ -1,3 +1,23 @@
+$(document).ready(function () {
+    $('#startStreamBtn').click(function () {
+        var button = $(this);
+        var videoBox = $('#videoBox');
+        var circleImage = $('#circleImage');
+
+        if (button.hasClass('btn-success')) {
+            button.removeClass('btn-success').addClass('btn-danger').text('Stop Streaming');
+            videoBox.show();
+            circleImage.hide();
+            startStreaming();
+        } else {
+            button.removeClass('btn-danger').addClass('btn-success').text('Start Streaming');
+            videoBox.hide();
+            circleImage.show();
+            stopStreaming();
+        }
+    });
+});
+
 "use strict";
 
 let mediaRecorder;
@@ -133,3 +153,4 @@ function updateWatcherCountUI() {
     const watcherCountElement = document.getElementById('watcherCount');
     watcherCountElement.textContent = (watcherCount-1).toString();
 }
+
