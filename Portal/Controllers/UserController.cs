@@ -17,19 +17,19 @@ namespace Portal.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    var user = await _userService.LoginUserAsync(loginViewModel.Username!, loginViewModel.Password!);
+                var user = await _userService.LoginUserAsync(loginViewModel.Username!, loginViewModel.Password!);
 
-                    if (user)
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+                if (user)
+                {
+                    return RedirectToAction("Index", "Home");
                 }
             }
-            catch (KeyException e)
+            catch (MultipleExceptions e)
             {
-                ModelState.AddModelError(e.Key, e.Message);
+                foreach (var innerExc in e.InnerExceptions)
+                {
+                    ModelState.AddModelError((((KeyException)innerExc).Key), (((KeyException)innerExc).Message));
+                }
             }
 
             return View(loginViewModel);
@@ -43,15 +43,12 @@ namespace Portal.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    var result = await _userService.RegisterUserAsync(registerViewModel.Username!, registerViewModel.EmailAddress!, registerViewModel.Password!);
+                var result = await _userService.RegisterUserAsync(registerViewModel.Username!, registerViewModel.EmailAddress!, registerViewModel.Password!);
 
-                    if (result)
-                    {
-                        await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
-                        return RedirectToAction("Index", "Home");
-                    }
+                if (result)
+                {
+                    await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
+                    return RedirectToAction("Index", "Home");
                 }
             } catch (MultipleExceptions e)
             {

@@ -13,49 +13,87 @@
 
         public async Task<bool> LoginUserAsync(string username, string password)
         {
-            var user = await _userManager.FindByNameAsync(username);
+            var exceptions = new List<Exception>();
 
-            if (user != null)
+            if (username == null)
             {
-                if ((await _signInManager.PasswordSignInAsync(user, password, false, false)).Succeeded)
-                {
-                    return true;
-                }
+                exceptions.Add(new KeyException("Username", "Username is required!"));
             }
 
-            throw new KeyException("Password", "Incorrect username and password combination.");
+            if (password == null)
+            {
+                exceptions.Add(new KeyException("Password", "Password is required!"));
+            }
+
+            if (exceptions.Count == 0)
+            {
+                var user = await _userManager.FindByNameAsync(username);
+
+                if (user != null)
+                {
+                    if ((await _signInManager.PasswordSignInAsync(user, password, false, false)).Succeeded)
+                    {
+                        return true;
+                    }
+                }
+
+                exceptions.Add(new KeyException("Password", "Incorrect username and password combination."));
+            }
+
+            throw new MultipleExceptions(exceptions);
         }
 
         public async Task<bool> RegisterUserAsync(string username, string emailAddress, string password)
         {
             var exceptions = new List<Exception>();
 
-            var userExistsUsername = await _userManager.FindByNameAsync(username);
-            var userExistsEmailAddress = await _userManager.FindByEmailAsync(emailAddress);
-
-            if (userExistsUsername != null)
+            if (username == null)
             {
-                exceptions.Add(new KeyException("Username", $"Username '{username}' is already taken. Please choose a different username."));
+                exceptions.Add(new KeyException("Username", "Username is required!"));
+            } else
+            {
+                if (username.Length < 6)
+                {
+                    exceptions.Add(new KeyException("Username", "The username should be a at least 6 characters long!"));
+                } else
+                {
+                    var userExistsUsername = await _userManager.FindByNameAsync(username);
+
+                    if (userExistsUsername != null)
+                    {
+                        exceptions.Add(new KeyException("Username", $"Username '{username}' is already taken. Please choose a different username."));
+                    }
+                }
+            }
+            
+            if (emailAddress == null)
+            {
+                exceptions.Add(new KeyException("EmailAddress", "Email address is required!"));
+            } else
+            {
+                if (!EmailValidation(emailAddress))
+                {
+                    exceptions.Add(new KeyException("EmailAddress", "The emailaddress is not valid!"));
+                } else
+                {
+                    var userExistsEmailAddress = await _userManager.FindByEmailAsync(emailAddress);
+
+                    if (userExistsEmailAddress != null)
+                    {
+                        exceptions.Add(new KeyException("EmailAddress", $"Email address '{emailAddress}' is already taken. Please choose a different email address."));
+                    }
+                }
             }
 
-            if (userExistsEmailAddress != null)
+            if (password == null)
             {
-                exceptions.Add(new KeyException("EmailAddress", $"Email address '{emailAddress}' is already taken. Please choose a different email address."));
-            }
-
-            if (username.Length < 6)
+                exceptions.Add(new KeyException("Password", "Password is required!"));
+            } else
             {
-                exceptions.Add(new KeyException("Username", "The username should be a at least 6 characters long!"));
-            }
-
-            if (!PasswordValidation(password))
-            {
-                exceptions.Add(new KeyException("Password", "The password should be at least 8 characters long and contrain at least 1 uppercase letter and 1 number!"));
-            }
-
-            if (!EmailValidation(emailAddress))
-            {
-                exceptions.Add(new KeyException("EmailAddress", "The emailaddress is not valid!"));
+                if (!PasswordValidation(password))
+                {
+                    exceptions.Add(new KeyException("Password", "The password should be at least 8 characters long and contrain at least 1 uppercase letter and 1 number!"));
+                }
             }
 
             if (exceptions.Count == 0)
