@@ -24,18 +24,18 @@ public class StreamHub : Hub
     {
         await Clients.Others.SendAsync("AnswerReceived", answer);
     }
-    public override Task OnConnectedAsync()
+    public override async Task OnConnectedAsync()
     {
         watcherCount++;
-        Clients.All.SendAsync("UpdateWatcherCount", watcherCount);
+        await Clients.All.SendAsync("UpdateWatcherCount", watcherCount);
 
-        return base.OnConnectedAsync();
+        await base.OnConnectedAsync();
     }
-    public override Task OnDisconnectedAsync(Exception exception)
+    public override async Task OnDisconnectedAsync(Exception exception)
     {
         watcherCount--;
-        Clients.All.SendAsync("UpdateWatcherCount", watcherCount);
+        await Clients.All.SendAsync("UpdateWatcherCount", watcherCount);
 
-        return base.OnDisconnectedAsync(exception);
+        await base.OnDisconnectedAsync(exception);
     }
 }
