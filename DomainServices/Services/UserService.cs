@@ -1,15 +1,25 @@
-﻿namespace DomainServices.Services
+﻿using Domain;
+using DomainServices.Interfaces.Repositories;
+using System.Diagnostics;
+
+namespace DomainServices.Services
 {
     public class UserService : IUserService
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IUserRepository _userRepository;
 
+<<<<<<< HEAD
 
         public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+=======
+        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUserRepository userRepository)
+>>>>>>> bacf9f196541959ced3f405be36cc8210399cd09
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userRepository = userRepository;
         }
 
         public async Task<bool> LoginUserAsync(string username, string password)
@@ -51,12 +61,14 @@
             if (username == null)
             {
                 exceptions.Add(new KeyException("Username", "Username is required!"));
-            } else
+            }
+            else
             {
                 if (username.Length < 6)
                 {
                     exceptions.Add(new KeyException("Username", "The username should be a at least 6 characters long!"));
-                } else
+                }
+                else
                 {
                     var userExistsUsername = await _userManager.FindByNameAsync(username);
 
@@ -66,16 +78,18 @@
                     }
                 }
             }
-            
+
             if (emailAddress == null)
             {
                 exceptions.Add(new KeyException("EmailAddress", "Email address is required!"));
-            } else
+            }
+            else
             {
                 if (!EmailValidation(emailAddress))
                 {
                     exceptions.Add(new KeyException("EmailAddress", "The emailaddress is not valid!"));
-                } else
+                }
+                else
                 {
                     var userExistsEmailAddress = await _userManager.FindByEmailAsync(emailAddress);
 
@@ -89,7 +103,8 @@
             if (password == null)
             {
                 exceptions.Add(new KeyException("Password", "Password is required!"));
-            } else
+            }
+            else
             {
                 if (!PasswordValidation(password))
                 {
@@ -107,6 +122,10 @@
                 };
 
                 var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    await _userRepository.CreateUser(new User { Name = username, Email = emailAddress });
+                }
 
                 return result.Succeeded;
             }
@@ -141,5 +160,7 @@
 
             return mailRegex.IsMatch(email);
         }
+        public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
+
     }
 }

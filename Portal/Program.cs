@@ -5,6 +5,10 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Portal.Controllers;
+using Infrastructure.Repositories;
+using Microsoft.Extensions.Options;
+using Portal.Hubs;
+using SignalRChat.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +26,17 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 }).AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<IdentityUser>>().AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+//Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+
+//Services 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
 builder.Services.AddScoped<IloggerService, LoggerService>();
 
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -35,6 +46,10 @@ builder.Services.AddAuthentication("CookieAuth")
     });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR(options => {
+    options.EnableDetailedErrors = true;
+    options.MaximumReceiveMessageSize = null;
+});
 
 // Build the configuration
 var configuration = new ConfigurationBuilder()
@@ -98,5 +113,7 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<StreamHub>("/streamHub");
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
