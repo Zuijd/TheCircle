@@ -4,10 +4,11 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 document.getElementById("sendButton").disabled = true;
 
-connection.on("ReceiveMessage", function (user, message) {
+connection.on("ReceiveMessage", function (message, user) {
     var li = document.createElement("li");
     document.getElementById("messagesList").appendChild(li);
-    li.textContent = `${user} says ${message}`;
+    //li.textContent = `${user} says ${message}`;
+    li.textContent = `${message}`;
 });
 
 connection.start().then(function () {
