@@ -7,6 +7,7 @@ const connection = new signalR.HubConnectionBuilder()
 let mediaSource;
 let sourceBuffer;
 let receivedChunks = [];
+let isAppending = false;
 
 connection.on("ReceiveChunk", (chunk) => {
     const videoElement = document.getElementById('video');
@@ -21,8 +22,8 @@ connection.on("ReceiveChunk", (chunk) => {
 
     receivedChunks.push(chunk);
 
-    if (sourceBuffer && !sourceBuffer.updating) {
-        appendNextChunk();
+    if (sourceBuffer && !isAppending) {
+        processChunks();
     }
 });
 
@@ -35,50 +36,42 @@ connection.start()
     });
 
 function handleSourceOpen() {
+    console.log('MediaSource opened.');
     sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
-    appendNextChunk();
+    sourceBuffer.addEventListener('updateend', handleUpdateEnd);
+    processChunks();
 }
 
-function appendNextChunk() {
-    if (sourceBuffer && !sourceBuffer.updating && receivedChunks.length > 0) {
-        const chunk = receivedChunks.shift();
-        const uint8Array = base64ToBytes(chunk);
-        const chunkData = new Uint8Array(uint8Array.buffer);
-        sourceBuffer.appendBuffer(chunkData);
+function handleUpdateEnd() {
+    console.log('handleUpdateEnd called.');
+    isAppending = false;
+    processChunks();
+}
+
+function processChunks() {
+    console.log('processChunks called.');
+    if (sourceBuffer && !isAppending && receivedChunks.length > 0) {
+        isAppending = true;
+        const chunksToAppend = receivedChunks.splice(0, receivedChunks.length);
+        const mergedChunk = mergeChunks(chunksToAppend);
+        const uint8Array = base64ToBytes(mergedChunk);
+        console.log('Appending chunk:', mergedChunk);
+        sourceBuffer.appendBuffer(uint8Array);
     }
+}
+
+function mergeChunks(chunks) {
+    return chunks.join('');
 }
 
 function base64ToBytes(base64) {
-    const base64abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    const padding = '=';
+    const binaryString = window.atob(base64);
+    const length = binaryString.length;
+    const bytes = new Uint8Array(length);
 
-    let result = [];
-    let bytes = (base64.length / 4) * 3;
-    if (base64[base64.length - 1] === padding) {
-        bytes--;
-        if (base64[base64.length - 2] === padding) {
-            bytes--;
-        }
+    for (let i = 0; i < length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
     }
 
-    for (let i = 0, j = 0; i < base64.length; i += 4, j += 3) {
-        const char1 = base64abc.indexOf(base64[i]);
-        const char2 = base64abc.indexOf(base64[i + 1]);
-        const char3 = base64abc.indexOf(base64[i + 2]);
-        const char4 = base64abc.indexOf(base64[i + 3]);
-
-        const byte1 = (char1 << 2) | (char2 >> 4);
-        const byte2 = ((char2 & 15) << 4) | (char3 >> 2);
-        const byte3 = ((char3 & 3) << 6) | char4;
-
-        result[j] = byte1;
-        if (char3 !== 64) {
-            result[j + 1] = byte2;
-        }
-        if (char4 !== 64) {
-            result[j + 2] = byte3;
-        }
-    }
-
-    return new Uint8Array(result);
+    return bytes;
 }

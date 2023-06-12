@@ -4,15 +4,22 @@
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Watch Stream</title>
+<head>
+    <title>Live Stream Viewer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="/js/watch.js"></script>
-  </head>
-  <body>
-    <h1>Watch Stream</h1>
-    <video id="video" autoplay controls></video>
-  </body>
+    <style>
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Stream Viewer</h1>
+     <video id="video" type="video/webm; codecs=vp8" autoplay controls></video>
+</body>
 </html>
+
 
