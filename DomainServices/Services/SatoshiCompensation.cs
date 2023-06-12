@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using DomainServices.Interfaces.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,13 @@ namespace DomainServices.Services
         private const decimal InitialCompensation = 0.00000001M;
         private const double CompensationMultiplier = 2;
 
-        private readonly ILogger<SatoshiCompensation> _logger;
+        private readonly IloggerService _customLogger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SatoshiCompensation(ILogger<SatoshiCompensation> logger)
+        public SatoshiCompensation(IHttpContextAccessor httpContextAccessor, IloggerService customLogger)
         {
-            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
+            _customLogger = customLogger;
         }
 
         public decimal CalculateCompensation(TimeSpan streamDuration)
@@ -30,7 +34,7 @@ namespace DomainServices.Services
 
             decimal compensation = InitialCompensation * (decimal)Math.Pow(CompensationMultiplier, consecutiveHours - 1);
 
-            _logger.LogInformation($"calculated {compensation} Satoshi from {consecutiveHours} consecutive hours streamed ");
+            _customLogger.Info($"calculated {compensation} Satoshi from {consecutiveHours} consecutive hours streamed ");
 
             return compensation;
 

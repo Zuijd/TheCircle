@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using System.Data;
+using System.Drawing;
+using System.Security;
 
 public class DatabaseLogger : ILogger
 {
@@ -82,7 +86,7 @@ public class DatabaseLogger : ILogger
 
     private bool ShouldExcludeLogMessage(string logMessage)
     {
-        string[] excludedKeywords = { "listening on", "application started", "Hosting environment", "Content root path", "Entity Framework", "An error", "An exception" };
+        string[] excludedKeywords = { "listening on", "application started", "Hosting environment", "Content root path", "Entity Framework", "An error", "An exception", "Executed DbCommand"  };
         foreach (string keyword in excludedKeywords)
         {
             if (logMessage.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
