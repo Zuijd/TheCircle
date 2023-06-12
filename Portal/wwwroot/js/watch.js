@@ -1,97 +1,70 @@
 "use strict";
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl('/streamHub') // Adjust the URL to match your server endpoint
-    .build();
+  .withUrl('/streamHub') // Adjust the URL to match your server endpoint
+  .build();
 
 let mediaSource;
-// let sourceBuffer = null;
-// let receivedBlobs = [];
+let sourceBuffer;
 
 connection.on("ReceiveChunk", (chunk) => {
-    
-    const uint8Array = base64ToBytes(chunk);
-    const blob = new Blob([uint8Array.buffer], { type: 'video/webm;codecs="vp9,opus"' });
+  const uint8Array = base64ToBytes(chunk);
+  const blob = new Blob([uint8Array.buffer], { type: 'video/webm;codecs="vp9,opus"' });
 
-    console.log(blob)
-    console.log("Receiving chunk: " + chunk);
-    
-    appendToStream(blob);
+  console.log(blob);
+  console.log("Receiving chunk: " + chunk);
+
+  appendToStream(blob);
 });
 
 async function appendToStream(blob) {
+  if (!sourceBuffer || sourceBuffer.updating) {
+    return;
+  }
 
-    const videoElement = document.getElementById('video');
+  const vidBuff = await blob.arrayBuffer();
 
-    const vidBuff = await blob.arrayBuffer();
-
-    const sourceBuffer = await new Promise((resolve, reject) => {
-		const getSourceBuffer = () => {
-			try {
-				const sourceBuffer = mediaSource.addSourceBuffer(`video/webm; codecs="vp9,opus"`);
-				resolve(sourceBuffer);
-			} catch (e) {
-				reject(e);
-			}
-		};
-		if (mediaSource.readyState === 'open') {
-			getSourceBuffer();
-		} else {
-			mediaSource.addEventListener('sourceopen', getSourceBuffer);
-		}
-	});
-
-    // Now that we have an "open" source buffer, we can append to it
-	sourceBuffer.appendBuffer(vidBuff);
-	// Listen for when append has been accepted and
-	// You could alternative use `.addEventListener` here instead
-	sourceBuffer.onupdateend = () => {
-        console.log("UPDATE")
-		// Nothing else to load
-		mediaSource.endOfStream();
-		// Start playback!
-		// Note: this will fail if video is not muted, due to rules about
-		// autoplay and non-muted videos
-		videoElement.play();
-	};
-
-    	// Debug Info
-	console.log({
-		sourceBuffer,
-		mediaSource,
-		videoElement
-	});
+  sourceBuffer.appendBuffer(vidBuff);
 }
 
 function base64ToBytes(base64) {
-    const binaryString = window.atob(base64);
-    const length = binaryString.length;
-    const bytes = new Uint8Array(length);
+  const binaryString = window.atob(base64);
+  const length = binaryString.length;
+  const bytes = new Uint8Array(length);
 
-    for (let i = 0; i < length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
+  for (let i = 0; i < length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
 
-    return bytes;
+  return bytes;
 }
 
 connection.start()
-    .then(() => {
-        console.log('Connection established.');
+  .then(() => {
+    console.log('Connection established.');
 
-        const videoElement = document.getElementById('video');
+    const videoElement = document.getElementById('video');
 
-        // Controleer of MediaSource wordt ondersteund door de browser
-        if (!window.MediaSource) {
-            console.error('MediaSource wordt niet ondersteund in deze browser.');
-            return;
-        }
+    // Check if MediaSource is supported by the browser
+    if (!window.MediaSource) {
+      console.error('MediaSource is not supported in this browser.');
+      return;
+    }
 
-        mediaSource = new MediaSource();
-        videoElement.src = URL.createObjectURL(mediaSource);
+    mediaSource = new MediaSource();
+    videoElement.src = URL.createObjectURL(mediaSource);
 
-        // startVideoStream()
-    })
-    .catch(error => {
-        console.error('Error starting the signaling connection:', error);
+    mediaSource.addEventListener('sourceopen', () => {
+      sourceBuffer = mediaSource.addSourceBuffer(`video/webm; codecs="vp9,opus"`);
+      console.log('Source buffer is ready.');
     });
+
+    videoElement.addEventListener('play', () => {
+      videoElement.play().catch((error) => {
+        console.error('Error starting video playback:', error);
+      });
+    });
+  })
+  .catch(error => {
+    console.error('Error starting the signaling connection:', error);
+  });
