@@ -12,7 +12,7 @@ namespace Domain
         [Required]
         public int Id { get; set; } 
         [Required]
-        public string Username { get; set; } = null!;
+        public User User { get; set; } = null!;
         [Required]
         public string MessageBody { get; set; } = null!;
         [Required]

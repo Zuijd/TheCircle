@@ -1,14 +1,20 @@
-﻿namespace DomainServices.Services
+﻿using Domain;
+using DomainServices.Interfaces.Repositories;
+using System.Diagnostics;
+
+namespace DomainServices.Services
 {
     public class UserService : IUserService
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IUserRepository _userRepository;
 
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUserRepository userRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userRepository = userRepository;
         }
 
         public async Task<bool> LoginUserAsync(string username, string password)
@@ -59,5 +65,7 @@
 
             return (_signInManager.Context.User.Identity!.IsAuthenticated) ? true : throw new InvalidOperationException("Failed to sign out.");
         }
+        public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
+        
     }
 }

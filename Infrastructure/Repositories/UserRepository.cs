@@ -10,17 +10,19 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repositories
 {
-    public class MessageRepository : IMessageRepository
+    public class UserRepository : IUserRepository
     {
-
         private readonly ApplicationDbContext _context;
 
-        public MessageRepository(ApplicationDbContext context) => _context = context;
-        public async Task<bool> CreateMessage(Message message)
+        public UserRepository(ApplicationDbContext context) => _context = context;
+
+        public async Task<User> GetUserByName(string username) => await _context.User.Where(user => user.Name == username).FirstOrDefaultAsync();
+
+        public async Task<bool> CreateUser(User user)
         {
             try
             {
-                await _context.Message.AddAsync(message);
+                await _context.User.AddAsync(user);
                 await _context.SaveChangesAsync();
                 return true;
             }

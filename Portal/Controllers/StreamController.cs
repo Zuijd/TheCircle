@@ -9,11 +9,13 @@ public class StreamController : Controller
 {
     private readonly ILogger<StreamController> _logger;
     private readonly IMessageService _messageService;
+    private readonly IUserService _userService;
 
-    public StreamController(ILogger<StreamController> logger, IMessageService messageService)
+    public StreamController(ILogger<StreamController> logger, IMessageService messageService, IUserService userService)
     {
         _logger = logger;
         _messageService = messageService;
+        _userService = userService;
     }
 
     public IActionResult Index()
@@ -36,7 +38,7 @@ public class StreamController : Controller
             {
                 Message message = new()
                 {
-                    Username = chatViewModel.Username!,
+                    User = await _userService.GetUserByName(chatViewModel.Username!),
                     MessageBody = chatViewModel.Message!
                 };
 
