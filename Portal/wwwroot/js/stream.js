@@ -3,7 +3,7 @@
 let mediaRecorder;
 let recordedChunks = [];
 let timer;
-const timerInterval = 15000;
+const timerInterval = 10000;
 
 const connection = new signalR.HubConnectionBuilder()
     .withUrl('/streamHub') // Adjust the URL to match your server endpoint
@@ -16,10 +16,11 @@ function startStreaming() {
             const videoElement = document.getElementById('video');
             videoElement.srcObject = stream;
 
-            mediaRecorder = new MediaRecorder(stream, { timeslice: timerInterval });
+            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
 
             mediaRecorder.addEventListener('dataavailable', event => {
                 console.log("New data available: " + event.data.size)
+                console.log(event.data)
                 recordedChunks.push(event.data);
                 sendBlob(event.data);
             });
@@ -74,16 +75,7 @@ function sendBlob(chunk) {
     reader.readAsArrayBuffer(chunk);
 }
 
-connection.start()
-    .then(() => {
-        // Connection is established, ready to send/receive signaling messages
-        console.log('Connection established.');
-    })
-    .catch(error => {
-        console.error('Error starting the signaling connection:', error);
-    });
-
-    //Function to convert uint8array to base64
+// Function to convert uint8array to base64
 function bytesToBase64(bytes) {
     let result = '';
     const base64abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -116,3 +108,12 @@ function bytesToBase64(bytes) {
 
     return result;
 }
+
+connection.start()
+    .then(() => {
+        // Connection is established, ready to send/receive signaling messages
+        console.log('Connection established.');
+    })
+    .catch(error => {
+        console.error('Error starting the signaling connection:', error);
+    });
