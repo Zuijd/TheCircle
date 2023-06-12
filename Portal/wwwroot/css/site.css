@@ -97,7 +97,6 @@ body {
     width: 500px;
 }
 
-
 #selectStreamText {
     transform: translate(27%);
 }
@@ -106,6 +105,11 @@ body {
     display: none;
     width: 800px;
     height: 500px;
-
 }
 
+.viewerCount{
+    background-color: black;
+    width: fit-content;
+    color: white;
+    padding: 5px;
+}
