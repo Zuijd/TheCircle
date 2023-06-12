@@ -5,7 +5,6 @@ using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Portal.Controllers;
-using Infrastructure.Repositories;
 using Microsoft.Extensions.Options;
 using Portal.Hubs;
 using SignalRChat.Hubs;
@@ -57,8 +56,7 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
     .Build();
 
-builder.Services.AddSingleton(configuration.GetConnectionString("MyDatabase"));
-string connectionString = configuration.GetConnectionString("MyDatabase");
+string connectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
 
 builder.Services.AddScoped<DatabaseLogger>();
 builder.Services.AddScoped<IStreamRepository>(sp => new StreamRepository(connectionString));
@@ -73,7 +71,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ILoggerProvider>(sp =>
 {
     var httpContextAccessor = sp.GetService<IHttpContextAccessor>();
-    return new DatabaseLoggerProvider(connectionString, httpContextAccessor);
+    var applicationConnectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
+    return new DatabaseLoggerProvider(applicationConnectionString, httpContextAccessor);
 });
 
 // Session configuration

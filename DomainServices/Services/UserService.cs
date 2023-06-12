@@ -10,12 +10,7 @@ namespace DomainServices.Services
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IUserRepository _userRepository;
 
-<<<<<<< HEAD
-
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
-=======
         public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUserRepository userRepository)
->>>>>>> bacf9f196541959ced3f405be36cc8210399cd09
         {
             _userManager = userManager;
             _signInManager = signInManager;

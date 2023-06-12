@@ -12,11 +12,13 @@ namespace DomainServices.Logger
     public class DatabaseLoggerProvider : ILoggerProvider
     {
         private readonly string _connectionString;
+        private readonly string _tableName;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DatabaseLoggerProvider(string connectionString, IHttpContextAccessor httpContextAccessor)
+        public DatabaseLogger(string applicationConnectionString, IHttpContextAccessor httpContextAccessor)
         {
-            _connectionString = connectionString;
+            _connectionString = applicationConnectionString;
+            _tableName = "Logs";
             _httpContextAccessor = httpContextAccessor;
         }
 
