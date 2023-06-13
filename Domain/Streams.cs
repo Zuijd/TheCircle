@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    public class Stream
+    public class Streams
     {
         [Required]
         public int Id {  get; set; }
