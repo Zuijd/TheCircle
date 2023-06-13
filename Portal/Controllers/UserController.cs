@@ -1,15 +1,18 @@
 namespace Portal.Controllers
 {
+    [TLSAccess]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ICertificateService _certificateService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ICertificateService certificateService)
         {
             _userService = userService;
+            _certificateService = certificateService;
         }
 
-        [PreventAccessFilter]
+        [PreventAccess]
         public IActionResult Login() => View();
 
         [HttpPost]
@@ -35,7 +38,7 @@ namespace Portal.Controllers
             return View(loginViewModel);
         }
 
-        [PreventAccessFilter]
+        [PreventAccess]
         public IActionResult Register() => View();
 
         [HttpPost]

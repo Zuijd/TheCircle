@@ -1,14 +1,17 @@
-﻿namespace DomainServices.Services
+﻿
+namespace DomainServices.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<UserIdentity> _userManager;
+        private readonly SignInManager<UserIdentity> _signInManager;
+        private readonly ICertificateService _certificateService;
 
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public UserService(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager, ICertificateService certificateService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _certificateService = certificateService;
         }
 
         public async Task<bool> LoginUserAsync(string username, string password)
@@ -98,11 +101,16 @@
 
             if (exceptions.Count == 0)
             {
-                var user = new IdentityUser
+                var keyPair = _certificateService.CreateKeyPair();
+                var certificate = _certificateService.CreateCertificate(username!, emailAddress!, keyPair!);
+
+                var user = new UserIdentity
                 {
                     UserName = username,
                     Email = emailAddress,
                     EmailConfirmed = true,
+                    Certificate = certificate,
+                    PrivateKey = _certificateService.getPrivateKey(keyPair),
                 };
 
                 var result = await _userManager.CreateAsync(user, password);

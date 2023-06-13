@@ -1,11 +1,9 @@
-using Microsoft.Extensions.Options;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationConnectionString")));
 builder.Services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SecurityConnectionString")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<UserIdentity, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedEmail = false;
     options.Password.RequiredLength = 0;
@@ -13,10 +11,11 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.SignIn.RequireConfirmedAccount = false;
-}).AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<IdentityUser>>().AddDefaultTokenProviders();
+}).AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<UserIdentity>>().AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICertificateService, CertificateService>();
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -30,7 +29,11 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Error/Error");
     app.UseHsts();
@@ -38,14 +41,12 @@ if (!app.Environment.IsDevelopment())
 
 void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 {
-    app.UseMiddleware<PreventAccessFilterAttribute>();
+    app.UseMiddleware<PreventAccess>();
+    app.UseMiddleware<TLSAccess>();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

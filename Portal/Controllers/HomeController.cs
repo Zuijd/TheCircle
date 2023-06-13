@@ -4,6 +4,7 @@ using Portal.Models;
 
 namespace Portal.Controllers;
 
+[TLSAccess]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
