@@ -1,7 +1,30 @@
+
+@{
+  ViewData["Title"] = "Watch Stream";
+}
+
 @model ChatViewModel
 
-Watch stream
-<video id="gum-local" autoplay playsinline></video>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Stream Viewer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="/js/watch.js"></script>
+    <style>
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Stream Viewer</h1>
+     <video id="video" type="video/webm; codecs=vp9" autoplay controls></video>
+</body>
+</html>
 
 <img src="" alt="">
 
