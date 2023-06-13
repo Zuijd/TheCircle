@@ -1,6 +1,10 @@
+
 @{
   ViewData["Title"] = "Watch Stream";
 }
+
+@model ChatViewModel
+
 
 <!DOCTYPE html>
 <html>
@@ -18,8 +22,93 @@
 </head>
 <body>
     <h1>Live Stream Viewer</h1>
-     <video id="video" type="video/webm; codecs=vp8" autoplay controls></video>
+     <video id="video" type="video/webm; codecs=vp9" autoplay controls></video>
 </body>
 </html>
 
+<img src="" alt="">
 
+
+@* chat *@
+<div class="container">
+    <div class="row p-1">
+        <div class="col-1">Message</div>
+        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
+    </div>
+    <div class="row p-1">
+        <div class="col-6 text-end">
+            <input type="button" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+    <div class="container">
+        <h1>Chats</h1>
+        <div class="row p-1">
+            <div class="col-6">
+                <hr />
+            </div>
+        </div>
+        <div class="row p-1">
+            <div class="col-6">
+                <ul id="messagesList"></ul>
+            </div>
+        </div>
+    </div>
+    <partial name="_Chat" model="@Model"></partial>
+</div>
+
+@section Scripts {
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="/js/watch.js"></script>
+    <script>
+
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+        document.getElementById("sendButton").disabled = true;
+
+        connection.on("ReceiveMessage", function (message) {
+            var li = document.createElement("li");
+            document.getElementById("messagesList").appendChild(li);
+            li.textContent = `${message}`;
+        });
+
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            var message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessage", message).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+
+        $(function () {
+            $("#sendButton").click(function () {
+                var ChatViewModel = {
+                    Message: $("#messageInput").val()
+                };
+
+                var JSONData = JSON.stringify(ChatViewModel);
+
+                $.ajax({
+                    url: "@Url.Action("Message","Stream")",
+                    data: JSONData,
+                    type: "Post",
+                    contentType: 'application/json;charset=utf-8',
+                    succes: function (result) {
+                        console.log("d")
+                    },
+                    error: function (result) {
+                        window.alert("oh");
+                    }
+                });
+            });
+        })
+
+    </script>
+}

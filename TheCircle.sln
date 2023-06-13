@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{D2516415-EE0C-4A0F-AFBA-0E5E5EB44AA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{D2516415-EE0C-4A0F-AFBA-0E5E5EB44AA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{E4F3CDB4-F95B-4CCD-AF2E-B55FC7F51C20}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{E4F3CDB4-F95B-4CCD-AF2E-B55FC7F51C20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainServices", "DomainServices\DomainServices.csproj", "{B4A72EB3-730C-4AE9-8C8B-6F04305C7917}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainServices", "DomainServices\DomainServices.csproj", "{B4A72EB3-730C-4AE9-8C8B-6F04305C7917}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal", "Portal\Portal.csproj", "{887B9E90-5B9E-435C-ACE4-EA48C0A71382}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portal", "Portal\Portal.csproj", "{759B45AC-0BB4-4CDA-8C5A-503EFD3631E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{B4A72EB3-730C-4AE9-8C8B-6F04305C7917}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4A72EB3-730C-4AE9-8C8B-6F04305C7917}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4A72EB3-730C-4AE9-8C8B-6F04305C7917}.Release|Any CPU.Build.0 = Release|Any CPU
-		{887B9E90-5B9E-435C-ACE4-EA48C0A71382}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{887B9E90-5B9E-435C-ACE4-EA48C0A71382}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{887B9E90-5B9E-435C-ACE4-EA48C0A71382}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{887B9E90-5B9E-435C-ACE4-EA48C0A71382}.Release|Any CPU.Build.0 = Release|Any CPU
+		{759B45AC-0BB4-4CDA-8C5A-503EFD3631E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{759B45AC-0BB4-4CDA-8C5A-503EFD3631E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{759B45AC-0BB4-4CDA-8C5A-503EFD3631E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{759B45AC-0BB4-4CDA-8C5A-503EFD3631E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
