@@ -43,7 +43,7 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 // Services 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
-builder.Services.AddScoped<IloggerService, LoggerService>();
+builder.Services.AddScoped<ILoggerService, LoggerService>();
 
 builder.Services.AddScoped<IMessageService, MessageService>();
 

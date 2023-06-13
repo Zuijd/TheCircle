@@ -13,16 +13,16 @@ using System.Net.Mail;
 
 namespace DomainServices.Services
 {
-    public class LoggerService : IloggerService, ILogger
+    public class LoggerService : ILoggerService, ILogger
     {
 
-        private readonly ILogger<LoggerService> _logger;
+        private readonly ILogger<ILoggerService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILoggerRepository _loggerRepository;
 
         private string _loggerName;
 
-        public LoggerService(ILogger<LoggerService> logger, IHttpContextAccessor httpContextAccessor, ILoggerRepository loggerRepository)
+        public LoggerService(ILogger<ILoggerService> logger, IHttpContextAccessor httpContextAccessor, ILoggerRepository loggerRepository)
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;

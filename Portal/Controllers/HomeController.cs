@@ -11,9 +11,9 @@ namespace Portal.Controllers
     {
      
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IloggerService _logger;
+        private readonly ILoggerService _logger;
 
-        public HomeController(IHttpContextAccessor httpContextAccessor, IloggerService logger)
+        public HomeController(IHttpContextAccessor httpContextAccessor, ILoggerService logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;

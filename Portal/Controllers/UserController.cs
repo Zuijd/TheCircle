@@ -9,9 +9,9 @@ namespace Portal.Controllers
         private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly IloggerService _logger;
+        private readonly ILoggerService _logger;
 
-        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor, IloggerService logger)
+        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor, ILoggerService logger)
         {
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;

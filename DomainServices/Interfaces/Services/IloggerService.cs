@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DomainServices.Interfaces.Services
 {
-    public interface IloggerService
+    public interface ILoggerService
     {
         public void Info(string message, params object[] args);
         public void Error(string message, params object[] args);
