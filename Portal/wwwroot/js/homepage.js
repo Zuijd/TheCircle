@@ -95,9 +95,6 @@ $(document).ready(function () {
         return new Uint8Array(result);
     }
 
-    // Add an h1 element to show "Please select a streamer" initially
-    const selectStreamerTitle = $('<h1 id="selectStreamText"></h1>').text('Please select a streamer');
-    $('#streamsContainer').append(selectStreamerTitle);
 
     // Show the circle image in the center of the website initially
     $('#circleImage').show();
@@ -356,23 +353,28 @@ $(document).ready(function () {
 
     function createChatbox(streamer) {
         const chatboxContainer = $('<div class="col-md-6 mb-4 chatbox-container"></div>');
-
+    
         const chatboxTitle = $('<div class="chatbox-title"></div>').text(`Chatbox for ${streamer}`);
+        const viewerCount = $('<div class="viewer-count"></div>').text(`Viewers: `);
+        const watcherCountElement = $('<span id="watcherCount"></span>');
+        viewerCount.append(watcherCountElement);
         const chatboxMessages = $('<div class="chatbox-messages"></div>');
         const chatboxInput = $('<div class="chatbox-input"></div>');
-
+    
         const inputText = $('<input type="text" placeholder="Type your message...">').addClass('chatbox-input-text');
         const sendButton = $('<button>Send</button>').addClass('chatbox-input-button');
-
+    
         chatboxInput.append(inputText);
         chatboxInput.append(sendButton);
-
+    
         chatboxContainer.append(chatboxTitle);
+        chatboxContainer.append(viewerCount);
         chatboxContainer.append(chatboxMessages);
         chatboxContainer.append(chatboxInput);
-
+    
         return chatboxContainer;
     }
+    
 
     $('.streams-container input[type="checkbox"]').on('change', function () {
         if ($('.streams-container input[type="checkbox"]:checked').length > 4) {

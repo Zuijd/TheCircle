@@ -1,24 +1,33 @@
 $(document).ready(function () {
-    $('#startStreamBtn').click(function () {
-        var button = $(this);
-        var videoBox = $('#videoBox');
-        var circleImage = $('#circleImage');
+  $("#startStreamBtn").click(function () {
+    var button = $(this);
+    var streamBox = $("#streamBox");
+    var circleImage = $("#circleImage");
+    var chatBox = $("#chatBox");
 
-        if (button.hasClass('btn-success')) {
-            button.removeClass('btn-success').addClass('btn-danger').text('Stop Streaming');
-            videoBox.show();
-            circleImage.hide();
-            startStreaming();
-        } else {
-            button.removeClass('btn-danger').addClass('btn-success').text('Start Streaming');
-            videoBox.hide();
-            circleImage.show();
-            stopStreaming();
-        }
-    });
+    if (button.hasClass("btn-success")) {
+      button
+        .removeClass("btn-success")
+        .addClass("btn-danger")
+        .text("Stop Streaming");
+      streamBox.show();
+      circleImage.hide();
+      startStreaming();
+      chatBox.show();
+    } else {
+      button
+        .removeClass("btn-danger")
+        .addClass("btn-success")
+        .text("Start Streaming");
+      streamBox.hide();
+      circleImage.show();
+      stopStreaming();
+      chatBox.hide();
+    }
+  });
 });
 
-"use strict";
+("use strict");
 
 let mediaRecorder;
 let recordedChunks = [];
@@ -27,63 +36,62 @@ const timerInterval = 5000;
 let watcherCount = 0;
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl('/streamHub') // Adjust the URL to match your server endpoint
-    .build();
+  .withUrl("/streamHub") // Adjust the URL to match your server endpoint
+  .build();
 
-connection.on('UpdateWatcherCount', (count) => {
-    watcherCount = count;
-    updateWatcherCountUI();
-})
+connection.on("UpdateWatcherCount", (count) => {
+  watcherCount = count;
+  updateWatcherCountUI();
+});
 
 function startStreaming() {
+  navigator.mediaDevices
+    .getUserMedia({ video: true, audio: true })
+    .then((stream) => {
+      const videoElement = document.getElementById("video");
+      videoElement.srcObject = stream;
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-            const videoElement = document.getElementById('video');
-            videoElement.srcObject = stream;
+      mediaRecorder = new MediaRecorder(stream, { timeslice: timerInterval });
 
-            mediaRecorder = new MediaRecorder(stream, { timeslice: timerInterval });
+      mediaRecorder.addEventListener("dataavailable", (event) => {
+        console.log("New data available: " + event.data.size);
+        recordedChunks.push(event.data);
+        sendBlob(event.data);
+      });
 
-            mediaRecorder.addEventListener('dataavailable', event => {
-                console.log("New data available: " + event.data.size)
-                recordedChunks.push(event.data);
-                sendBlob(event.data);
-            });
+      mediaRecorder.addEventListener("stop", () => {
+        const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
+        const url = URL.createObjectURL(recordedBlob);
 
-            mediaRecorder.addEventListener('stop', () => {
-                const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
-                const url = URL.createObjectURL(recordedBlob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "stream.webm";
+        document.body.appendChild(a);
+        a.click();
 
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'stream.webm';
-                document.body.appendChild(a);
-                a.click();
+        recordedChunks = [];
+        URL.revokeObjectURL(url);
+      });
 
-                recordedChunks = [];
-                URL.revokeObjectURL(url);
-            });
+      mediaRecorder.start();
+      console.log("Recording started.");
 
-            mediaRecorder.start();
-            console.log('Recording started.');
-
-            // Trigger the dataavailable event every x seconds
-            timer = setInterval(() => {
-                mediaRecorder.requestData();
-            }, timerInterval);
-
-        })
-        .catch(error => {
-            console.error('Error accessing media devices:', error);
-        });
+      // Trigger the dataavailable event every x seconds
+      timer = setInterval(() => {
+        mediaRecorder.requestData();
+      }, timerInterval);
+    })
+    .catch((error) => {
+      console.error("Error accessing media devices:", error);
+    });
 }
 
 function stopStreaming() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        clearInterval(timer);
-        console.log('Recording stopped.');
-    }
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
+    mediaRecorder.stop();
+    clearInterval(timer);
+    console.log("Recording stopped.");
+  }
 }
 
 // function sendBlob(chunk) {
@@ -101,19 +109,20 @@ function stopStreaming() {
 // }
 
 function sendBlob(chunk) {
-    connection.invoke("SendChunk", chunk).catch(error => {
-        console.error("Error sending Blob: ", error);
-    });
+  connection.invoke("SendChunk", chunk).catch((error) => {
+    console.error("Error sending Blob: ", error);
+  });
 }
 
-connection.start()
-    .then(() => {
-        // Connection is established, ready to send/receive signaling messages
-        console.log('Connection established.');
-    })
-    .catch(error => {
-        console.error('Error starting the signaling connection:', error);
-    });
+connection
+  .start()
+  .then(() => {
+    // Connection is established, ready to send/receive signaling messages
+    console.log("Connection established.");
+  })
+  .catch((error) => {
+    console.error("Error starting the signaling connection:", error);
+  });
 
 //Function to convert uint8array to base64
 // function bytesToBase64(bytes) {
@@ -150,7 +159,6 @@ connection.start()
 // }
 
 function updateWatcherCountUI() {
-    const watcherCountElement = document.getElementById('watcherCount');
-    watcherCountElement.textContent = (watcherCount-1).toString();
+  const watcherCountElement = document.getElementById("watcherCount");
+  watcherCountElement.textContent = (watcherCount - 1).toString();
 }
-

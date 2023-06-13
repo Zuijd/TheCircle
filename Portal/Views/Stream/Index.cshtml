@@ -1,32 +1,39 @@
-@{
-  ViewData["Title"] = "Stream";
-}
-
-<head>
+﻿<head>
     <meta charset="UTF-8">
     <title>Stream</title>
     <!-- Include necessary libraries -->
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
 </head>
 
-<body>
-    <video id="video" width="640" height="480" autoplay></video>
-    
-    <div id="watcherCountContainer" class="viewerCount">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill m-1" viewBox="0 0 16 16">
-            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
-            <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
-        </svg>
-        <span id="watcherCount"></span> viewer(s)
+<div class="container">
+    <div class="row">
+            <div col-md></div>
+        
+        <button id="startStreamBtn" class="btn btn-success">Start Streaming</button>
+        
     </div>
 
-    <button onclick="startStreaming()">Start Streaming</button>
-    <button onclick="stopStreaming()">Stop Streaming</button>
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-6 mb-4" id="streamBox">
+            <video id="video" style="width: 100%; height: 100%;" autoplay></video>
+
+            </div>
+
+        <div id="chatBox" class="col-md-6 mb-4 chatbox-container">
+            <div class="chatbox-title">Chatbox for streamer 1</div>
+            <div class="viewer-count">Viewers: <span id="watcherCount"></span></div>
+            <div class="chatbox-messages"></div>
+            <div class="chatbox-input"><input type="text" placeholder="Type your message..." class="chatbox-input-text">
+            <button class="chatbox-input-button">Send</button>
+            </div>
+            </div>
+
+    </div>
+
+    <img id="circleImage" src="./assets/circle.png" alt="Circle">
+</div>
 
 
-
-    <!-- Include the stream.js file -->
-    <script src="/js/stream.js"></script>
-</body>
-
-
+@section Scripts {
+<script src="~/js/stream.js" asp-append-version="true"></script>
+}
