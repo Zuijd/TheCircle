@@ -87,7 +87,7 @@ public class DatabaseLogger : ILogger
 
     private bool ShouldExcludeLogMessage(string logMessage)
     {
-        string[] excludedKeywords = { "listening on", "application started", "Hosting environment", "Content root path", "Entity Framework", "An error", "An exception", "Executed DbCommand" };
+        string[] excludedKeywords = { "listening on", "application started", "Hosting environment", "Content root path", "Entity Framework", "An error", "An exception", "Executed DbCommand", "Applying migration", "Application" };
         foreach (string keyword in excludedKeywords)
         {
             if (logMessage.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
