@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Stream Page";
+    var username = User.Identity?.Name;
 }
 
 Stream
@@ -10,10 +10,6 @@ Stream
 
 @* chat *@
 <div class="container">
-    <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" /></div>
-    </div>
     <div class="row p-1">
         <div class="col-1">Message</div>
         <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
@@ -35,5 +31,35 @@ Stream
     </div>
 </div>
 
+@section Scripts{
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="/js/stream.js"></script>
+    <script>
+
+        "use strict";
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+        document.getElementById("sendButton").disabled = true;
+
+        connection.on("ReceiveMessage", function (username, message) {
+            var li = document.createElement("li");
+            document.getElementById("messagesList").appendChild(li);
+            li.textContent = `${username} : ${message}`;
+        });
+
+        connection.start().then(function () {
+            document.getElementById("sendButton").disabled = false;
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            var message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessage", '@username', message).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+    </script>
+} 
