@@ -34,7 +34,6 @@ public class StreamController : Controller
     [HttpPost]
     public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
     {
-
         try
         {
 
