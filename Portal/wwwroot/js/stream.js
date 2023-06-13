@@ -3,10 +3,10 @@
 let mediaRecorder;
 let recordedChunks = [];
 let timer;
-const timerInterval = 10000;
+const timerInterval = 30000;
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl('/streamHub') // Adjust the URL to match your server endpoint
+    .withUrl('/streamHub')
     .build();
 
 function startStreaming() {
@@ -19,8 +19,6 @@ function startStreaming() {
             mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
 
             mediaRecorder.addEventListener('dataavailable', event => {
-                console.log("New data available: " + event.data.size)
-                console.log(event.data)
                 recordedChunks.push(event.data);
                 sendBlob(event.data);
             });
@@ -29,11 +27,11 @@ function startStreaming() {
                 const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
                 const url = URL.createObjectURL(recordedBlob);
 
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'stream.webm';
-                document.body.appendChild(a);
-                a.click();
+                // const a = document.createElement('a');
+                // a.href = url;
+                // a.download = 'stream.webm';
+                // document.body.appendChild(a);
+                // a.click();
 
                 recordedChunks = [];
                 URL.revokeObjectURL(url);
