@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Security;
 
+
 public class DatabaseLogger : ILogger
 {
     private readonly string _connectionString;

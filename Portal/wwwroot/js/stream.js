@@ -5,7 +5,7 @@ let recordedChunks = [];
 let timer;
 const timerInterval = 30000;
 
-const connection = new signalR.HubConnectionBuilder()
+const connectionStream = new signalR.HubConnectionBuilder()
     .withUrl('/streamHub')
     .build();
 
@@ -66,7 +66,7 @@ function sendBlob(chunk) {
         const uint8Array = new Uint8Array(buffer);
         const base64String = bytesToBase64(uint8Array);
         console.log("Sending chunk: " + base64String);
-        connection.invoke("SendChunk", base64String).catch(error => {
+        connectionStream.invoke("SendChunk", base64String).catch(error => {
             console.error("Error sending Blob: ", error);
         });
     };
@@ -107,27 +107,27 @@ function bytesToBase64(bytes) {
     return result;
 }
 
-connection.start()
+connectionStream.start()
     .then(() => {
         // Connection is established, ready to send/receive signaling messages
-        console.log('Connection established.');
+        console.log('ConnectionChat established.');
     })
     .catch(error => {
         console.error('Error starting the signaling connection:', error);
     });
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+var connectionChat = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 document.getElementById("sendButton").disabled = true;
 
-connection.on("ReceiveMessage", function (message, user) {
+connectionChat.on("ReceiveMessage", function (message, user) {
     var li = document.createElement("li");
     document.getElementById("messagesList").appendChild(li);
     //li.textContent = `${user} says ${message}`;
     li.textContent = `${message}`;
 });
 
-connection.start().then(function () {
+connectionChat.start().then(function () {
     document.getElementById("sendButton").disabled = false;
 }).catch(function (err) {
     return console.error(err.toString());
@@ -136,7 +136,7 @@ connection.start().then(function () {
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var user = document.getElementById("userInput").value;
     var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", user, message).catch(function (err) {
+    connectionChat.invoke("SendMessage", user, message).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

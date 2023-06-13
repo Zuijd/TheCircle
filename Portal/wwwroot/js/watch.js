@@ -1,13 +1,13 @@
 "use strict";
 
-const connection = new signalR.HubConnectionBuilder()
+const connectionStream = new signalR.HubConnectionBuilder()
     .withUrl('/streamHub') // Adjust the URL to match your server endpoint
     .build();
 
 let mediaSource;
 let sourceBuffer;
 
-connection.on("ReceiveChunk", (chunk) => {
+connectionStream.on("ReceiveChunk", (chunk) => {
     const uint8Array = base64ToBytes(chunk);
     const blob = new Blob([uint8Array.buffer], { type: 'video/webm;codecs="vp9,opus"' });
 
@@ -39,7 +39,7 @@ function base64ToBytes(base64) {
     return bytes;
 }
 
-connection.start()
+connectionStream.start()
     .then(() => {
         console.log('Connection established.');
 
