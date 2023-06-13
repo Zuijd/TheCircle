@@ -8,7 +8,7 @@ connection.on("ReceiveMessage", function (message, user) {
     var li = document.createElement("li");
     document.getElementById("messagesList").appendChild(li);
     //li.textContent = `${user} says ${message}`;
-    li.textContent = `${message}`;
+    li.textContent = `${user} : ${message}`;
 });
 
 connection.start().then(function () {

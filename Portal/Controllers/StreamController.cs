@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
@@ -31,19 +32,15 @@ public class StreamController : Controller
     [HttpPost]
     public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
     {
-
-        Debug.WriteLine("dedede1");
-
-
         try
         {
 
             if (ModelState.IsValid)
             {
-
+                Console.WriteLine(chatViewModel.Username);
                 Message message = new()
                 {
-                    User = await _userService.GetUserByName(User.Identity?.Name!),
+                    User = _userService.GetUserByName(chatViewModel.Username).Result,
                     MessageBody = chatViewModel.Message!
                 };
 
@@ -58,6 +55,6 @@ public class StreamController : Controller
             ModelState.AddModelError(e.Message, e.Message);
         }
 
-        return PartialView("_Chat");
+        return View("Watch");
     }
 }

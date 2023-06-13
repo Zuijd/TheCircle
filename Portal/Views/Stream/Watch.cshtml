@@ -1,10 +1,12 @@
 @model ChatViewModel
+@{
+    var username = User.Identity?.Name;
+}
 
 Watch stream
 <video id="gum-local" autoplay playsinline></video>
 
 <img src="" alt="">
-
 
 @* chat *@
 <div class="container">
@@ -17,6 +19,7 @@ Watch stream
             <input type="button" id="sendButton" value="Send Message" />
         </div>
     </div>
+
     <div class="container">
         <h1>Chats</h1>
         <div class="row p-1">
@@ -30,7 +33,8 @@ Watch stream
             </div>
         </div>
     </div>
-    <partial name="_Chat" model="@Model"></partial>
+    @*    <partial name="_Chat" model="@Model"></partial>
+    *@
 </div>
 
 @section Scripts {
@@ -44,10 +48,10 @@ Watch stream
 
         document.getElementById("sendButton").disabled = true;
 
-        connection.on("ReceiveMessage", function (message) {
+        connection.on("ReceiveMessage", function (username, message) {
             var li = document.createElement("li");
             document.getElementById("messagesList").appendChild(li);
-            li.textContent = `${message}`;
+            li.textContent = `${username} : ${message}`;
         });
 
         connection.start().then(function () {
@@ -58,7 +62,7 @@ Watch stream
 
         document.getElementById("sendButton").addEventListener("click", function (event) {
             var message = document.getElementById("messageInput").value;
-            connection.invoke("SendMessage", message).catch(function (err) {
+            connection.invoke("SendMessage", '@username', message).catch(function (err) {
                 return console.error(err.toString());
             });
             event.preventDefault();
