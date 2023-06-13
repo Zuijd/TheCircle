@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.SignalR;
-
-namespace Portal.Hubs;
+using System.Threading.Tasks;
 
 public class StreamHub : Hub
 {
-    public async Task SendStream(string message)
+    public async Task SendChunk(byte[] chunk)
     {
-        await Clients.All.SendAsync("ReceiveStream", message);
+        await Clients.Others.SendAsync("ReceiveChunk", chunk);
     }
 }
