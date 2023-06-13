@@ -31,7 +31,7 @@ namespace Portal.Controllers
                     if (user)
                     {
                         HttpContext.Session.SetString("Username", loginViewModel.Username!);
-                        _logger.Info("User has logged in!");
+                        _logger.Log("User has logged in!");
                         
                         return RedirectToAction("Index", "Home");
                     }
@@ -60,7 +60,7 @@ namespace Portal.Controllers
                 if (result)
                 {
                     await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
-                    _logger.Info($"Registered user: {registerViewModel.Username}");
+                    _logger.Log($"Registered user: {registerViewModel.Username}");
                     
                     return RedirectToAction("Index", "Home");
                 }
@@ -84,7 +84,7 @@ namespace Portal.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.SignUserOutAsync();
-                    _logger.Info("User has logged out");
+                    _logger.Log("User has logged out");
                     HttpContext.Session.Remove("Username"); 
                  
                 }

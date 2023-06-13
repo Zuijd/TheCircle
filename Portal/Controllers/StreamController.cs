@@ -21,13 +21,13 @@ public class StreamController : Controller
 
     public IActionResult Index()
     {
-        _logger.Info("User has accessed Stream page!");
+        _logger.Log("User has accessed Stream page!");
         return View();
     }
 
     public IActionResult Watch()
     {
-        _logger.Info($"User has accessed {nameof(Watch)}");
+        _logger.Log($"User has accessed {nameof(Watch)}");
         return View();
     }
 
@@ -48,7 +48,7 @@ public class StreamController : Controller
                 };
 
                 await _messageService.CreateMessage(message);
-                _logger.Info("User created message!");
+                _logger.Log("User created message!");
 
             }
         }

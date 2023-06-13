@@ -21,7 +21,7 @@ namespace Portal.Controllers
 
         public IActionResult Index()
         {
-            _logger.Info("User has accessed the home page!");
+            _logger.Log("User has accessed the home page!");
             return View();
         }
 

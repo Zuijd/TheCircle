@@ -20,6 +20,8 @@ namespace Infrastructure.Repositories
         public async Task<bool> addLog(Log log) {
             try
             {
+                Console.WriteLine(log.ToString());
+                
                 await _context.Log.AddAsync(log);
                 await _context.SaveChangesAsync();
                 return true;

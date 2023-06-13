@@ -39,13 +39,14 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ILoggerRepository, LoggerRepository>();
 
 // Services 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
-
 builder.Services.AddScoped<IMessageService, MessageService>();
+
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -71,16 +72,6 @@ builder.Services.AddScoped<IStreamRepository>(sp =>
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddHttpContextAccessor();
-
-// Register the logger provider
-builder.Services.AddSingleton<ILoggerService>(sp =>
-{
-    var httpContextAccessor = sp.GetService<IHttpContextAccessor>();
-
-    return new LoggerService(httpContextAccessor);
-    // var applicationConnectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
-    // return new DatabaseLoggerProvider(httpContextAccessor);
-});
 
 // Session configuration
 builder.Services.AddSession();
@@ -120,6 +111,7 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapHub<StreamHub>("/streamHub");
 app.MapHub<ChatHub>("/chatHub");
 

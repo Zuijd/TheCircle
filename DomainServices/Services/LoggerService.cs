@@ -13,52 +13,27 @@ using System.Net.Mail;
 
 namespace DomainServices.Services
 {
-    public class LoggerService : ILoggerService, ILogger
+    public class LoggerService : ILoggerService
     {
-
-        private readonly ILogger<ILoggerService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILoggerRepository _loggerRepository;
 
-        private string _loggerName;
+        private string _user;
 
-        public LoggerService(ILogger<ILoggerService> logger, IHttpContextAccessor httpContextAccessor, ILoggerRepository loggerRepository)
+        public LoggerService(IHttpContextAccessor httpContextAccessor, ILoggerRepository loggerRepository)
         {
-            _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _loggerRepository = loggerRepository;
-            _loggerName = GetUserNameFromSession();
+            _user = GetUserNameFromSession();
         }
 
-        // Catch all logs
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            //throw new NotImplementedException();
-            return null;
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            //throw new NotImplementedException();
-            return true;
-        }
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        public void Log(string message)
         {
             DateTime timestamp = DateTime.UtcNow.AddHours(2);
-
-            string formattedMessage = formatter(state, exception);
-
-            if (ShouldExcludeLogMessage(formattedMessage))
-            {
-                return;
-            }
-
-            _loggerRepository.addLog(new Log { Username = _loggerName, Message = formattedMessage, Level = logLevel.ToString(), Timestamp = timestamp, Exception = exception?.ToString() });
+            _loggerRepository.addLog(new Log { Username = _user, Message = message, Timestamp = timestamp });
         }
 
-
-        private string GetUserNameFromSession()
+        private string GetUserNameFromSession() 
         {
             var httpContext = _httpContextAccessor.HttpContext;
             if (httpContext != null)
@@ -75,51 +50,6 @@ namespace DomainServices.Services
             }
 
             return "System";
-        }
-
-        private bool ShouldExcludeLogMessage(string logMessage)
-        {
-            string[] excludedKeywords = { "listening on", "application started", "Hosting environment", "Content root path", "Entity Framework", "An error", "An exception", "Executed DbCommand" };
-            foreach (string keyword in excludedKeywords)
-            {
-                if (logMessage.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    return true; // Exclude the log message
-                }
-            }
-
-            return false; // Include the log message
-        }
-
-        // Processes all logs
-        public void Debug(string message, params object[] args)
-        {
-            _logger.LogDebug(message);
-        }
-
-        public void Error(string message, params object[] args)
-        {
-            _logger.LogError(message);
-        }
-
-        public void Fatal(string message, params object[] args)
-        {
-            _logger.LogCritical(message);
-        }
-
-        public void Info(string message, params object[] args)
-        {
-            _logger.LogInformation(message);
-        }
-
-        public void Trace(string message, params object[] args)
-        {
-            _logger.LogTrace(message);
-        }
-
-        public void Warn(string message, params object[] args)
-        {
-            _logger.LogWarning(message);
         }
     }
 }
