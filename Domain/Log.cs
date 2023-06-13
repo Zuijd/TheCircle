@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    public class Logs
+    public class Log
     {
         [Required]
         public int Id { get; set; }

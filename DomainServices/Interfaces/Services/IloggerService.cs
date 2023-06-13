@@ -13,8 +13,6 @@ namespace DomainServices.Interfaces.Services
         public void Warn(string message, params object[] args);
         public void Fatal(string message, params object[] args);
         public void Trace(string message, params object[] args);
-        public void Debug(string message, params object[] args);
-
-       
+        public void Debug(string message, params object[] args);       
     }
 }

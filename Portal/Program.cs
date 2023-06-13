@@ -1,6 +1,5 @@
 using DomainServices.Interfaces.Repositories;
 using DomainServices.Interfaces.Services;
-using DomainServices.Logger;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -74,11 +73,13 @@ builder.Logging.AddConsole();
 builder.Services.AddHttpContextAccessor();
 
 // Register the logger provider
-builder.Services.AddSingleton<ILoggerProvider>(sp =>
+builder.Services.AddSingleton<ILoggerService>(sp =>
 {
     var httpContextAccessor = sp.GetService<IHttpContextAccessor>();
-    var applicationConnectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
-    return new DatabaseLoggerProvider(applicationConnectionString, httpContextAccessor);
+
+    return new LoggerService(httpContextAccessor);
+    // var applicationConnectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
+    // return new DatabaseLoggerProvider(httpContextAccessor);
 });
 
 // Session configuration

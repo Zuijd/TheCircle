@@ -1,5 +1,4 @@
 ﻿using DomainServices.Interfaces.Services;
-using DomainServices.Logger;
 using Microsoft.Extensions.Logging;
 using Portal.Models.User;
 
