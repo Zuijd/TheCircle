@@ -1,7 +1,0 @@
-﻿{
-  "build": {
-    "env": {
-      "DOTNET_VERSION":  "6.0"
-    }
-  }
-}
