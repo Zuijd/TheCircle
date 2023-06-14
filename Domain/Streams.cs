@@ -31,7 +31,7 @@ namespace Domain
 
         // Navigation property
         public Streams Stream { get; set; }
-
+        public Live() { }
         public Live(TimeSpan live, DateTime start, DateTime end, int streamid)
         {
             this.Duration = live;
@@ -55,7 +55,7 @@ namespace Domain
 
         // Navigation property
         public Streams Stream { get; set; }
-
+        public Break() { }
         public Break(TimeSpan live, DateTime start, DateTime end, int streamid)
         {
             this.Duration = live;

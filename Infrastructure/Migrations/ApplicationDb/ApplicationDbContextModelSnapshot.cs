@@ -22,91 +22,187 @@ namespace Infrastructure.Migrations.ApplicationDb
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Domain.Logs", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+            modelBuilder.Entity("Domain.Break", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                b.Property<string>("Exception")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("DateTimeEnd")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("Level")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("DateTimeStart")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("Message")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<TimeSpan?>("Duration")
+                        .HasColumnType("time");
 
-                b.Property<DateTime>("Timestamp")
-                    .HasColumnType("datetime2");
+                    b.Property<int>("StreamId")
+                        .HasColumnType("int");
 
-                b.Property<string>("Username")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id");
 
-                b.HasKey("Id");
+                    b.HasIndex("StreamId");
 
-                b.ToTable("Logs");
-            });
+                    b.ToTable("Break");
+                });
+
+            modelBuilder.Entity("Domain.Live", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime?>("DateTimeEnd")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DateTimeStart")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan?>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<int>("StreamId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StreamId");
+
+                    b.ToTable("Live");
+                });
+
+            modelBuilder.Entity("Domain.Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Log");
+                });
 
             modelBuilder.Entity("Domain.Message", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                b.Property<string>("MessageBody")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("MessageBody")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<DateTime>("TimeStamp")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("Message");
-            });
+                    b.ToTable("Message");
+                });
+
+            modelBuilder.Entity("Domain.Streams", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool?>("Live")
+                        .IsRequired()
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("Satoshi")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Streams");
+                });
 
             modelBuilder.Entity("Domain.User", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                b.Property<string>("Email")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("Name")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("User");
-            });
+                    b.ToTable("User");
+                });
+
+            modelBuilder.Entity("Domain.Break", b =>
+                {
+                    b.HasOne("Domain.Streams", "Stream")
+                        .WithMany("BreakList")
+                        .HasForeignKey("StreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stream");
+                });
+
+            modelBuilder.Entity("Domain.Live", b =>
+                {
+                    b.HasOne("Domain.Streams", "Stream")
+                        .WithMany("LiveList")
+                        .HasForeignKey("StreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stream");
+                });
 
             modelBuilder.Entity("Domain.Message", b =>
-            {
-                b.HasOne("Domain.User", "User")
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("Domain.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("User");
-            });
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Streams", b =>
+                {
+                    b.Navigation("BreakList");
+
+                    b.Navigation("LiveList");
+                });
 #pragma warning restore 612, 618
         }
     }

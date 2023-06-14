@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230613095152_Streams_table_added")]
-    partial class Streams_table_added
+    [Migration("20230614101350_Updated_Streams")]
+    partial class Updated_Streams
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -41,12 +41,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<TimeSpan?>("Duration")
                         .HasColumnType("time");
 
-                    b.Property<int?>("StreamsId")
+                    b.Property<int>("StreamId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StreamsId");
+                    b.HasIndex("StreamId");
 
                     b.ToTable("Break");
                 });
@@ -68,30 +68,23 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<TimeSpan?>("Duration")
                         .HasColumnType("time");
 
-                    b.Property<int?>("StreamsId")
+                    b.Property<int>("StreamId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StreamsId");
+                    b.HasIndex("StreamId");
 
                     b.ToTable("Live");
                 });
 
-            modelBuilder.Entity("Domain.Logs", b =>
+            modelBuilder.Entity("Domain.Log", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Exception")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Level")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -106,7 +99,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Logs");
+                    b.ToTable("Log");
                 });
 
             modelBuilder.Entity("Domain.Message", b =>
@@ -146,8 +139,8 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .IsRequired()
                         .HasColumnType("bit");
 
-                    b.Property<float>("Satoshi")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Satoshi")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -175,16 +168,24 @@ namespace Infrastructure.Migrations.ApplicationDb
 
             modelBuilder.Entity("Domain.Break", b =>
                 {
-                    b.HasOne("Domain.Streams", null)
+                    b.HasOne("Domain.Streams", "Stream")
                         .WithMany("BreakList")
-                        .HasForeignKey("StreamsId");
+                        .HasForeignKey("StreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stream");
                 });
 
             modelBuilder.Entity("Domain.Live", b =>
                 {
-                    b.HasOne("Domain.Streams", null)
+                    b.HasOne("Domain.Streams", "Stream")
                         .WithMany("LiveList")
-                        .HasForeignKey("StreamsId");
+                        .HasForeignKey("StreamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Stream");
                 });
 
             modelBuilder.Entity("Domain.Message", b =>
