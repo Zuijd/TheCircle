@@ -7,7 +7,16 @@ namespace Portal.Hubs
     {
         public async Task SendChunk(byte[] chunk)
         {
-            await Clients.Others.SendAsync("ReceiveChunk", chunk);
+            var httpContext = Context.GetHttpContext();
+            var userName = httpContext!.User.Identity!.Name;
+
+            await Clients.Group(userName).SendAsync("ReceiveChunk", chunk);
         }
+        
+        public async Task JoinGroup(string group)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, group);
+        }
+
     }
 }

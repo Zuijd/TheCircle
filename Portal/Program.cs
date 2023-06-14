@@ -1,3 +1,4 @@
+using DomainServices.Interfaces.Hubs;
 using DomainServices.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using Portal.Hubs;
@@ -36,7 +37,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
-
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
