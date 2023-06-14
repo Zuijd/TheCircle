@@ -45,6 +45,8 @@ function startStreaming() {
                 mediaRecorder.requestData();
             }, timerInterval);
 
+            
+
         })
         .catch(error => {
             console.error('Error accessing media devices:', error);
@@ -141,3 +143,56 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     });
     event.preventDefault();
 });
+
+
+// Fetch calls
+function FetchAddStream() {
+
+    fetch('/api/stream/AddStream', {
+        method: 'POST',
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+
+}
+
+function FetchStopStreaming() {
+
+}
+
+function FetchAddBreak() {
+    fetch('/api/stream/AddBreak', {
+        method: 'POST',
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+}
+
+function FetchAddLive() {
+    //AddLive
+}
+
+
+function AddSatoshi() {
+    //AddSatoshi
+}
