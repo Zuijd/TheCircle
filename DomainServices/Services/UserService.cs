@@ -1,13 +1,4 @@
-﻿using System.Security.Claims;
-
-using System.Text;
-using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.Claims;
-
-
-namespace DomainServices.Services
+﻿namespace DomainServices.Services
 {
     public class UserService : IUserService
     {
@@ -162,6 +153,22 @@ namespace DomainServices.Services
             var mailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
 
             return mailRegex.IsMatch(email);
+        }
+
+        public async Task<byte[]> GetSpecificClaim(string username, string claimType)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            var claim = claims.FirstOrDefault(claim => claim.Type.Equals(claimType));
+
+            if (claim != null)
+            {
+                return Encoding.UTF8.GetBytes(claim.Value);
+            }
+
+            throw new KeyException($"No{claimType}Claim", $"No {claimType} claim present");
         }
     }
 }
