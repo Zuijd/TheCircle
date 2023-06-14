@@ -1,4 +1,5 @@
-﻿
+﻿using System.Security.Claims;
+
 namespace DomainServices.Services
 {
     public class UserService : IUserService

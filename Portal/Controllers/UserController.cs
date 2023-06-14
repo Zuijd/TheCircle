@@ -82,5 +82,23 @@ namespace Portal.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Test()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult TestPost(string subject, string body)
+        {
+            ViewData["PrivateKey"] = _certificateService.getPrivateKey();
+            Console.WriteLine(subject);
+            Console.WriteLine(body);
+
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Test";
+
+}
+
+<h1>Test</h1>
+<form asp-action="TestPost" asp-controller="Home" method="post">
+    <div>
+        <label for="Subject">Subject:</label>
+        <input type="text" name="subject">
+    </div>
+    <div>
+        <label for="Body">Body:</label>
+        <input type="text" name="body">
+    </div>
+    <div>
+        <input type="submit" onclick="createDigSig()" value="Submit">
+    </div>
+
+    <input type="hidden" value="CERT">
+    <input type="hidden" value="">
+
+</form>

@@ -77,8 +77,6 @@
             //verify the integrity of the message by hashing the plaintext message and comparing it with the hashed message in the signature
             bool isValid = rsa.VerifyData(messageBytes, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
-            Console.WriteLine(isValid);
-
             //throw exc when given bool is false (when digsig is invalid)
             if (!isValid)
             {
