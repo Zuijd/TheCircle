@@ -1,4 +1,5 @@
-﻿<div class="container">
+﻿@* Former Watch page *@
+<div class="container">
     <div class="row">
         <div id="streamSelectorBox" class="col">
             <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
@@ -43,5 +44,6 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/homepage.js" asp-append-version="true"></script>
 }

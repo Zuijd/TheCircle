@@ -29,32 +29,32 @@ public class StreamController : Controller
         return View();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
-    {
-        try
-        {
+    //[HttpPost]
+    //public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
+    //{
+    //    try
+    //    {
 
-            if (ModelState.IsValid)
-            {
-                Console.WriteLine(chatViewModel.Username);
-                Message message = new()
-                {
-                    User = _userService.GetUserByName(chatViewModel.Username).Result,
-                    MessageBody = chatViewModel.Message!
-                };
+    //        if (ModelState.IsValid)
+    //        {
+    //            Console.WriteLine(chatViewModel.Username);
+    //            Message message = new()
+    //            {
+    //                User = _userService.GetUserByName(chatViewModel.Username).Result,
+    //                MessageBody = chatViewModel.Message!
+    //            };
 
 
-                await _messageService.CreateMessage(message);
+    //            await _messageService.CreateMessage(message);
 
-            }
-        }
-        catch (Exception e)
-        {
+    //        }
+    //    }
+    //    catch (Exception e)
+    //    {
 
-            ModelState.AddModelError(e.Message, e.Message);
-        }
+    //        ModelState.AddModelError(e.Message, e.Message);
+    //    }
 
-        return View("Watch");
-    }
+    //    return View("Watch");
+    //}
 }

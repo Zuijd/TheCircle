@@ -71,18 +71,20 @@
         const chatboxContainer = $('<div class="col-md-6 mb-4 chatbox-container"></div>');
 
         const chatboxTitle = $('<div class="chatbox-title"></div>').text(`Chatbox for ${streamer}`);
-        const chatboxMessages = $('<div class="chatbox-messages"></div>');
-        const chatboxInput = $('<div class="chatbox-input"></div>');
+        const chatboxMessages = $('<ul id="messagesList"></ul>');
+        const chatboxInput = $('<input type="text" class="w-100" id="messageInput" /></div>');
 
-        const inputText = $('<input type="text" placeholder="Type your message...">').addClass('chatbox-input-text');
-        const sendButton = $('<button>Send</button>').addClass('chatbox-input-button');
+        const inputText = $('<input type="text" placeholder="Type your message..."</input>').addClass('chatbox-input-text');
+        const sendButton = $('<div class="btn" id="sendButton">Send</div>');
+        console.log('Button generated')
 
         chatboxInput.append(inputText);
-        chatboxInput.append(sendButton);
 
         chatboxContainer.append(chatboxTitle);
         chatboxContainer.append(chatboxMessages);
         chatboxContainer.append(chatboxInput);
+        chatboxContainer.append(sendButton);
+
 
         return chatboxContainer;
     }
@@ -92,4 +94,69 @@
             this.checked = false;
         }
     });
+
+    "use strict";
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+    connection.on("ReceiveMessage", function (username, message) {
+        var li = document.createElement("li");
+        document.getElementById("messagesList").appendChild(li);
+        li.textContent = `${username} : ${message}`;
+    });
+
+    connection.start().then(function () {
+        $("#sendButton").prop('disabled', false);
+        //document.getElementById("sendButton").disabled = false;
+        console.log('Button set to enabled')
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    console.log('Button set to disabled')
+    $("#sendButton").prop('disabled', true);
+
+
+    console.log('IK BEN HIERRRRRRRRRR')
+
+    $(document).on("click", "#sendButton", function (event) {
+        var message = document.getElementById("messageInput").value;
+        connection.invoke("SendMessage", '@username', message).catch(function (err) {
+            return console.error(err.toString());
+        });
+        event.preventDefault();
+        // Do something with `$(this)`.
+    });
+    //document.getElementById("sendButton").addEventListener("click", function (event) {
+    //    var message = document.getElementById("messageInput").value;
+    //    connection.invoke("SendMessage", '@username', message).catch(function (err) {
+    //        return console.error(err.toString());
+    //    });
+    //    event.preventDefault();
+    //});
+//}
+
+    $(function () {
+    $("#sendButton").click(function () {
+        var ChatViewModel = {
+            Message: $("#messageInput").val()
+        };
+
+        var JSONData = JSON.stringify(ChatViewModel);
+
+        $.ajax({
+            url: '@Url.Action("Message","Home")',
+            data: JSONData,
+            type: "Post",
+            contentType: 'application/json;charset=utf-8',
+            success: function (result) {
+                console.log("d")
+            },
+            error: function (result) {
+                window.alert("oh");
+            }
+        });
+    });
+})
+
+
 });
