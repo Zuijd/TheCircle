@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Domain;
+using DomainServices.Interfaces.Hubs;
 using DomainServices.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
@@ -34,8 +35,8 @@ public class StreamController : Controller
         _logger.Log("User has accessed Stream page!");
         return View();
     }
-
-    public IActionResult Watch()
+    
+    public IActionResult Watch(string id)
     {
         _logger.Log($"User has accessed {nameof(Watch)}");
         return View();

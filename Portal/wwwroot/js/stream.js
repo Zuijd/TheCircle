@@ -3,7 +3,7 @@
 let mediaRecorder;
 let recordedChunks = [];
 let timer;
-const timerInterval = 30000;
+const timerInterval = 10000;
 
 const connectionStream = new signalR.HubConnectionBuilder()
     .withUrl('/streamHub')

@@ -1,17 +1,7 @@
+using DomainServices.Interfaces.Hubs;
 using DomainServices.Interfaces.Repositories;
-using DomainServices.Interfaces.Services;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Portal.Controllers;
-using SignalRChat.Hubs;
-using System;
-using Microsoft.EntityFrameworkCore;
-
+using Portal.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +40,6 @@ builder.Services.AddScoped<ILoggerService, LoggerService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IStreamService, StreamService>();
 
-
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
     {
@@ -87,12 +76,6 @@ else
 {
     app.UseExceptionHandler("/Error/Error");
     app.UseDeveloperExceptionPage();
-}
-
-
-void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-    app.UseMiddleware<PreventAccessFilterAttribute>();
 }
 
 app.UseHttpsRedirection();
