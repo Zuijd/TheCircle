@@ -1,57 +1,55 @@
-﻿using DomainServices.Interfaces.Services;
+﻿using DomainServices.Interfaces.Repositories;
+using DomainServices.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain;
+using System.Net.Mail;
 
 namespace DomainServices.Services
 {
-    public class LoggerService : IloggerService
+    public class LoggerService : ILoggerService
     {
-
-        private readonly ILogger<LoggerService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILoggerRepository _loggerRepository;
 
-        private string _loggerName;
+        private string _user;
 
-        public LoggerService(ILogger<LoggerService> logger, IHttpContextAccessor httpContextAccessor)
+        public LoggerService(IHttpContextAccessor httpContextAccessor, ILoggerRepository loggerRepository)
         {
-            _logger = logger;
             _httpContextAccessor = httpContextAccessor;
-            _loggerName = _httpContextAccessor.HttpContext.Session.GetString("Username") ?? "System";
+            _loggerRepository = loggerRepository;
+            _user = GetUserNameFromSession();
         }
 
-        public void Debug(string message, params object[] args)
+        public void Log(string message)
         {
-            _logger.LogDebug(message);
+            DateTime timestamp = DateTime.UtcNow.AddHours(2);
+            _loggerRepository.addLog(new Log { Username = _user, Message = message, Timestamp = timestamp });
         }
 
-        public void Error(string message, params object[] args)
+        private string GetUserNameFromSession() 
         {
-            _logger.LogError(message);
-        }
+            var httpContext = _httpContextAccessor.HttpContext;
+            if (httpContext != null)
+            {
+                var session = httpContext.Session;
+                if (session != null)
+                {
+                    var userName = session.GetString("Username");
+                    if (!string.IsNullOrEmpty(userName))
+                    {
+                        return userName;
+                    }
+                }
+            }
 
-        public void Fatal(string message, params object[] args)
-        {
-            _logger.LogCritical(message);
-        }
-
-        public void Info(string message, params object[] args)
-        {
-           _logger.LogInformation(message);
-        }
-
-        public void Trace(string message, params object[] args)
-        {
-            _logger.LogTrace(message);
-        }
-
-        public void Warn(string message, params object[] args)
-        {
-            _logger.LogWarning(message);
+            return "System";
         }
     }
 }

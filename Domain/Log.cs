@@ -7,18 +7,20 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
-    public class Logs
+    public class Log
     {
         [Required]
         public int Id { get; set; }
         [Required]
-        public string? Username { get; set; }
+        public string Username { get; set; }
         [Required]
-        public string? Message { get; set; }
-        [Required]
-        public string? Level { get; set; }
+        public string Message { get; set; }
         [Required]
         public DateTime Timestamp { get; set; }
-        public string? Exception { get; set; }
+
+        public string ToString()
+        {
+            return $"[{Timestamp}] {Username}: {Message}";
+        }
     }
 }

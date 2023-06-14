@@ -1,6 +1,5 @@
 using DomainServices.Interfaces.Repositories;
 using DomainServices.Interfaces.Services;
-using DomainServices.Logger;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -41,13 +40,14 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ILoggerRepository, LoggerRepository>();
 
 // Services 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
-builder.Services.AddScoped<IloggerService, LoggerService>();
-
+builder.Services.AddScoped<ILoggerService, LoggerService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -73,14 +73,6 @@ builder.Services.AddScoped<IStreamRepository>(sp =>
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddHttpContextAccessor();
-
-// Register the logger provider
-builder.Services.AddSingleton<ILoggerProvider>(sp =>
-{
-    var httpContextAccessor = sp.GetService<IHttpContextAccessor>();
-    var applicationConnectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
-    return new DatabaseLoggerProvider(applicationConnectionString, httpContextAccessor);
-});
 
 // Session configuration
 builder.Services.AddSession();

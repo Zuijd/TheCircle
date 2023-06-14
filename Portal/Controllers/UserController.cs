@@ -1,5 +1,4 @@
 ﻿using DomainServices.Interfaces.Services;
-using DomainServices.Logger;
 using Microsoft.Extensions.Logging;
 using Portal.Models.User;
 
@@ -10,9 +9,9 @@ namespace Portal.Controllers
         private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly IloggerService _logger;
+        private readonly ILoggerService _logger;
 
-        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor, IloggerService logger)
+        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor, ILoggerService logger)
         {
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
@@ -32,7 +31,7 @@ namespace Portal.Controllers
                     if (user)
                     {
                         HttpContext.Session.SetString("Username", loginViewModel.Username!);
-                        _logger.Info("User has logged in!");
+                        _logger.Log("User has logged in!");
                         
                         return RedirectToAction("Index", "Home");
                     }
@@ -61,7 +60,7 @@ namespace Portal.Controllers
                 if (result)
                 {
                     await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
-                    _logger.Info($"Registered user: {registerViewModel.Username}");
+                    _logger.Log($"Registered user: {registerViewModel.Username}");
                     
                     return RedirectToAction("Index", "Home");
                 }
@@ -85,7 +84,7 @@ namespace Portal.Controllers
                 if (ModelState.IsValid)
                 {
                     var user = await _userService.SignUserOutAsync();
-                    _logger.Info("User has logged out");
+                    _logger.Log("User has logged out");
                     HttpContext.Session.Remove("Username"); 
                  
                 }
