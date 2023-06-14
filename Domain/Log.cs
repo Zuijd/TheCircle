@@ -18,7 +18,14 @@ namespace Domain
         [Required]
         public DateTime Timestamp { get; set; }
 
-        public string ToString()
+        public Log(string username, string message)
+        {
+            Username = username;
+            Message = message;
+            Timestamp = DateTime.Now;
+        }
+
+        public override string ToString()
         {
             return $"[{Timestamp}] {Username}: {Message}";
         }
