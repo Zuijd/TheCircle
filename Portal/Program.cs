@@ -81,12 +81,6 @@ else
     app.UseDeveloperExceptionPage();
 }
 
-
-void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-    app.UseMiddleware<PreventAccessFilterAttribute>();
-}
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
