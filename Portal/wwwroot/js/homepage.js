@@ -98,10 +98,12 @@
     "use strict";
 
     var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-    connection.on("ReceiveMessage", function (username, message) {
+    var container = document.getElementById('streams-container');
+    var username = container.getAttribute('data-user');
+    connection.on("ReceiveMessage", function (user, message) {
         var li = document.createElement("li");
         document.getElementById("messagesList").appendChild(li);
-        li.textContent = `${username} : ${message}`;
+        li.textContent = `${user} : ${message}`;
     });
 
     connection.start().then(function () {
@@ -116,15 +118,12 @@
     $("#sendButton").prop('disabled', true);
 
 
-    console.log('IK BEN HIERRRRRRRRRR')
-
     $(document).on("click", "#sendButton", function (event) {
         var message = document.getElementById("messageInput").value;
-        connection.invoke("SendMessage", '@username', message).catch(function (err) {
+        connection.invoke("SendMessage", username, message).catch(function (err) {
             return console.error(err.toString());
         });
         event.preventDefault();
-        // Do something with `$(this)`.
     });
     //document.getElementById("sendButton").addEventListener("click", function (event) {
     //    var message = document.getElementById("messageInput").value;

@@ -1,9 +1,11 @@
 ﻿@* Former Watch page *@
+@ViewBag
+
 <div class="container">
     <div class="row">
         <div id="streamSelectorBox" class="col">
             <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
-            <div class="streams-container">
+            <div class="streams-container" id="streams-container" data-user="@ViewBag.Username">
                 <div class="stream">
                     <input type="checkbox" id="streamer 1" value="streamer 1">
                     <label for="streamer 1">Streamer 1</label>

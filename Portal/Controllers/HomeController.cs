@@ -21,6 +21,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        string username = User.Identity?.Name!; // Retrieve the username from the user identity
+        ViewBag.Username = username; // Pass the username to the ViewBag
         return View();
     }
 
