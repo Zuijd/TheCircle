@@ -1,4 +1,4 @@
-using DomainServices.Interfaces.Hubs;
+using DomainServices.Interfaces;
 using DomainServices.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using Portal.Hubs;

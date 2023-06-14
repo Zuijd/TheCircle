@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Domain;
-using DomainServices.Interfaces.Hubs;
+using DomainServices.Interfaces;
 using DomainServices.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
