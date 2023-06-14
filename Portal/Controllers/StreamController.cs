@@ -10,9 +10,9 @@ public class StreamController : Controller
 {
     private readonly IMessageService _messageService;
     private readonly IUserService _userService;
-    private readonly IloggerService _logger;
+    private readonly ILoggerService _logger;
 
-    public StreamController(IloggerService logger, IMessageService messageService, IUserService userService)
+    public StreamController(ILoggerService logger, IMessageService messageService, IUserService userService)
     {
         _logger = logger;
         _messageService = messageService;
@@ -21,20 +21,19 @@ public class StreamController : Controller
 
     public IActionResult Index()
     {
-        _logger.Info("User has accessed Stream page!");
+        _logger.Log("User has accessed Stream page!");
         return View();
     }
 
     public IActionResult Watch()
     {
-        _logger.Info($"User has accessed {nameof(Watch)}");
+        _logger.Log($"User has accessed {nameof(Watch)}");
         return View();
     }
 
     [HttpPost]
     public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
     {
-
         try
         {
 
@@ -48,7 +47,7 @@ public class StreamController : Controller
                 };
 
                 await _messageService.CreateMessage(message);
-                _logger.Info("User created message!");
+                _logger.Log("User created message!");
 
             }
         }

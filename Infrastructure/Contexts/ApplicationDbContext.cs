@@ -6,7 +6,7 @@ namespace Infrastructure.Contexts
     {
         public DbSet<Message> Message { get; set; } = null!;
         public DbSet<User> User { get; set; } = null!;
-        public DbSet<Logs> Logs { get; set; } = null!;
+        public DbSet<Log> Log { get; set; } = null!;
 
         public DbSet<Streams> Streams { get; set; } = null!;
 
