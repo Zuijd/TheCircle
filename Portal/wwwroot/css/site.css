@@ -109,3 +109,20 @@ body {
 
 }
 
+#sendButton {
+    background-color: white;
+    margin-top: 10px;
+}
+
+#messagesList {
+    list-style-type: none;
+    border-radius: 5px;
+    padding-left: 0px;
+}
+
+#message {
+    margin-bottom: 5px;
+    background-color: white;
+    border-radius: 5px;
+    padding: 5px;
+}

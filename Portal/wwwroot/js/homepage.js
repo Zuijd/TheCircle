@@ -76,7 +76,6 @@
 
         const inputText = $('<input type="text" placeholder="Type your message..."</input>').addClass('chatbox-input-text');
         const sendButton = $('<div class="btn" id="sendButton">Send</div>');
-        console.log('Button generated')
 
         chatboxInput.append(inputText);
 
@@ -103,7 +102,8 @@
     connection.on("ReceiveMessage", function (user, message) {
         var li = document.createElement("li");
         document.getElementById("messagesList").appendChild(li);
-        li.textContent = `${user} : ${message}`;
+        li.innerHTML = `<b>${user}</b>: ${message}`;
+        li.id = 'message';
     });
 
     connection.start().then(function () {
