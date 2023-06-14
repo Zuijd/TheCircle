@@ -5,41 +5,86 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DomainServices.Interfaces.Repositories;
+using Infrastructure.Contexts;
+using Domain;
+using System.IO;
 
 namespace Infrastructure.Repositories
 {
     public class StreamRepository : IStreamRepository
     {
+        private readonly ApplicationDbContext _context;
 
-        private readonly string _connectionString;
-        private readonly string _tableName;
+        public StreamRepository(ApplicationDbContext context) => _context = context;
 
-        public StreamRepository(string connectionString)
+        public async Task<bool> addStream(Streams stream)
         {
-            _connectionString = connectionString;
-            _tableName = "Stream";
+            try
+            {
+                Console.WriteLine(stream.ToString());
+
+                await _context.Streams.AddAsync(stream);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
-        public void SaveCompensation(decimal compensation, int streamId)
+        public async Task<bool> saveBreakMoment(TimeSpan live, DateTime start, DateTime end, int Id)
         {
-            // Example: Storing in a database
-            // Implement your code to store the log message in a database
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            var stream = await _context.Streams.FindAsync(Id);
+            if (stream == null)
             {
-                connection.Open();
-
-                string query = $"UPDATE {_tableName} SET Satoshi = Satoshi + @Satoshi WHERE Id = @StreamId";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Satoshi", compensation);
-                    command.Parameters.AddWithValue("@StreamId", streamId);
-
-
-                    command.ExecuteNonQuery();
-                }
-
-                connection.Close();
+                // Handle the case when the Streams entity with the given streamId doesn't exist
+                return false;
             }
+
+            var newBreak = new Break(live, start, end, Id);
+
+            stream.BreakList ??= new List<Break>();
+            stream.BreakList.Add(newBreak);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> saveLiveMoment(TimeSpan live, DateTime start, DateTime end, int Id)
+        {
+            var stream = await _context.Streams.FindAsync(Id);
+            if (stream == null)
+            { 
+                // Handle the case when the Streams entity with the given streamId doesn't exist
+                return false;
+            }
+
+            var newLive = new Live(live, start, end, Id);
+            stream.LiveList ??= new List<Live>();
+            stream.LiveList.Add(newLive);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        async Task<bool> IStreamRepository.SaveCompensation(decimal compensation, int Id)
+        {
+            var stream = await _context.Streams.FindAsync(Id);
+            if (stream == null)
+            {
+                // Handle the case when the Streams entity with the given streamId doesn't exist
+                return false;
+            }
+
+            stream.Satoshi = Decimal.Add(stream.Satoshi, compensation);
+            await _context.SaveChangesAsync();
+
+            return true;
+
+
         }
     }
 }
