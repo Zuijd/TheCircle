@@ -50,6 +50,7 @@ namespace Portal.Controllers
 
                 if (result)
                 {
+                    //Login user
                     await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
                     return RedirectToAction("Index", "Home");
                 }
