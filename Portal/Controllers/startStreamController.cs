@@ -4,11 +4,11 @@ using Portal.Models;
 
 namespace Portal.Controllers;
 
-public class HomeController : Controller
+public class StartStreamController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILogger<StartStreamController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    public StartStreamController(ILogger<StartStreamController> logger)
     {
         _logger = logger;
     }
