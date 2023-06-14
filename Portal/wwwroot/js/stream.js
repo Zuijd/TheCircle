@@ -189,7 +189,21 @@ function FetchAddBreak() {
 }
 
 function FetchAddLive() {
-    //AddLive
+    fetch('/api/stream/AddLive', {
+        method: 'POST',
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
 }
 
 
