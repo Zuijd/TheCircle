@@ -33,37 +33,34 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> saveBreakMoment(TimeSpan live, DateTime start, DateTime end, int Id)
+        public async Task<bool> saveBreakMoment(Break pauze)
         {
-            var stream = await _context.Streams.FindAsync(Id);
+            var stream = await _context.Streams.FindAsync(pauze.StreamId);
             if (stream == null)
             {
                 // Handle the case when the Streams entity with the given streamId doesn't exist
                 return false;
             }
 
-            var newBreak = new Break(live, start, end, Id);
-
             stream.BreakList ??= new List<Break>();
-            stream.BreakList.Add(newBreak);
+            stream.BreakList.Add(pauze);
 
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<bool> saveLiveMoment(TimeSpan live, DateTime start, DateTime end, int Id)
+        public async Task<bool> saveLiveMoment(Live live)
         {
-            var stream = await _context.Streams.FindAsync(Id);
+            var stream = await _context.Streams.FindAsync(live.StreamId);
             if (stream == null)
             { 
                 // Handle the case when the Streams entity with the given streamId doesn't exist
                 return false;
             }
 
-            var newLive = new Live(live, start, end, Id);
             stream.LiveList ??= new List<Live>();
-            stream.LiveList.Add(newLive);
+            stream.LiveList.Add(live);
 
             await _context.SaveChangesAsync();
 
