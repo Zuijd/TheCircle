@@ -3,35 +3,43 @@
 let mediaRecorder;
 let recordedChunks = [];
 let timer;
-const timerInterval = 30000;
+const timerInterval = 10000;
 
 const connectionStream = new signalR.HubConnectionBuilder()
     .withUrl('/streamHub')
     .build();
 
 function startStreaming() {
+    
+    var button = document.getElementById('startButton');
+    var userId = button.getAttribute('data-userid');
+    console.log(userId);
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
-            const videoElement = document.getElementById('video');
+            const videoElement = document.createElement('video');
+            videoElement.autoplay = true;
+            videoElement.muted = true;
             videoElement.srcObject = stream;
+            videoElement.setAttribute('controls', 'controls');
+
+            // Dynamically generate a unique video tag for the stream
+            const streamId = generateStreamId();
+            videoElement.id = `stream-${streamId}`;
+
+            // Append the video element to the document body
+            document.body.appendChild(videoElement);
 
             mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
 
             mediaRecorder.addEventListener('dataavailable', event => {
                 recordedChunks.push(event.data);
-                sendBlob(event.data);
+                sendBlob(streamId, event.data);
             });
 
             mediaRecorder.addEventListener('stop', () => {
                 const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
                 const url = URL.createObjectURL(recordedBlob);
-
-                // const a = document.createElement('a');
-                // a.href = url;
-                // a.download = 'stream.webm';
-                // document.body.appendChild(a);
-                // a.click();
 
                 recordedChunks = [];
                 URL.revokeObjectURL(url);
@@ -59,19 +67,21 @@ function stopStreaming() {
     }
 }
 
-function sendBlob(chunk) {
+function sendBlob(streamId, chunk) {
     const reader = new FileReader();
     reader.onloadend = () => {
         const buffer = reader.result;
         const uint8Array = new Uint8Array(buffer);
         const base64String = bytesToBase64(uint8Array);
         console.log("Sending chunk: " + base64String);
-        connectionStream.invoke("SendChunk", base64String).catch(error => {
+        connectionStream.invoke("SendChunk", streamId, base64String).catch(error => {
             console.error("Error sending Blob: ", error);
         });
     };
     reader.readAsArrayBuffer(chunk);
 }
+
+
 
 // Function to convert uint8array to base64
 function bytesToBase64(bytes) {
@@ -105,6 +115,11 @@ function bytesToBase64(bytes) {
     }
 
     return result;
+}
+
+// Generate a unique stream ID
+function generateStreamId() {
+    return Math.random().toString(36).substr(2, 9);
 }
 
 connectionStream.start()
@@ -141,3 +156,4 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     });
     event.preventDefault();
 });
+

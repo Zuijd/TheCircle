@@ -5,28 +5,32 @@ const connectionStream = new signalR.HubConnectionBuilder()
     .build();
 
 let mediaSource;
-let sourceBuffer;
+let sourceBuffers = {};
 
-connectionStream.on("ReceiveChunk", (chunk) => {
+connectionStream.on("ReceiveChunk", (streamId, chunk) => {
     const uint8Array = base64ToBytes(chunk);
     const blob = new Blob([uint8Array.buffer], { type: 'video/webm;codecs="vp9,opus"' });
 
     console.log(blob);
     console.log("Receiving chunk: " + chunk);
 
-    appendToStream(blob);
+    appendToStream(streamId, blob);
 });
 
-async function appendToStream(blob) {
-    if (!sourceBuffer || sourceBuffer.updating) {
+async function appendToStream(streamId, blob) {
+    if (!sourceBuffers[streamId] || sourceBuffers[streamId].updating) {
         return;
     }
 
-    const vidBuff = await blob.arrayBuffer();
+    const reader = new FileReader();
 
-    sourceBuffer.appendBuffer(vidBuff);
+    reader.onloadend = () => {
+        const arrayBuffer = reader.result;
+        sourceBuffers[streamId].appendBuffer(arrayBuffer);
+    };
+
+    reader.readAsArrayBuffer(blob);
 }
-
 function base64ToBytes(base64) {
     const binaryString = window.atob(base64);
     const length = binaryString.length;
@@ -39,11 +43,12 @@ function base64ToBytes(base64) {
     return bytes;
 }
 
+
 connectionStream.start()
     .then(() => {
         console.log('Connection established.');
 
-        const videoElement = document.getElementById('video');
+        const videoContainer = document.getElementById('video-container');
 
         // Check if MediaSource is supported by the browser
         if (!window.MediaSource) {
@@ -52,19 +57,36 @@ connectionStream.start()
         }
 
         mediaSource = new MediaSource();
-        videoElement.src = URL.createObjectURL(mediaSource);
+        videoContainer.appendChild(mediaSource);
 
         mediaSource.addEventListener('sourceopen', () => {
-            sourceBuffer = mediaSource.addSourceBuffer(`video/webm; codecs="vp9,opus"`);
-            console.log('Source buffer is ready.');
+            console.log('MediaSource sourceopen event triggered.');
+
+            const streamIds = connectionStream.invoke("GetStreamIds").catch(error => {
+                console.error("Error getting stream IDs:", error);
+            });
+
+            streamIds.then(ids => {
+                ids.forEach(streamId => {
+                    createSourceBuffer(streamId);
+                });
+            });
         });
 
-        videoElement.addEventListener('play', () => {
-            videoElement.play().catch((error) => {
-                console.error('Error starting video playback:', error);
-            });
+        mediaSource.addEventListener('error', (e) => {
+            console.error('MediaSource error:', e);
         });
     })
     .catch(error => {
         console.error('Error starting the signaling connection:', error);
     });
+
+function createSourceBuffer(streamId) {
+    const sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp9,opus"');
+
+    sourceBuffer.addEventListener('updateend', () => {
+        console.log(`Source buffer ${streamId} updateend event triggered.`);
+    });
+
+    sourceBuffers[streamId] = sourceBuffer;
+}

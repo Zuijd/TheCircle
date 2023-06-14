@@ -22,6 +22,12 @@ public class StreamController : Controller
     public IActionResult Index()
     {
         _logger.Log("User has accessed Stream page!");
+           
+        var username = User.Identity.Name;
+        var user = _userService.GetUserByName(username);
+        var userId = user.Id;
+        ViewBag.UserId = userId;
+
         return View();
     }
 

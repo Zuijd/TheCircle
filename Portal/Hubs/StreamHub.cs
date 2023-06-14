@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 public class StreamHub : Hub
 {
-    public async Task SendChunk(byte[] chunk)
+    public async Task SendChunk(string streamId, string chunk)
     {
-        await Clients.Others.SendAsync("ReceiveChunk", chunk);
+        await Clients.Others.SendAsync("ReceiveChunk", streamId, chunk);
     }
 }
