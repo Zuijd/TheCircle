@@ -1,17 +1,6 @@
 using DomainServices.Interfaces.Repositories;
-using DomainServices.Interfaces.Services;
 using Infrastructure.Repositories;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Portal.Controllers;
-using SignalRChat.Hubs;
-using System;
-using Microsoft.EntityFrameworkCore;
-
+using Portal.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
