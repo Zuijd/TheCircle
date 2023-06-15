@@ -29,8 +29,7 @@ namespace DomainServices.Services
 
         public void Log(string message)
         {
-            DateTime timestamp = DateTime.UtcNow.AddHours(2);
-            _loggerRepository.addLog(new Log { Username = _user, Message = message, Timestamp = timestamp });
+            _loggerRepository.addLog(new Log(_user, message));
         }
 
         private string GetUserNameFromSession() 
