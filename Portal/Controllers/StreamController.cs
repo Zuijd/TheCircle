@@ -16,10 +16,10 @@ public class StreamController : Controller
     private readonly IStreamService _streamService;
 
     public StreamController(
-        ILoggerService logger, 
-        IMessageService messageService, 
-        IUserService userService, 
-        ISatoshiCompensation satoshiCompensationService, 
+        ILoggerService logger,
+        IMessageService messageService,
+        IUserService userService,
+        ISatoshiCompensation satoshiCompensationService,
         IStreamService streamService
         )
     {
@@ -35,7 +35,7 @@ public class StreamController : Controller
         _logger.Log("User has accessed Stream page!");
         return View();
     }
-    
+
     public IActionResult Watch(string id)
     {
         _logger.Log($"User has accessed {nameof(Watch)}");
@@ -78,9 +78,7 @@ public class StreamController : Controller
     {
         try
         {
-            Console.WriteLine(newStreamInfo);
-            var streamId =  this._streamService.AddStream(newStreamInfo);
-            return Ok(streamId);
+            return await this._streamService.AddStream(newStreamInfo);
         }
         catch (Exception e)
         {
@@ -95,22 +93,22 @@ public class StreamController : Controller
     {
         try
         {
-            Console.WriteLine($"{stopStreamInfo}");
-            var succes = this._streamService.StopStream(stopStreamInfo);    
-            return Ok(succes);
-        } catch (Exception e) { 
+            return await this._streamService.StopStream(stopStreamInfo);
+        }
+        catch (Exception e)
+        {
+            ModelState.AddModelError(e.Message, e.Message);
             return BadRequest(e.Message);
         }
     }
 
     // Add Break
     [HttpPost]
-    public async Task<IActionResult> AddBreak([FromBody] Break pauze)
+    public async Task<IActionResult> AddBreak([FromBody] dynamic pauze)
     {
         try
         {
-            //this._streamService.AddBreakMoment(pauze);
-            return Ok(true);
+            return await this._streamService.AddBreakMoment(pauze);
         }
         catch (Exception e)
         {
@@ -121,12 +119,11 @@ public class StreamController : Controller
 
     // Add Live
     [HttpPost]
-    public async Task<IActionResult> AddLive([FromBody] Live live)
+    public async Task<IActionResult> AddLive([FromBody] dynamic live)
     {
         try
         {
-            //this._streamService.AddLiveMoment(live);
-            return Ok(true);
+            return await this._streamService.AddLiveMoment(live);
         }
         catch (Exception e)
         {
@@ -134,23 +131,5 @@ public class StreamController : Controller
             return BadRequest(e.Message);
         }
     }
-
-    // Add Live
-    [HttpPost]
-    public async Task<IActionResult> AddSatoshi()
-    {
-        try
-        {
-            //this._streamService.AddLiveMoment(live);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            ModelState.AddModelError(e.Message, e.Message);
-            return BadRequest(e.Message);
-        }
-    }
-
-
 
 }

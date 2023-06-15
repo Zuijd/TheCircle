@@ -35,29 +35,41 @@ namespace DomainServices.Services
         public bool StopStream(dynamic streamInfo)
         {
             var HttpContext = _contextAccessor.HttpContext;
-            var streamId = HttpContext.Session.GetInt32("StreamId");
+            var streamId = (int) HttpContext.Session.GetInt32("StreamId")!;
             var endStream = DateTime.Parse(streamInfo.GetProperty("endStream").GetString());
             var durationStream = streamInfo.GetProperty("durationStream").GetInt32();
-            var succes = this._streamRepository.StopStream((int)streamId!, endStream, durationStream);
+            var succes = this._streamRepository.StopStream(streamId, endStream, durationStream);
+            //Add satoshi call + WHATSUPPP!!!!
             HttpContext.Session.Remove("StreamId");
             return succes;
         }
 
-        public void AddBreakMoment(dynamic pauzeInfo)
+        public Task<bool> AddBreakMoment(dynamic pauzeInfo)
         {
-            this._streamRepository.saveBreakMoment(pauzeInfo);
+            var HttpContext = _contextAccessor.HttpContext;
+            var streamId = (int)HttpContext.Session.GetInt32("StreamId")!;
+            var startBreak = DateTime.Parse(pauzeInfo.GetProperty("startBreak").GetString());
+            var endBreak = DateTime.Parse(pauzeInfo.GetProperty("endBreak").GetString());
+            TimeSpan duration = endBreak - startBreak;
+            var newBreak = new Break(startBreak, endBreak, duration);
+            return this._streamRepository.saveBreakMoment(newBreak, streamId);
         }
 
-        public void AddLiveMoment(dynamic liveInfo)
+        public Task<bool> AddLiveMoment(dynamic liveInfo)
         {
-            this._streamRepository.saveLiveMoment(liveInfo);
+            var HttpContext = _contextAccessor.HttpContext;
+            var streamId = (int)HttpContext.Session.GetInt32("StreamId")!;
+            var startLive = DateTime.Parse(liveInfo.GetProperty("startLive").GetString());
+            var endLive = DateTime.Parse(liveInfo.GetProperty("endLive").GetString());
+            TimeSpan duration = endLive - startLive;
+            var newLive = new Live(startLive, endLive, duration);
+            return this._streamRepository.saveLiveMoment(newLive,streamId);
         }
 
-        public void AddSatoshi(decimal satoshi, int streamId)
-        {
-            this._streamRepository.SaveCompensation(satoshi, streamId);
-        }
 
-       
+        bool IStreamService.AddSatoshi(int streamId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -11,9 +11,9 @@ namespace DomainServices.Interfaces.Repositories
     {
         public Task<int> addStream(Streams stream);
         public Task<bool> StopStream(int streamId, DateTime endStream, int durationStream);
-        public Task<bool> saveLiveMoment(Live live);
-        public Task<bool> saveBreakMoment(Break pauze);
-        public Task<bool> SaveCompensation(decimal compensation, int streamId);
+        public Task<bool> saveLiveMoment(Live live,int streamId);
+        public Task<bool> saveBreakMoment(Break pauze, int streamId);
+        public Task<bool> SaveCompensation();
     }
 }
 

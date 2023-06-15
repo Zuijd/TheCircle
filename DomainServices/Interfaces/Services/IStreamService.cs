@@ -11,9 +11,9 @@ namespace DomainServices.Interfaces.Services
     {
         public int AddStream(dynamic streamInfo);
         public bool StopStream(dynamic streamInfo);
-        public void AddLiveMoment(dynamic live);
-        public void AddBreakMoment(dynamic pauze);
-        public void AddSatoshi(decimal satoshi, int streamId);
+        public Task<bool> AddLiveMoment(dynamic live);
+        public Task<bool> AddBreakMoment(dynamic pauze);
+        public bool AddSatoshi(int streamId);
               
     }
 }

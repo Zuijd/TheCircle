@@ -57,9 +57,9 @@ namespace Infrastructure.Repositories
             return true;
         }
 
-        public async Task<bool> saveBreakMoment(Break pauze)
+        public async Task<bool> saveBreakMoment(Break pauze, int streamId)
         {
-            var stream = await _context.Streams.FindAsync(pauze.StreamId);
+            var stream = await _context.Streams.FindAsync(streamId);
             if (stream == null)
             {
                 // Handle the case when the Streams entity with the given streamId doesn't exist
@@ -74,9 +74,9 @@ namespace Infrastructure.Repositories
             return true;
         }
 
-        public async Task<bool> saveLiveMoment(Live live)
+        public async Task<bool> saveLiveMoment(Live live, int streamId)
         {
-            var stream = await _context.Streams.FindAsync(live.StreamId);
+            var stream = await _context.Streams.FindAsync(streamId);
             if (stream == null)
             { 
                 // Handle the case when the Streams entity with the given streamId doesn't exist
@@ -93,17 +93,17 @@ namespace Infrastructure.Repositories
 
       
 
-        async Task<bool> IStreamRepository.SaveCompensation(decimal compensation, int Id)
+        async Task<bool> IStreamRepository.SaveCompensation()
         {
-            var stream = await _context.Streams.FindAsync(Id);
+            var stream = await _context.Streams.FindAsync();
             if (stream == null)
             {
                 // Handle the case when the Streams entity with the given streamId doesn't exist
                 return false;
             }
 
-            stream.Satoshi = Decimal.Add(stream.Satoshi, compensation);
-            await _context.SaveChangesAsync();
+            //stream.Satoshi = Decimal.Add(stream.Satoshi, compensation);
+            //await _context.SaveChangesAsync();
 
             return true;
 

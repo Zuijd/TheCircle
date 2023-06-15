@@ -45,18 +45,21 @@ namespace Domain
         // Navigation property
         public Streams Stream { get; set; }
         public Live() { }
-        public Live(TimeSpan live, DateTime start, DateTime end, int streamid)
+        public Live( DateTime start, DateTime end, TimeSpan live)
         {
             this.Duration = live;
             this.DateTimeStart = start;
             this.DateTimeEnd = end;
-            this.StreamId = streamid;
+          
         }
     }
 
     public class Break
     {
-      
+        private dynamic startLive;
+        private dynamic endLive;
+        private dynamic durationLive;
+
         [Required]
         public int Id { get; set; }
         public DateTime? DateTimeStart { get; set; }
@@ -69,12 +72,12 @@ namespace Domain
         // Navigation property
         public Streams Stream { get; set; }
         public Break() { }
-        public Break(TimeSpan live, DateTime start, DateTime end, int streamid)
+        
+        public Break(DateTime startLive, DateTime endLive, dynamic durationLive)
         {
-            this.Duration = live;
-            this.DateTimeStart = start;
-            this.DateTimeEnd = end;
-            this.StreamId = streamid;
+            this.startLive = startLive;
+            this.endLive = endLive;
+            this.durationLive = durationLive;
         }
     }
 }

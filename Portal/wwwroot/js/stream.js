@@ -10,7 +10,7 @@ const connectionStream = new signalR.HubConnectionBuilder()
     .build();
 
 
-// Variable value given back after first fetch so we know where to store stamps/spans/satoshi 
+// current Stream after create in DB 
 var streamId
 // Bool if Camera is on/off
 var camBool
@@ -23,63 +23,63 @@ var durationStream
 //  Live moments
 var startLive
 var endLive
-var durationLive
 // Break moments
 var startBreak
 var endBreak
-var durationBreak
-// current stream
-var streamId
+
 
 
 function startStreaming() {
+    if (!streamBool) {
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-            const videoElement = document.getElementById('video');
-            videoElement.srcObject = stream;
 
-            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            .then(stream => {
+                const videoElement = document.getElementById('video');
+                videoElement.srcObject = stream;
 
-            mediaRecorder.addEventListener('dataavailable', event => {
-                recordedChunks.push(event.data);
-                sendBlob(event.data);
+                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
+
+                mediaRecorder.addEventListener('dataavailable', event => {
+                    recordedChunks.push(event.data);
+                    sendBlob(event.data);
+                });
+
+                mediaRecorder.addEventListener('stop', () => {
+                    const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(recordedBlob);
+
+                    // const a = document.createElement('a');
+                    // a.href = url;
+                    // a.download = 'stream.webm';
+                    // document.body.appendChild(a);
+                    // a.click();
+
+                    recordedChunks = [];
+                    URL.revokeObjectURL(url);
+                });
+
+                mediaRecorder.start();
+                console.log('Recording started.');
+
+                streamBool = camBool = true;
+                startStream = startLive = new Date();
+                FetchAddStream();
+
+                startTimer();
+
+                //// Trigger the dataavailable event every x seconds
+                //timer = setInterval(() => {
+                //    mediaRecorder.requestData();
+                //}, timerInterval);
+
+
+
+            })
+            .catch(error => {
+                console.error('Error accessing media devices:', error);
             });
-
-            mediaRecorder.addEventListener('stop', () => {
-                const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
-                const url = URL.createObjectURL(recordedBlob);
-
-                // const a = document.createElement('a');
-                // a.href = url;
-                // a.download = 'stream.webm';
-                // document.body.appendChild(a);
-                // a.click();
-
-                recordedChunks = [];
-                URL.revokeObjectURL(url);
-            });
-
-            mediaRecorder.start();
-            console.log('Recording started.');
-
-            streamBool = camBool = true;
-            startStream = startLive = new Date();
-            FetchAddStream();
-
-            startTimer();
-
-            //// Trigger the dataavailable event every x seconds
-            //timer = setInterval(() => {
-            //    mediaRecorder.requestData();
-            //}, timerInterval);
-
-
-
-        })
-        .catch(error => {
-            console.error('Error accessing media devices:', error);
-        });
+    }
 }
 
 
@@ -91,28 +91,29 @@ function startTimer() {
 }
 
 function stopStreaming() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        clearInterval(timer);
 
-        console.log('Recording stopped.');
+    if (streamBool) {
+
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+            clearInterval(timer);
+
+            console.log('Recording stopped.');
+        }
+
+        if (camBool) {
+            endStream = endLive = new Date();
+            FetchAddLive()
+        } else {
+            endStream = endBreak = new Date();
+            FetchAddBreak();
+        }
+        durationStream = endStream - startStream;
+
+        FetchStopStreaming();
+        stopCamera();
+        streamBool = false;
     }
-
-    if (camBool) {
-        endStream = endLive = new Date();
-        durationLive = endLive - startLive;
-        FetchAddLive()
-    } else {
-        endStream = endBreak = new Date();
-        durationBreak = endBreak - startBreak;
-        FetchAddBreak();
-    }
-    durationStream = endStream - startStream;
-
-
-    FetchStopStreaming();
-    stopCamera();
-    streamBool = false;
 
 }
 
@@ -145,7 +146,6 @@ function switchCamera() {
         case camBool && streamBool:
             // Nothing should happen, because you are already streaming with camera on
             endLive = startBreak = new Date();
-            durationLive = endLive - startLive;
             stopCamera();
             // startBreak()
             camBool = false;
@@ -161,7 +161,6 @@ function switchCamera() {
         case !camBool && streamBool:
             // camBool to true & break should end and live should start
             endBreak = startLive = new Date();
-            durationBreak = endBreak - startBreak;
             //endBreak();
             startCamera();
             startTimer();
@@ -366,7 +365,6 @@ function FetchAddBreak() {
         console.log('endStream: ' + endStream)
     }
     console.log('endBreak : ' + endBreak)
-    console.log('durationBreak   : ' + durationBreak)
 
 
     fetch('/stream/AddBreak', {
@@ -376,8 +374,7 @@ function FetchAddBreak() {
         },
         body: JSON.stringify({
             startBreak: startBreak,
-            endBreak: endBreak,
-            durationBreak: durationBreak
+            endBreak: endBreak
         })
     })
         .then(response => {
@@ -403,7 +400,6 @@ function FetchAddLive() {
     console.log('camBool: ' + camBool)
     console.log('endStream: ' + endStream)
     console.log('endLive : ' + endLive)
-    console.log('durationLive  : ' + durationLive)
 
     fetch('/stream/AddLive', {
         method: 'POST',
@@ -412,32 +408,26 @@ function FetchAddLive() {
         },
         body: JSON.stringify({
             startLive: startLive,
-            endLive: endLive,
-            durationLive: durationLive
+            endLive: endLive
+            })
         })
-    })
-        .then(response => {
-            if (response.ok) {
-                // Streaming started successfully
-                console.log('Streaming started!');
-            } else {
-                // Error occurred
-                console.error('Failed to start streaming:', response.statusText);
-            }
-        })
-        .then(data => {
-            // Handle the response data here
-            console.log('Response data:', data);
-        })
-        .catch(error => {
-            console.error('An error occurred while starting streaming:', error);
-        });
-}
+            .then(response => {
+                if (response.ok) {
+                    // Streaming started successfully
+                    console.log('Streaming started!');
+                } else {
+                    // Error occurred
+                    console.error('Failed to start streaming:', response.statusText);
+                }
+            })
+            .then(data => {
+                // Handle the response data here
+                console.log('Response data:', data);
+            })
+            .catch(error => {
+                console.error('An error occurred while starting streaming:', error);
+            });
 
-
-function AddSatoshi() {
-    //AddSatoshi
-}
-
+    }
 
 
