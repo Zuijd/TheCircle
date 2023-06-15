@@ -9,7 +9,7 @@ Stream
 
 
 @* chat *@
-<div class="container">
+<div class="container" id="stream-container" data-user="@username">
     <div class="row p-1">
         <div class="col-1">Message</div>
         <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
@@ -29,12 +29,14 @@ Stream
             <ul id="messagesList"></ul>
         </div>
     </div>
+    <input type="hidden" id="viewName" value="Stream Index">
 </div>
 
 @section Scripts{
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="/js/stream.js"></script>
-    <script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="/js/chat.js"></script>
+
+    @*    <script>
 
         "use strict";
 
@@ -62,4 +64,5 @@ Stream
             event.preventDefault();
         });
     </script>
+*@
 } 

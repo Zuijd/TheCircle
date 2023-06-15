@@ -1,6 +1,9 @@
 ﻿@* Former Watch page *@
+@{
+    var username = User.Identity?.Name;
+}
 
-<div class="container">
+<div class="container" id="stream-container" data-user="@username">
     <div class="row">
         <div id="streamSelectorBox" class="col">
             <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
@@ -40,13 +43,13 @@
         </div>
 
         <img id="circleImage" src="./assets/circle.png" alt="Circle">
-
+        <input type="hidden" id="viewName" value="Home Index">
     </div>
 </div>
 
 @section Scripts {
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/homepage.js" asp-append-version="true"></script>
-    <script src="~/js/watch.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
 
 }

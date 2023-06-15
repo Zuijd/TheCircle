@@ -32,32 +32,32 @@ public class HomeController : Controller
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
-    {
-        try
-        {
+    //[HttpPost]
+    //public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
+    //{
+    //    try
+    //    {
 
-            if (ModelState.IsValid)
-            {
-                Console.WriteLine(chatViewModel.Username);
-                Message message = new()
-                {
-                    User = _userService.GetUserByName(User.Identity?.Name!).Result,
-                    MessageBody = chatViewModel.Message!
-                };
+    //        if (ModelState.IsValid)
+    //        {
+    //            //Console.WriteLine(chatViewModel.);
+    //            Message message = new()
+    //            {
+    //                User = _userService.GetUserByName(User.Identity?.Name!).Result,
+    //                MessageBody = chatViewModel.Message!
+    //            };
 
 
-                await _messageService.CreateMessage(message);
+    //            await _messageService.CreateMessage(message);
 
-            }
-        }
-        catch (Exception e)
-        {
+    //        }
+    //    }
+    //    catch (Exception e)
+    //    {
 
-            ModelState.AddModelError(e.Message, e.Message);
-        }
+    //        ModelState.AddModelError(e.Message, e.Message);
+    //    }
 
-        return View("Index");
-    }
+    //    return View("Index");
+    //}
 }
