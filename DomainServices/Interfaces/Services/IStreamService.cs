@@ -9,9 +9,10 @@ namespace DomainServices.Interfaces.Services
 {
     public interface IStreamService
     {
-        public void AddStream(Streams stream);
-        public void AddLiveMoment(Live live);
-        public void AddBreakMoment(Break pauze);
+        public int AddStream(dynamic streamInfo);
+        public bool StopStream(dynamic streamInfo);
+        public void AddLiveMoment(dynamic live);
+        public void AddBreakMoment(dynamic pauze);
         public void AddSatoshi(decimal satoshi, int streamId);
               
     }

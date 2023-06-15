@@ -9,14 +9,27 @@ namespace Domain
 {
     public class Streams
     {
+            
+
         [Required]
         public int Id {  get; set; }
-        //public int UserId { get; set; }
         public List<Live>? LiveList { get; set; }
         public List<Break>? BreakList { get; set; }
         public Decimal Satoshi { get; set; }
-        [Required]
+        public string? UserName { get; set; }
         public bool? Live { get; set; }
+        public DateTime Start { get; set; }
+        public DateTime End { get; set; }
+        public int Duration { get; set; }
+
+        public Streams() { }
+
+        public Streams(string username, dynamic live, dynamic startStream)
+        {
+            this.UserName = username;
+            this.Live = live;
+            this.Start = startStream;
+        }
     }
 
     public class Live {

@@ -74,16 +74,31 @@ public class StreamController : Controller
     // Cals for the stream.js file to save ongoing streams
     // Add Stream
     [HttpPost]
-    public async Task<IActionResult> AddStream([FromBody] Streams stream)
+    public async Task<IActionResult> AddStream([FromBody] dynamic newStreamInfo)
     {
         try
         {
-            this._streamService.AddStream(stream);
-            return Ok();
+            Console.WriteLine(newStreamInfo);
+            var streamId =  this._streamService.AddStream(newStreamInfo);
+            return Ok(streamId);
         }
         catch (Exception e)
         {
             ModelState.AddModelError(e.Message, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+
+    // Stop Stream
+    [HttpPost]
+    public async Task<IActionResult> StopStream([FromBody] dynamic stopStreamInfo)
+    {
+        try
+        {
+            Console.WriteLine($"{stopStreamInfo}");
+            var succes = this._streamService.StopStream(stopStreamInfo);    
+            return Ok(succes);
+        } catch (Exception e) { 
             return BadRequest(e.Message);
         }
     }
@@ -94,8 +109,8 @@ public class StreamController : Controller
     {
         try
         {
-            this._streamService.AddBreakMoment(pauze);
-            return Ok();
+            //this._streamService.AddBreakMoment(pauze);
+            return Ok(true);
         }
         catch (Exception e)
         {
@@ -110,8 +125,8 @@ public class StreamController : Controller
     {
         try
         {
-            this._streamService.AddLiveMoment(live);
-            return Ok();
+            //this._streamService.AddLiveMoment(live);
+            return Ok(true);
         }
         catch (Exception e)
         {
@@ -122,11 +137,11 @@ public class StreamController : Controller
 
     // Add Live
     [HttpPost]
-    public async Task<IActionResult> AddSatoshi([FromBody] Live live)
+    public async Task<IActionResult> AddSatoshi()
     {
         try
         {
-            this._streamService.AddLiveMoment(live);
+            //this._streamService.AddLiveMoment(live);
             return Ok();
         }
         catch (Exception e)

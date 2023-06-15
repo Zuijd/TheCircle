@@ -17,7 +17,7 @@ namespace Infrastructure.Repositories
 
         public StreamRepository(ApplicationDbContext context) => _context = context;
 
-        public async Task<bool> addStream(Streams stream)
+        public async Task<int> addStream(Streams stream)
         {
             try
             {
@@ -25,12 +25,36 @@ namespace Infrastructure.Repositories
 
                 await _context.Streams.AddAsync(stream);
                 await _context.SaveChangesAsync();
-                return true;
+                return stream.Id;
             }
             catch (Exception)
             {
+                return -1;
+            }
+        }
+
+        public async Task<bool> StopStream(int streamId, DateTime endStream, int durationStream)
+        {
+            var stream = await _context.Streams.FindAsync(streamId);
+            if (stream == null)
+            {
                 return false;
             }
+
+            stream.Live = false;
+            stream.End = endStream;
+            stream.Duration = durationStream;
+            try
+            {
+                // Your code here
+                _context.SaveChanges();
+                Console.Write("Did changes save??");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("An exception occurred: " + ex.Message);
+            }
+            return true;
         }
 
         public async Task<bool> saveBreakMoment(Break pauze)
@@ -66,6 +90,8 @@ namespace Infrastructure.Repositories
 
             return true;
         }
+
+      
 
         async Task<bool> IStreamRepository.SaveCompensation(decimal compensation, int Id)
         {
