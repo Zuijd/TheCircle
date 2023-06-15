@@ -1,5 +1,9 @@
-﻿@{
-
+﻿@using System.Text;
+@{
+    string privateKey = ViewData["PrivateKey"].ToString().Replace("\n", "").Replace("\r", "");
+    string certificate = ViewData["Certificate"].ToString().Replace("\n", "").Replace("\r", "");
+    string encodedPrivateKey = Convert.ToBase64String(Encoding.UTF8.GetBytes(privateKey));
+    string encodedCertificate = Convert.ToBase64String(Encoding.UTF8.GetBytes(certificate));
 }
 
 <h1>Test</h1>
@@ -13,8 +17,9 @@
         <input type="text" name="body">
     </div>
     <div>
-        <button onclick="createDigSig(JSON.stringify({ subject: document.getElementsByName('subject')[0].value, body: document.getElementsByName('body')[0].value }), '@ViewData["PrivateKey"]')">Submit</button>
+        <button onclick="createDigSig('hoi', '@encodedPrivateKey')">Submit</button>
     </div>
 
     <input type="hidden" id="signature" name="signature">
+    <input type="hidden" id="certificate" name="certificate" value="@encodedCertificate">
 </form>

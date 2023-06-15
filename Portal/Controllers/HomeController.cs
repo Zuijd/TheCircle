@@ -1,19 +1,17 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Portal.Models;
-
-namespace Portal.Controllers;
+﻿namespace Portal.Controllers;
 
 [TLSAccess]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly IUserService _userService;
+    private readonly ICertificateService _certificateService;
 
-    public HomeController(ILogger<HomeController> logger, IUserService userService)
+    public HomeController(ILogger<HomeController> logger, IUserService userService, ICertificateService certificateService)
     {
         _logger = logger;
         _userService = userService;
+        _certificateService = certificateService;
     }
 
     public IActionResult Index()
@@ -37,17 +35,25 @@ public class HomeController : Controller
     public async Task<IActionResult> Test()
     {
         ViewData["PrivateKey"] = await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey");
+        ViewData["Certificate"] = await _userService.GetSpecificClaim(User.Identity?.Name!, "Certificate");
+
         return View();
     }
 
     [Authorize]
     [HttpPost]
-    public IActionResult TestPost(string subject, string body, string signature)
+    public IActionResult TestPost(string subject, string body, string signature, string certificate)
     {
         Console.WriteLine(subject);
         Console.WriteLine(body);
+        Console.WriteLine(certificate);
+        Console.WriteLine("-----------------------------");
         Console.WriteLine(signature);
 
-        return RedirectToAction("Index", "Home");
+        var publicKey2 = _certificateService.getPublicKeyOutOfUserCertificate(Convert.FromBase64String(certificate));
+
+        _certificateService.VerifyDigSig("hoi", Convert.FromBase64String(signature), publicKey2);
+
+        return RedirectToAction("Test", "Home");
     }
 }

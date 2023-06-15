@@ -13,6 +13,11 @@
             _certificateService = certificateService;
         }
 
+        public async Task<UserIdentity> GetUser(string name)
+        {
+            return await _userManager.FindByNameAsync(name);
+        }
+
         public async Task<bool> LoginUserAsync(string username, string password)
         {
             var exceptions = new List<Exception>();
@@ -116,9 +121,9 @@
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddClaimAsync(user, new Claim("PrivateKey", Encoding.UTF8.GetString(_certificateService.getPrivateKey(keyPair))));
-                    await _userManager.AddClaimAsync(user, new Claim("PublicKey", Encoding.UTF8.GetString(_certificateService.getPublicKeyOutOfUserCertificate(certificate))));
-                    await _userManager.AddClaimAsync(user, new Claim("Certificate", Encoding.UTF8.GetString(certificate)));
+                    await _userManager.AddClaimAsync(user, new Claim("PrivateKey", Convert.ToBase64String(_certificateService.getPrivateKey(keyPair))));
+                    await _userManager.AddClaimAsync(user, new Claim("PublicKey", Convert.ToBase64String(_certificateService.getPublicKeyOutOfUserCertificate(certificate))));
+                    await _userManager.AddClaimAsync(user, new Claim("Certificate", Convert.ToBase64String(certificate)));
                 }
 
                 return result.Succeeded;
@@ -155,7 +160,7 @@
             return mailRegex.IsMatch(email);
         }
 
-        public async Task<byte[]> GetSpecificClaim(string username, string claimType)
+        public async Task<string> GetSpecificClaim(string username, string claimType)
         {
             var user = await _userManager.FindByNameAsync(username);
 
@@ -165,7 +170,7 @@
 
             if (claim != null)
             {
-                return Encoding.UTF8.GetBytes(claim.Value);
+                return claim.Value;
             }
 
             throw new KeyException($"No{claimType}Claim", $"No {claimType} claim present");

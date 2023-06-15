@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace Domain
+﻿namespace Domain
 {
     public class UserIdentity : IdentityUser
     {
