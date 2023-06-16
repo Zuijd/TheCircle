@@ -1,6 +1,4 @@
-﻿using Domain;
-
-namespace DomainServices.Interfaces.Services
+﻿namespace DomainServices.Interfaces.Services
 {
     public interface IUserService
     {

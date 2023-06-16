@@ -1,10 +1,3 @@
-using System.Diagnostics;
-using Domain;
-using DomainServices.Interfaces.Hubs;
-using DomainServices.Interfaces.Services;
-using Microsoft.AspNetCore.Mvc;
-using Portal.Models;
-
 namespace Portal.Controllers;
 
 public class StreamController : Controller

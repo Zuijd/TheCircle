@@ -1,17 +1,15 @@
-﻿using Domain;
-using DomainServices.Interfaces.Repositories;
-using System.Diagnostics;
+﻿using DomainServices.Interfaces.Repositories;
 
 namespace DomainServices.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<UserIdentity> _userManager;
+        private readonly SignInManager<UserIdentity> _signInManager;
         private readonly IUserRepository _userRepository;
         private readonly ICertificateService _certificateService;
 
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUserRepository userRepository, ICertificateService certificateService)
+        public UserService(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager, IUserRepository userRepository, ICertificateService certificateService)
         {
             _userManager = userManager;
             _signInManager = signInManager;

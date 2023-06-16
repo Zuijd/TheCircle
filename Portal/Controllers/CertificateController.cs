@@ -25,9 +25,6 @@
         [HttpPost]
         public async Task<IActionResult> TestPost(TestViewModel testViewModel)
         {
-            Console.WriteLine(testViewModel.subject);
-            Console.WriteLine(testViewModel.message);
-
             ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
             //retrieve private key
             var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
