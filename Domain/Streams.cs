@@ -9,25 +9,24 @@ namespace Domain
 {
     public class Streams
     {
-            
-
         [Required]
         public int Id {  get; set; }
         public List<Live>? LiveList { get; set; }
         public List<Break>? BreakList { get; set; }
-        public Decimal Satoshi { get; set; }
-        public string? UserName { get; set; }
-        public bool? Live { get; set; }
+        public decimal Satoshi { get; set; }
+        public string UserName { get; set; }
+        public bool IsLive { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
         public TimeSpan Duration { get; set; }
 
+        //Default Constructor
         public Streams() { }
 
         public Streams(string username, bool live, DateTime startStream)
         {
             this.UserName = username;
-            this.Live = live;
+            this.IsLive = live;
             this.Start = startStream;
         }
     }
@@ -41,10 +40,11 @@ namespace Domain
 
         // Foreign key property
         public int StreamId { get; set; }
-
         // Navigation property
         public Streams Stream { get; set; }
+        //Default Constructor
         public Live() { }
+
         public Live( DateTime start, DateTime end, TimeSpan live)
         {
             this.Duration = live;
@@ -65,11 +65,11 @@ namespace Domain
 
         // Foreign key property
         public int StreamId { get; set; }
-
         // Navigation property
         public Streams Stream { get; set; }
+        //Default Constructor
         public Break() { }
-        
+
         public Break(DateTime startBreak, DateTime endBreak, dynamic durationBreak)
         {
             this.DateTimeStart = startBreak;

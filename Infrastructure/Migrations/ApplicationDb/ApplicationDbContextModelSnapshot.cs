@@ -46,7 +46,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("StreamId");
 
-                    b.ToTable("Break");
+                    b.ToTable("Break", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Live", b =>
@@ -73,7 +73,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("StreamId");
 
-                    b.ToTable("Live");
+                    b.ToTable("Live", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Log", b =>
@@ -97,7 +97,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Log");
+                    b.ToTable("Log", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Message", b =>
@@ -122,7 +122,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Message");
+                    b.ToTable("Message", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Streams", b =>
@@ -153,7 +153,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Streams");
+                    b.ToTable("Streams", (string)null);
                 });
 
             modelBuilder.Entity("Domain.User", b =>
@@ -172,7 +172,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Break", b =>

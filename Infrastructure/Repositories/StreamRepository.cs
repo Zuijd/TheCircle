@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> StopStream(int streamId, DateTime endStream, TimeSpan durationStream)
+        public async Task<bool> StopStream(int streamId, DateTime endStream, TimeSpan durationStream, decimal satoshi)
         {
             var stream = await _context.Streams.FindAsync(streamId);
             if (stream == null)
@@ -39,20 +39,15 @@ namespace Infrastructure.Repositories
                 return false;
             }
 
-            stream.Live = false;
+            stream.IsLive = false;
             stream.End = endStream;
-
+            stream.Satoshi = satoshi;
             stream.Duration = durationStream;
-            try
-            {
-                // Your code here
-                _context.SaveChanges();
-                Console.Write("Did changes save??");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("An exception occurred: " + ex.Message);
-            }
+           
+            await _context.SaveChangesAsync();
+
+            //var streamUpdated = await _context.Streams.FindAsync(streamId);
+
             return true;
         }
 
@@ -90,28 +85,12 @@ namespace Infrastructure.Repositories
             return true;
         }
 
-      
-
-        async Task<bool> IStreamRepository.SaveCompensation(decimal satoshi, int streamId)
-        {
-            var stream = await _context.Streams.FindAsync();
-            if (stream == null)
-            {
-                // Handle the case when the Streams entity with the given streamId doesn't exist
-                return false;
-            }
-
-            stream.Satoshi = satoshi;
-            await _context.SaveChangesAsync();
-
-            return true;
-
-
-        }
-
         public async Task<List<Live>> GetLiveMoments(int StreamId)
         {
-            var stream = await _context.Streams.FindAsync(StreamId);
+            var stream = await _context.Streams
+                .Include(s => s.LiveList) // Explicitly include the LiveList
+                .FirstOrDefaultAsync(s => s.Id == StreamId);
+
             if (stream == null)
             {
                 // Handle the case when the Streams entity with the given streamId doesn't exist

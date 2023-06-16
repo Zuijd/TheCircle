@@ -15,9 +15,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Satoshi = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Live = table.Column<bool>(type: "bit", nullable: true),
+                    Satoshi = table.Column<decimal>(type: "decimal(18,8)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsLive = table.Column<bool>(type: "bit", nullable: false),
                     Start = table.Column<DateTime>(type: "datetime2", nullable: false),
                     End = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Duration = table.Column<TimeSpan>(type: "time", nullable: false)
