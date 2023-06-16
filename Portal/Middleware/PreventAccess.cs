@@ -1,6 +1,6 @@
 ﻿namespace Portal.Middleware
 {
-    public class PreventAccessFilterAttribute : ActionFilterAttribute
+    public class PreventAccess : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {

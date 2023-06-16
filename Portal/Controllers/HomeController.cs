@@ -7,9 +7,9 @@ using DomainServices.Interfaces.Services;
 
 namespace Portal.Controllers
 {
+    [TLSAccess]
     public class HomeController : Controller
     {
-     
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILoggerService _logger;
 
