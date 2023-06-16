@@ -70,8 +70,10 @@
     function createChatbox(streamer) {
         const chatboxContainer = $('<div class="col-md-6 mb-4 chatbox-container"></div>');
 
+        var streamerId = streamer.split(" ").pop();
+
         const chatboxTitle = $('<div class="chatbox-title"></div>').text(`Chatbox for ${streamer}`);
-        const chatboxMessages = $('<ul id="messagesList"></ul>');
+        const chatboxMessages = $(`<ul id="messagesList" data-streamerId=${streamerId}></ul>`);
         const chatboxInput = $('<input type="text" class="w-100" id="messageInput" /></div>');
 
         const inputText = $('<input type="text" placeholder="Type your message..."</input>').addClass('chatbox-input-text');

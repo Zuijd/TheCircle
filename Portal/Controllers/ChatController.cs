@@ -46,7 +46,7 @@ namespace Portal.Controllers
                 ModelState.AddModelError(e.Message, e.Message);
             }
 
-            Console.WriteLine(chatViewModel.ViewName);
+            //Console.WriteLine(chatViewModel.ViewName);
 
             if (chatViewModel.ViewName == "Stream Index")
             {

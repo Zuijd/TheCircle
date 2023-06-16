@@ -3,11 +3,21 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 var container = document.getElementById('stream-container');
 var username = container.getAttribute('data-user');
-connection.on("ReceiveMessage", function (user, message) {
+connection.on("ReceiveMessage", function (user, message, streamUserId) {
+    console.log("Recieved message " + user + " " + message + " " + streamUserId);
+
     var li = document.createElement("li");
-    document.getElementById("messagesList").appendChild(li);
-    li.innerHTML = `<b>${user}</b>: ${message}`;
-    li.id = 'message';
+    var messagesList = document.getElementById("messagesList");
+
+    var streamerId = messagesList.getAttribute('data-streamerId')
+
+    console.log(streamerId + streamUserId);
+
+    if (streamerId === streamUserId) {
+        li.innerHTML = `<b>${user}</b>: ${message}`;
+        li.id = 'message';
+        messagesList.appendChild(li)
+    }
 });
 
 connection.start().then(function () {
@@ -21,8 +31,14 @@ $("#sendButton").prop('disabled', true);
 
 
 $(document).on("click", "#sendButton", function (event) {
+    var streamerId = 2;
+
     var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", username, message).catch(function (err) {
+
+    connection.invoke("JoinGroup", streamerId.toString()).catch(function (err) {
+        return console.error(err.toString());
+    });
+    connection.invoke("SendMessage", username, message, streamerId.toString()).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
