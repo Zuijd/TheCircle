@@ -41,18 +41,6 @@ function base64ToBytes(base64) {
 
 connectionStream.start()
     .then(() => {
-
-        var userName = window.location.pathname.split("/")[3];
-
-        if (!userName) {
-            console.log("No user name provided.");
-        }
-
-
-        connectionStream.invoke("JoinGroup", userName).catch(err => {
-            console.log(err)
-        })
-        
         console.log('Connection established.');
 
         const videoElement = document.getElementById('video');
@@ -62,7 +50,7 @@ connectionStream.start()
             console.error('MediaSource is not supported in this browser.');
             return;
         }
-        
+
         mediaSource = new MediaSource();
         videoElement.src = URL.createObjectURL(mediaSource);
 
