@@ -5,17 +5,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations.ApplicationDb
 {
-    public partial class Info_Streams : Migration
+    public partial class totalSatoshiUser : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<decimal>(
+                name: "Satoshi",
+                table: "User",
+                type: "decimal(18,2)",
+                nullable: false,
+                defaultValue: 0m);
+
             migrationBuilder.CreateTable(
                 name: "Streams",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Satoshi = table.Column<decimal>(type: "decimal(18,8)", nullable: false),
+                    Satoshi = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsLive = table.Column<bool>(type: "bit", nullable: false),
                     Start = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -92,6 +99,10 @@ namespace Infrastructure.Migrations.ApplicationDb
 
             migrationBuilder.DropTable(
                 name: "Streams");
+
+            migrationBuilder.DropColumn(
+                name: "Satoshi",
+                table: "User");
         }
     }
 }

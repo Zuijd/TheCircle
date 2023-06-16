@@ -14,12 +14,14 @@ namespace DomainServices.Services
     public class StreamService : IStreamService
     {
         private readonly IStreamRepository _streamRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public StreamService(IStreamRepository streamRepository, IHttpContextAccessor httpContextAccessor)
+        public StreamService(IStreamRepository streamRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
         {
             _streamRepository = streamRepository;
             _contextAccessor = httpContextAccessor;
+            _userRepository = userRepository;
         }
 
         public async Task<int> AddStream(dynamic newStreamInfo)
@@ -41,6 +43,11 @@ namespace DomainServices.Services
             TimeSpan timeSpan = TimeSpan.FromMilliseconds(durationStream);
             var satoshi = await this.GetSatoshi(streamId);
             var succes = await this._streamRepository.StopStream(streamId, endStream, timeSpan, satoshi);
+            
+            if(succes) {
+                var username = HttpContext.Session.GetString("Username");
+                await this._userRepository.AddSatoshi(username,satoshi);
+            }
             HttpContext.Session.Remove("StreamId");
             return succes;
         }

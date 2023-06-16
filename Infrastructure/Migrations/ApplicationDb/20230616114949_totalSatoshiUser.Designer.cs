@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230616084859_Info_Streams")]
-    partial class Info_Streams
+    [Migration("20230616114949_totalSatoshiUser")]
+    partial class totalSatoshiUser
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -141,7 +141,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("Live")
+                    b.Property<bool>("IsLive")
                         .HasColumnType("bit");
 
                     b.Property<decimal>("Satoshi")
@@ -151,6 +151,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -171,6 +172,9 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Satoshi")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 

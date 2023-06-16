@@ -31,5 +31,19 @@ namespace Infrastructure.Repositories
                 return false;
             }
         }
+
+        public async Task<bool> AddSatoshi(string username, decimal satoshi)
+        {
+            var user = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
+            if (user == null) { return false; }
+
+            user.Satoshi += satoshi;
+            await _context.SaveChangesAsync();
+
+            var userUpdated = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
+
+            return true;
+        
+        }
     }
 }

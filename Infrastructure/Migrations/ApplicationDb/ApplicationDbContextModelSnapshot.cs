@@ -46,7 +46,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("StreamId");
 
-                    b.ToTable("Break", (string)null);
+                    b.ToTable("Break");
                 });
 
             modelBuilder.Entity("Domain.Live", b =>
@@ -73,7 +73,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("StreamId");
 
-                    b.ToTable("Live", (string)null);
+                    b.ToTable("Live");
                 });
 
             modelBuilder.Entity("Domain.Log", b =>
@@ -97,7 +97,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Log", (string)null);
+                    b.ToTable("Log");
                 });
 
             modelBuilder.Entity("Domain.Message", b =>
@@ -122,7 +122,7 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Message", (string)null);
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("Domain.Streams", b =>
@@ -139,7 +139,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("Live")
+                    b.Property<bool>("IsLive")
                         .HasColumnType("bit");
 
                     b.Property<decimal>("Satoshi")
@@ -149,11 +149,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Streams", (string)null);
+                    b.ToTable("Streams");
                 });
 
             modelBuilder.Entity("Domain.User", b =>
@@ -170,9 +171,12 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("Satoshi")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("Domain.Break", b =>
