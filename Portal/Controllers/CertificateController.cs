@@ -23,8 +23,11 @@
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> TestPost(string message = "test")
+        public async Task<IActionResult> TestPost(TestViewModel testViewModel)
         {
+            Console.WriteLine(testViewModel.subject);
+            Console.WriteLine(testViewModel.message);
+
             ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
             //retrieve private key
             var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
@@ -33,17 +36,17 @@
             var certificate = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "Certificate"));
 
             //create digital signature
-            var digSig = _certificateService.CreateDigSig(message, privateKey);
+            var digSig = _certificateService.CreateDigSig(testViewModel, privateKey);
 
             //call request to service
-            var post = _certificateService.CreatePost(message, digSig, certificate);
+            var serverResponse = _certificateService.CreatePost(testViewModel, digSig, certificate);
 
             ///// * VERIFY REQUEST FROM CREATEPOST * /////
             //retrieve public key from certificate
-            var publicKey = _certificateService.GetPublicKeyOutOfCertificate(post.Certificate);
+            var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
 
             //verify digital signature
-            var isValid = _certificateService.VerifyDigSig(message, digSig, publicKey);
+            var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
 
             //verification is succesful ? perform action : throw corresponding error
             Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");

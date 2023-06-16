@@ -1,4 +1,7 @@
-﻿namespace DomainServices.Services
+﻿using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
+
+namespace DomainServices.Services
 {
     public class CertificateService : ICertificateService
     {
@@ -17,27 +20,19 @@
             //get private key
             return rsa.ExportRSAPrivateKey();
         }
-
-        public byte[] GetPrivateKeyFromServer() 
+        public byte[] GetPrivateKeyFromServer()
         {
-            //read the content of private.key
+            // Read the content of private.key
             string privateKeyPath = "./../Portal/Certificates/private.key";
             string privateKeyPEM = File.ReadAllText(privateKeyPath);
 
-            //remove unnecessery headers
-            privateKeyPEM = privateKeyPEM.Replace("-----BEGIN PRIVATE KEY-----", "")
-                                       .Replace("-----END PRIVATE KEY-----", "")
-                                       .Replace("\n", "")
-                                       .Replace("\r", "");
-
-            //convert the PEM string to a byte array
-            byte[] privateKeyDER = Convert.FromBase64String(privateKeyPEM);
-
-            //load the private key
+            // Load the private key
             RSA privateKeyRSA = RSA.Create();
-            privateKeyRSA.ImportPkcs8PrivateKey(privateKeyDER, out int bytesRead);
 
-            //convert the private key to a PKCS#1-format and return it
+            // Import the private key from the PEM-encoded string
+            privateKeyRSA.ImportFromPem(privateKeyPEM);
+
+            // Convert the private key to PKCS#1 format and return it
             return privateKeyRSA.ExportRSAPrivateKey();
         }
 
@@ -73,7 +68,7 @@
             return certificate.Export(X509ContentType.Cert);
         }
         
-        public byte[] CreateDigSig(string message, byte[] privateKey)
+        public byte[] CreateDigSig(object content, byte[] privateKey)
         {
             //create new rsa crypto service provider
             //used to create new keypairs, encryption and decryption
@@ -82,14 +77,14 @@
             //import the public key
             rsa.ImportRSAPrivateKey(privateKey, out int bytesRead);
 
-            //convert the plaintext message to a byte[]
-            byte[] data = Encoding.UTF8.GetBytes(message);
+            //convert the plaintext object to a byte[]
+            byte[] data = ConvertObjectToByteArray(content);
 
             //using the crypto service provider; sign the digsig
             return rsa.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
-        public bool VerifyDigSig(string message, byte[] signature, byte[] publicKey)
+        public bool VerifyDigSig(object content, byte[] signature, byte[] publicKey)
         {
             //create new rsa crypto service provider
             //used to create new keypairs, encryption and decryption
@@ -99,7 +94,7 @@
             rsa.ImportRSAPublicKey(publicKey, out int bytesRead);
 
             //convert the plaintext message to a byte[]
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+            byte[] messageBytes = ConvertObjectToByteArray(content);
 
             //verify the integrity of the message by hashing the plaintext message and comparing it with the hashed message in the signature
             return rsa.VerifyData(messageBytes, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
@@ -107,22 +102,38 @@
 
         //////////////////  -  DUMMY FUNCTION  -  \\\\\\\\\\\\\\\\\\\\
 
-        public PKC CreatePost(string message, byte[] signature, byte[] certificate)
+        public PKC CreatePost(object content, byte[] signature, byte[] certificate)
         {
             var publicKey = GetPublicKeyOutOfCertificate(certificate);
 
             //verify digital signature
-            var isValid = VerifyDigSig(message, signature, publicKey);
+            var isValid = VerifyDigSig(content, signature, publicKey);
 
             //verification is succesful ? perform action : throw corresponding error
             Console.WriteLine(isValid ? "CLIENT PACKET IS VALID" : "CLIENT PACKET IS INVALID");
 
             return new PKC()
             {
-                Message = message,
-                Signature = CreateDigSig(message, GetPrivateKeyFromServer()),
+                Message = content,
+                Signature = CreateDigSig(content, GetPrivateKeyFromServer()),
                 Certificate = GetCertificateFromServer(),
             };
+        }
+
+        //////////////////  -  HELPER FUNCTION  -  \\\\\\\\\\\\\\\\\\\\
+
+        // Serialize object to byte array
+        public byte[] ConvertObjectToByteArray(object obj)
+        {
+            if (obj == null)
+                return null;
+
+            XmlSerializer serializer = new XmlSerializer(obj.GetType());
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                serializer.Serialize(memoryStream, obj);
+                return memoryStream.ToArray();
+            }
         }
     }
 }

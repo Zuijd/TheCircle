@@ -8,8 +8,8 @@
         byte[] GetPublicKeyOutOfCertificate(byte[] certificateBytes);
         byte[] GetCertificateFromServer();
         byte[] CreateCertificate(string username, string email, RSA rsa);
-        bool VerifyDigSig(string message, byte[] signature, byte[] publicKey);
-        byte[] CreateDigSig(string message, byte[] privateKey);
-        PKC CreatePost(string message, byte[] signature, byte[] certificate);
+        bool VerifyDigSig(object content, byte[] signature, byte[] publicKey);
+        byte[] CreateDigSig(object content, byte[] privateKey);
+        PKC CreatePost(object content, byte[] signature, byte[] certificate);
     }
 }

@@ -3,7 +3,7 @@
     public class PKC
     {
         [Required]
-        public string? Message { get; set; }
+        public object? Message { get; set; }
         [Required]
         public byte[]? Signature { get; set; }
         [Required]

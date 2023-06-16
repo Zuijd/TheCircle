@@ -1,19 +1,18 @@
-﻿@{
-
-}
+﻿@model TestViewModel
 
 <h1>Test</h1>
 <form asp-action="TestPost" asp-controller="Certificate" method="post">
+
     <div>
-        <label for="Subject">Subject:</label>
-        <input type="text" name="subject">
+        <label asp-for="subject">Subject:</label>
+        <input asp-for="subject" class="form-control --input" />
     </div>
+
     <div>
-        <label for="Body">Body:</label>
-        <input type="text" name="body">
+        <label asp-for="message">Message:</label>
+        <input asp-for="message" class="form-control --input" />
     </div>
     <div>
         <button type="submit">Submit</button>
-
     </div>
 </form>
