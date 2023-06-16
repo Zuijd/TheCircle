@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230615132649_added_duration_streams")]
-    partial class added_duration_streams
+    [Migration("20230616084859_Info_Streams")]
+    partial class Info_Streams
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,13 +32,13 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime?>("DateTimeEnd")
+                    b.Property<DateTime>("DateTimeEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateTimeStart")
+                    b.Property<DateTime>("DateTimeStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan?>("Duration")
+                    b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
                     b.Property<int>("StreamId")
@@ -59,13 +59,13 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime?>("DateTimeEnd")
+                    b.Property<DateTime>("DateTimeEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateTimeStart")
+                    b.Property<DateTime>("DateTimeStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan?>("Duration")
+                    b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
                     b.Property<int>("StreamId")
@@ -135,8 +135,8 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
 
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");

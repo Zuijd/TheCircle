@@ -30,13 +30,13 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime?>("DateTimeEnd")
+                    b.Property<DateTime>("DateTimeEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateTimeStart")
+                    b.Property<DateTime>("DateTimeStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan?>("Duration")
+                    b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
                     b.Property<int>("StreamId")
@@ -57,13 +57,13 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime?>("DateTimeEnd")
+                    b.Property<DateTime>("DateTimeEnd")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("DateTimeStart")
+                    b.Property<DateTime>("DateTimeStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<TimeSpan?>("Duration")
+                    b.Property<TimeSpan>("Duration")
                         .HasColumnType("time");
 
                     b.Property<int>("StreamId")
@@ -133,8 +133,8 @@ namespace Infrastructure.Migrations.ApplicationDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("time");
 
                     b.Property<DateTime>("End")
                         .HasColumnType("datetime2");

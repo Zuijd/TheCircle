@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> StopStream(int streamId, DateTime endStream, int durationStream)
+        public async Task<bool> StopStream(int streamId, DateTime endStream, TimeSpan durationStream)
         {
             var stream = await _context.Streams.FindAsync(streamId);
             if (stream == null)
@@ -41,6 +41,7 @@ namespace Infrastructure.Repositories
 
             stream.Live = false;
             stream.End = endStream;
+
             stream.Duration = durationStream;
             try
             {

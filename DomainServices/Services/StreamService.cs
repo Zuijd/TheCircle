@@ -38,7 +38,8 @@ namespace DomainServices.Services
             var streamId = (int) HttpContext.Session.GetInt32("StreamId")!;
             var endStream = DateTime.Parse(streamInfo.GetProperty("endStream").GetString());
             var durationStream = streamInfo.GetProperty("durationStream").GetInt32();
-            var succes = await this._streamRepository.StopStream(streamId, endStream, durationStream);
+            TimeSpan timeSpan = TimeSpan.FromMilliseconds(durationStream);
+            var succes = await this._streamRepository.StopStream(streamId, endStream, timeSpan);
             await this.AddSatoshi(streamId);
             HttpContext.Session.Remove("StreamId");
             return succes;
@@ -70,6 +71,7 @@ namespace DomainServices.Services
         public async Task<bool> AddSatoshi(int streamId)
         {
             var liveList = await this._streamRepository.GetLiveMoments(streamId);
+            if (liveList == null) return false;
            
             foreach (var live in liveList) {
                 satoshi = satoshi + CalculateSatoshi(live.Duration);

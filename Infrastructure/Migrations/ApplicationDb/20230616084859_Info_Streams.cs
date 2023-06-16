@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations.ApplicationDb
 {
-    public partial class Updated_Streams : Migration
+    public partial class Info_Streams : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,11 @@ namespace Infrastructure.Migrations.ApplicationDb
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Satoshi = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Live = table.Column<bool>(type: "bit", nullable: false)
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Live = table.Column<bool>(type: "bit", nullable: true),
+                    Start = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    End = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Duration = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,9 +33,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateTimeStart = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateTimeEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Duration = table.Column<TimeSpan>(type: "time", nullable: true),
+                    DateTimeStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateTimeEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
                     StreamId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -51,9 +55,9 @@ namespace Infrastructure.Migrations.ApplicationDb
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateTimeStart = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DateTimeEnd = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Duration = table.Column<TimeSpan>(type: "time", nullable: true),
+                    DateTimeStart = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateTimeEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Duration = table.Column<TimeSpan>(type: "time", nullable: false),
                     StreamId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
