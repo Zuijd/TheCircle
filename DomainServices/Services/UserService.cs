@@ -114,15 +114,15 @@
                     Email = emailAddress,
                     EmailConfirmed = true,
                     Certificate = certificate,
-                    PrivateKey = _certificateService.getPrivateKey(keyPair),
+                    PrivateKey = _certificateService.GetPrivateKey(keyPair),
                 };
 
                 var result = await _userManager.CreateAsync(user, password);
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddClaimAsync(user, new Claim("PrivateKey", Convert.ToBase64String(_certificateService.getPrivateKey(keyPair))));
-                    await _userManager.AddClaimAsync(user, new Claim("PublicKey", Convert.ToBase64String(_certificateService.getPublicKeyOutOfUserCertificate(certificate))));
+                    await _userManager.AddClaimAsync(user, new Claim("PrivateKey", Convert.ToBase64String(_certificateService.GetPrivateKey(keyPair))));
+                    await _userManager.AddClaimAsync(user, new Claim("PublicKey", Convert.ToBase64String(_certificateService.GetPublicKeyOutOfCertificate(certificate))));
                     await _userManager.AddClaimAsync(user, new Claim("Certificate", Convert.ToBase64String(certificate)));
                 }
 

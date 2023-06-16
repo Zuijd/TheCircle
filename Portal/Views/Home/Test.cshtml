@@ -1,13 +1,9 @@
-﻿@using System.Text;
-@{
-    string privateKey = ViewData["PrivateKey"].ToString().Replace("\n", "").Replace("\r", "");
-    string certificate = ViewData["Certificate"].ToString().Replace("\n", "").Replace("\r", "");
-    string encodedPrivateKey = Convert.ToBase64String(Encoding.UTF8.GetBytes(privateKey));
-    string encodedCertificate = Convert.ToBase64String(Encoding.UTF8.GetBytes(certificate));
+﻿@{
+
 }
 
 <h1>Test</h1>
-<form asp-action="TestPost" asp-controller="Home" id="submit" method="post">
+<form asp-action="TestPost" asp-controller="Certificate" method="post">
     <div>
         <label for="Subject">Subject:</label>
         <input type="text" name="subject">
@@ -17,9 +13,7 @@
         <input type="text" name="body">
     </div>
     <div>
-        <button onclick="createDigSig('hoi', '@encodedPrivateKey')">Submit</button>
-    </div>
+        <button type="submit">Submit</button>
 
-    <input type="hidden" id="signature" name="signature">
-    <input type="hidden" id="certificate" name="certificate" value="@encodedCertificate">
+    </div>
 </form>
