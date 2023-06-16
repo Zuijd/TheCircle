@@ -114,7 +114,7 @@ body {
     margin-top: 10px;
 }
 
-#messagesList {
+.messagesList {
     list-style-type: none;
     border-radius: 5px;
     padding-left: 0px;

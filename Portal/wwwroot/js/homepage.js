@@ -68,16 +68,16 @@
     }
 
     function createChatbox(streamer) {
-        const chatboxContainer = $('<div class="col-md-6 mb-4 chatbox-container"></div>');
+        const chatboxContainer = $(`<div class="col-md-6 mb-4 chatbox-container"></div>`);
 
         var streamerId = streamer.split(" ").pop();
 
         const chatboxTitle = $('<div class="chatbox-title"></div>').text(`Chatbox for ${streamer}`);
-        const chatboxMessages = $(`<ul id="messagesList" data-streamerId=${streamerId}></ul>`);
-        const chatboxInput = $('<input type="text" class="w-100" id="messageInput" /></div>');
+        const chatboxMessages = $(`<ul class="messagesList" id="messagesList${streamerId}"></ul>`);
+        const chatboxInput = $(`<input type="text" class="w-100" id="messageInput${streamerId}" /></div>`);
 
         const inputText = $('<input type="text" placeholder="Type your message..."</input>').addClass('chatbox-input-text');
-        const sendButton = $('<div class="btn" id="sendButton">Send</div>');
+        const sendButton = $(`<div class="btn" id="sendButton${streamerId}">Send</div>`);
 
         chatboxInput.append(inputText);
 

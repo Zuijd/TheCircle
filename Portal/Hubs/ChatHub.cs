@@ -6,7 +6,7 @@ namespace SignalRChat.Hubs
     {
         public async Task SendMessage(string username, string message, string streamUserId)
         {
-            Console.WriteLine("In method SendMessage");
+            Console.WriteLine("In method SendMessage " + streamUserId);
             await Clients.Group(streamUserId).SendAsync("ReceiveMessage", username, message, streamUserId);
         }
         public async Task JoinGroup(string streamUserId)
