@@ -40,8 +40,6 @@ namespace Infrastructure.Repositories
             user.Satoshi += satoshi;
             await _context.SaveChangesAsync();
 
-            var userUpdated = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
-
             return true;
         
         }

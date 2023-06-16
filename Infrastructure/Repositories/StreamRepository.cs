@@ -46,8 +46,6 @@ namespace Infrastructure.Repositories
            
             await _context.SaveChangesAsync();
 
-            //var streamUpdated = await _context.Streams.FindAsync(streamId);
-
             return true;
         }
 

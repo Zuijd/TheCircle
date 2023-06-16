@@ -83,8 +83,7 @@ namespace DomainServices.Services
             foreach (var live in liveList) {
                 satoshi = satoshi + CalculateSatoshi(live.Duration);
                  }
-            return 0.12345678M;
-            //return satoshi;
+            return satoshi;
         }
 
         private const decimal InitialCompensation = 0.00000001M;
