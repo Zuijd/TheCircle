@@ -27,80 +27,18 @@ var endLive
 var startBreak
 var endBreak
 
-
-
-function startStreaming() {
+// HTML Buttons
+function startButton() {
     if (!streamBool) {
-
-
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-            .then(stream => {
-                const videoElement = document.getElementById('video');
-                videoElement.srcObject = stream;
-
-                mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
-
-                mediaRecorder.addEventListener('dataavailable', event => {
-                    recordedChunks.push(event.data);
-                    sendBlob(event.data);
-                });
-
-                mediaRecorder.addEventListener('stop', () => {
-                    const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
-                    const url = URL.createObjectURL(recordedBlob);
-
-                    // const a = document.createElement('a');
-                    // a.href = url;
-                    // a.download = 'stream.webm';
-                    // document.body.appendChild(a);
-                    // a.click();
-
-                    recordedChunks = [];
-                    URL.revokeObjectURL(url);
-                });
-
-                mediaRecorder.start();
-                console.log('Recording started.');
-
-                streamBool = camBool = true;
-                startStream = startLive = new Date();
-                FetchAddStream();
-
-                startTimer();
-
-                //// Trigger the dataavailable event every x seconds
-                //timer = setInterval(() => {
-                //    mediaRecorder.requestData();
-                //}, timerInterval);
-
-
-
-            })
-            .catch(error => {
-                console.error('Error accessing media devices:', error);
-            });
+        streamBool = camBool = true;
+        startStream = startLive = new Date();
+        startStreaming();
+        FetchAddStream();
     }
 }
 
-
-function startTimer() {
-    timer = setInterval(() => {
-        mediaRecorder.requestData();
-    }, timerInterval);
-
-}
-
-function stopStreaming() {
-
+function stopButton() {
     if (streamBool) {
-
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-            mediaRecorder.stop();
-            clearInterval(timer);
-
-            console.log('Recording stopped.');
-        }
-
         if (camBool) {
             endStream = endLive = new Date();
             FetchAddLive()
@@ -108,12 +46,112 @@ function stopStreaming() {
             endStream = endBreak = new Date();
             FetchAddBreak();
         }
-        durationStream = endStream - startStream;
-
-        FetchStopStreaming();
         stopCamera();
-        streamBool = false;
+        stopStreaming();
+        durationStream = endStream - startStream;
+        FetchStopStreaming();
+        streamBool = camBool = false;
     }
+}
+
+function switchCamera() {
+    switch (true) {
+        case camBool && streamBool:
+            // Pauzing stream when live
+            endLive = startBreak = new Date();
+            stopCamera();
+            stopStreaming();
+            camBool = false;
+            console.log('Camera break')
+            FetchAddLive();
+            break;
+        case camBool && !streamBool:
+            // Not streaming, turn camera off
+            stopCamera()
+            camBool = false
+            console.log('Camera OFF')
+            break;
+        case !camBool && streamBool:
+            // Going back live
+            endBreak = startLive = new Date();
+            startStreaming();
+            camBool = true;
+            console.log('Camera wake up')
+            FetchAddBreak();
+            break;
+        case !camBool && !streamBool:
+            // not streaming, turn camera on
+            startCamera();
+            camBool = true
+            console.log('Camera ON')
+            break;
+        default:
+        // code to be executed if no case matches
+    }
+}
+
+function startStreaming() {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+            const videoElement = document.getElementById('video');
+            videoElement.srcObject = stream;
+
+            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
+
+            mediaRecorder.addEventListener('dataavailable', event => {
+                recordedChunks.push(event.data);
+                sendBlob(event.data);
+            });
+
+            mediaRecorder.addEventListener('stop', () => {
+                const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(recordedBlob);
+
+                // const a = document.createElement('a');
+                // a.href = url;
+                // a.download = 'stream.webm';
+                // document.body.appendChild(a);
+                // a.click();
+
+                recordedChunks = [];
+                URL.revokeObjectURL(url);
+            });
+
+            mediaRecorder.start();
+            console.log('Recording started.');
+
+            startTimer();
+
+        })
+        .catch(error => {
+            console.error('Error accessing media devices:', error);
+        });
+
+}
+
+function stopStreaming() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        clearInterval(timer);
+        console.log('Recording stopped.');
+    }
+
+    if (camBool) {
+        endStream = endLive = new Date();
+        FetchAddLive()
+    } else {
+        endStream = endBreak = new Date();
+        FetchAddBreak();
+    }
+    durationStream = endStream - startStream;
+}
+
+function startTimer() {
+    mediaRecorder.requestData();
+
+    timer = setInterval(() => {
+        mediaRecorder.requestData();
+    }, timerInterval);
 
 }
 
@@ -129,7 +167,6 @@ function stopCamera() {
     }
 }
 
-
 function startCamera() {
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
@@ -139,59 +176,6 @@ function startCamera() {
         .catch(error => {
             console.error('Error accessing media devices:', error);
         });
-}
-
-function switchCamera() {
-    switch (true) {
-        case camBool && streamBool:
-            // Nothing should happen, because you are already streaming with camera on
-            endLive = startBreak = new Date();
-            stopCamera();
-            // startBreak()
-            camBool = false;
-            console.log('Camera break')
-            FetchAddLive();
-            break;
-        case camBool && !streamBool:
-            // Camera is already on, so just stop the camera
-            stopCamera()
-            camBool = false
-            console.log('Camera OFF')
-            break;
-        case !camBool && streamBool:
-            // camBool to true & break should end and live should start
-            endBreak = startLive = new Date();
-            //endBreak();
-            startCamera();
-            startTimer();
-            camBool = true;
-            console.log('Camera wake up')
-            FetchAddBreak();
-            break;
-        case !camBool && !streamBool:
-            // camBool to true
-            startCamera();
-            camBool = true
-            console.log('Camera ON')
-            break;
-        default:
-        // code to be executed if no case matches
-    }
-}
-
-function startBreak() {
-    //Put line below in html where you want to display the video
-    //<video id="breakVideo" style="display: none;"></video>
-    // Show the break video
-    //breakVideoElement.src = 'your_break_video_url.mp4'; // Replace with your break video URL or data
-    //breakVideoElement.style.display = 'block';
-    //breakVideoElement.play();
-}
-
-function endBreak() {
-    // Hide the break video
-    //breakVideoElement.style.display = 'none';
-    //breakVideoElement.pause();
 }
 
 
@@ -282,7 +266,7 @@ document.getElementById("sendButton").addEventListener("click", function (event)
 // Fetch calls
 function FetchAddStream() {
     console.log('FetchAddStream: ')
-    
+
     fetch('/stream/AddStream', {
         method: 'POST',
         headers: {
@@ -405,25 +389,25 @@ function FetchAddLive() {
         body: JSON.stringify({
             startLive: startLive,
             endLive: endLive
-            })
         })
-            .then(response => {
-                if (response.ok) {
-                    // Streaming started successfully
-                    console.log('Streaming started!');
-                } else {
-                    // Error occurred
-                    console.error('Failed to start streaming:', response.statusText);
-                }
-            })
-            .then(data => {
-                // Handle the response data here
-                console.log('Response data:', data);
-            })
-            .catch(error => {
-                console.error('An error occurred while starting streaming:', error);
-            });
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
 
-    }
+}
 
 
