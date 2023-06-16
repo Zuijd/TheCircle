@@ -35,7 +35,6 @@ builder.Services.AddScoped<IStreamRepository,StreamRepository>();
 
 // Services 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IStreamService, StreamService>();

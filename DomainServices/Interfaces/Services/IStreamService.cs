@@ -9,11 +9,11 @@ namespace DomainServices.Interfaces.Services
 {
     public interface IStreamService
     {
-        public int AddStream(dynamic streamInfo);
-        public bool StopStream(dynamic streamInfo);
+        public Task<int> AddStream(dynamic streamInfo);
+        public Task<bool> StopStream(dynamic streamInfo);
         public Task<bool> AddLiveMoment(dynamic live);
         public Task<bool> AddBreakMoment(dynamic pauze);
-        public bool AddSatoshi(int streamId);
+        public Task<bool> AddSatoshi(int streamId);
               
     }
 }

@@ -12,21 +12,18 @@ public class StreamController : Controller
     private readonly IMessageService _messageService;
     private readonly IUserService _userService;
     private readonly ILoggerService _logger;
-    private readonly ISatoshiCompensation _satoshiCompensationService;
     private readonly IStreamService _streamService;
 
     public StreamController(
         ILoggerService logger,
         IMessageService messageService,
         IUserService userService,
-        ISatoshiCompensation satoshiCompensationService,
         IStreamService streamService
         )
     {
         _logger = logger;
         _messageService = messageService;
         _userService = userService;
-        _satoshiCompensationService = satoshiCompensationService;
         _streamService = streamService;
     }
 
@@ -78,7 +75,8 @@ public class StreamController : Controller
     {
         try
         {
-            return await this._streamService.AddStream(newStreamInfo);
+            var streamId = await this._streamService.AddStream(newStreamInfo);
+            return Ok(streamId);
         }
         catch (Exception e)
         {
@@ -93,7 +91,8 @@ public class StreamController : Controller
     {
         try
         {
-            return await this._streamService.StopStream(stopStreamInfo);
+            var succes = await this._streamService.StopStream(stopStreamInfo);
+            return Ok(succes);
         }
         catch (Exception e)
         {
@@ -108,7 +107,8 @@ public class StreamController : Controller
     {
         try
         {
-            return await this._streamService.AddBreakMoment(pauze);
+            var succes = await this._streamService.AddBreakMoment(pauze);
+            return Ok(succes);
         }
         catch (Exception e)
         {
@@ -123,7 +123,8 @@ public class StreamController : Controller
     {
         try
         {
-            return await this._streamService.AddLiveMoment(live);
+            var succes = await this._streamService.AddLiveMoment(live);
+            return Ok(succes);
         }
         catch (Exception e)
         {

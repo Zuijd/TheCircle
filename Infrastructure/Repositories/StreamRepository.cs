@@ -21,8 +21,6 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                Console.WriteLine(stream.ToString());
-
                 await _context.Streams.AddAsync(stream);
                 await _context.SaveChangesAsync();
                 return stream.Id;
@@ -57,7 +55,7 @@ namespace Infrastructure.Repositories
             return true;
         }
 
-        public async Task<bool> saveBreakMoment(Break pauze, int streamId)
+        public async Task<bool> saveBreakMoment(Break newBreak, int streamId)
         {
             var stream = await _context.Streams.FindAsync(streamId);
             if (stream == null)
@@ -67,7 +65,7 @@ namespace Infrastructure.Repositories
             }
 
             stream.BreakList ??= new List<Break>();
-            stream.BreakList.Add(pauze);
+            stream.BreakList.Add(newBreak);
 
             await _context.SaveChangesAsync();
 
@@ -93,7 +91,7 @@ namespace Infrastructure.Repositories
 
       
 
-        async Task<bool> IStreamRepository.SaveCompensation()
+        async Task<bool> IStreamRepository.SaveCompensation(decimal satoshi, int streamId)
         {
             var stream = await _context.Streams.FindAsync();
             if (stream == null)
@@ -102,12 +100,25 @@ namespace Infrastructure.Repositories
                 return false;
             }
 
-            //stream.Satoshi = Decimal.Add(stream.Satoshi, compensation);
-            //await _context.SaveChangesAsync();
+            stream.Satoshi = satoshi;
+            await _context.SaveChangesAsync();
 
             return true;
 
 
+        }
+
+        public async Task<List<Live>> GetLiveMoments(int StreamId)
+        {
+            var stream = await _context.Streams.FindAsync(StreamId);
+            if (stream == null)
+            {
+                // Handle the case when the Streams entity with the given streamId doesn't exist
+                return null;
+            }
+
+            var LiveList = stream.LiveList;
+            return LiveList;
         }
     }
 }

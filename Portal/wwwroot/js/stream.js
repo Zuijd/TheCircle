@@ -282,10 +282,7 @@ document.getElementById("sendButton").addEventListener("click", function (event)
 // Fetch calls
 function FetchAddStream() {
     console.log('FetchAddStream: ')
-    console.log('startStream: ' + startStream)
-    console.log('startLive: ' + startLive)
-    console.log('camBool: ' + camBool)
-
+    
     fetch('/stream/AddStream', {
         method: 'POST',
         headers: {
@@ -320,7 +317,6 @@ function FetchAddStream() {
 
 function FetchStopStreaming() {
     console.log('FetchStopStream: ')
-
     console.log('DurationStream: ' + durationStream)
 
     fetch('/stream/StopStream', {

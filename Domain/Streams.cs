@@ -35,9 +35,9 @@ namespace Domain
     public class Live {
         [Required]
         public int Id { get; set; }
-        public DateTime? DateTimeStart { get; set; }
-        public DateTime? DateTimeEnd { get; set; }
-        public TimeSpan? Duration { get; set; }
+        public DateTime DateTimeStart { get; set; }
+        public DateTime DateTimeEnd { get; set; }
+        public TimeSpan Duration { get; set; }
 
         // Foreign key property
         public int StreamId { get; set; }
@@ -56,15 +56,12 @@ namespace Domain
 
     public class Break
     {
-        private dynamic startLive;
-        private dynamic endLive;
-        private dynamic durationLive;
-
+      
         [Required]
         public int Id { get; set; }
-        public DateTime? DateTimeStart { get; set; }
-        public DateTime? DateTimeEnd { get; set;}
-        public TimeSpan? Duration { get; set; }
+        public DateTime DateTimeStart { get; set; }
+        public DateTime DateTimeEnd { get; set;}
+        public TimeSpan Duration { get; set; }
 
         // Foreign key property
         public int StreamId { get; set; }
@@ -73,11 +70,11 @@ namespace Domain
         public Streams Stream { get; set; }
         public Break() { }
         
-        public Break(DateTime startLive, DateTime endLive, dynamic durationLive)
+        public Break(DateTime startBreak, DateTime endBreak, dynamic durationBreak)
         {
-            this.startLive = startLive;
-            this.endLive = endLive;
-            this.durationLive = durationLive;
+            this.DateTimeStart = startBreak;
+            this.DateTimeEnd = endBreak;
+            this.Duration = durationBreak;
         }
     }
 }

@@ -13,7 +13,11 @@ namespace DomainServices.Interfaces.Repositories
         public Task<bool> StopStream(int streamId, DateTime endStream, int durationStream);
         public Task<bool> saveLiveMoment(Live live,int streamId);
         public Task<bool> saveBreakMoment(Break pauze, int streamId);
-        public Task<bool> SaveCompensation();
+        public Task<bool> SaveCompensation(decimal satoshi, int streamId);
+
+
+        public Task<List<Live>> GetLiveMoments(int StreamId);
+
     }
 }
 
