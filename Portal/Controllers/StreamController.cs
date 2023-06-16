@@ -110,7 +110,7 @@ public class StreamController : Controller
         try
         {
             var succes = await this._streamService.AddBreakMoment(pauze);
-            _logger.Log("User started a break and is no longer live!");
+            _logger.Log("User is back live after a break!");
             return Ok(succes);
         }
         catch (Exception e)
@@ -127,7 +127,7 @@ public class StreamController : Controller
         try
         {
             var succes = await this._streamService.AddLiveMoment(live);
-            _logger.Log("User ended a break and is back live!");
+            _logger.Log("User started a break and is no longer live!");
             return Ok(succes);
         }
         catch (Exception e)
