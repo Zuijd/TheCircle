@@ -1,7 +1,16 @@
+using DomainServices.Interfaces.Hubs;
+using DomainServices.Interfaces.Repositories;
+using Infrastructure.Repositories;
+using Portal.Hubs;
+
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationConnectionString")));
-builder.Services.AddDbContext<SecurityDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SecurityConnectionString")));
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationConnectionString")));
+builder.Services.AddDbContext<SecurityDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SecurityConnectionString")));
 
 builder.Services.AddIdentity<UserIdentity, IdentityRole>(options =>
 {
@@ -13,9 +22,20 @@ builder.Services.AddIdentity<UserIdentity, IdentityRole>(options =>
     options.SignIn.RequireConfirmedAccount = false;
 }).AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<UserIdentity>>().AddDefaultTokenProviders();
 
+
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+// Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ILoggerRepository, LoggerRepository>();
+
+// Services 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
+builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
+builder.Services.AddScoped<ILoggerService, LoggerService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -25,6 +45,26 @@ builder.Services.AddAuthentication("CookieAuth")
     });
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+    options.MaximumReceiveMessageSize = null;
+});
+
+builder.Services.AddScoped<IStreamRepository>(sp =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
+    return new StreamRepository(connectionString);
+});
+
+// Logging configurations
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Services.AddHttpContextAccessor();
+
+// Session configuration
+builder.Services.AddSession();
+builder.Services.AddDistributedMemoryCache();
 
 var app = builder.Build();
 
@@ -39,19 +79,19 @@ else
     app.UseHsts();
 }
 
-void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-{
-    app.UseMiddleware<PreventAccess>();
-    app.UseMiddleware<TLSAccess>();
-}
-
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseCookiePolicy();
+app.UseSession();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<StreamHub>("/streamHub");
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();

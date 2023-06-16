@@ -1,17 +1,27 @@
-﻿namespace Portal.Controllers
+﻿using System.Diagnostics;
+using DomainServices.Interfaces.Repositories;
+using Microsoft.AspNetCore.Mvc;
+using Portal.Models;
+using Microsoft.Extensions.Logging;
+using DomainServices.Interfaces.Services;
+
+namespace Portal.Controllers
 {
     [TLSAccess]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILoggerService _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IHttpContextAccessor httpContextAccessor, ILoggerService logger)
         {
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
+            _logger.Log("User has accessed the home page!");
             return View();
         }
 

@@ -1,18 +1,24 @@
-﻿namespace DomainServices.Services
+﻿using Domain;
+using DomainServices.Interfaces.Repositories;
+using System.Diagnostics;
+
+namespace DomainServices.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<UserIdentity> _userManager;
-        private readonly SignInManager<UserIdentity> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly IUserRepository _userRepository;
         private readonly ICertificateService _certificateService;
 
-        public UserService(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager, ICertificateService certificateService)
+        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUserRepository userRepository, ICertificateService certificateService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _userRepository = userRepository;
             _certificateService = certificateService;
         }
-
+        
         public async Task<UserIdentity> GetUser(string name)
         {
             return await _userManager.FindByNameAsync(name);
@@ -57,12 +63,14 @@
             if (username == null)
             {
                 exceptions.Add(new KeyException("Username", "Username is required!"));
-            } else
+            }
+            else
             {
                 if (username.Length < 6)
                 {
                     exceptions.Add(new KeyException("Username", "The username should be a at least 6 characters long!"));
-                } else
+                }
+                else
                 {
                     var userExistsUsername = await _userManager.FindByNameAsync(username);
 
@@ -72,16 +80,18 @@
                     }
                 }
             }
-            
+
             if (emailAddress == null)
             {
                 exceptions.Add(new KeyException("EmailAddress", "Email address is required!"));
-            } else
+            }
+            else
             {
                 if (!EmailValidation(emailAddress))
                 {
                     exceptions.Add(new KeyException("EmailAddress", "The emailaddress is not valid!"));
-                } else
+                }
+                else
                 {
                     var userExistsEmailAddress = await _userManager.FindByEmailAsync(emailAddress);
 
@@ -95,7 +105,8 @@
             if (password == null)
             {
                 exceptions.Add(new KeyException("Password", "Password is required!"));
-            } else
+            }
+            else
             {
                 if (!PasswordValidation(password))
                 {
@@ -118,6 +129,10 @@
                 };
 
                 var result = await _userManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    await _userRepository.CreateUser(new User { Name = username, Email = emailAddress });
+                }
 
                 if (result.Succeeded)
                 {
@@ -175,5 +190,7 @@
 
             throw new KeyException($"No{claimType}Claim", $"No {claimType} claim present");
         }
+
+        public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
     }
 }
