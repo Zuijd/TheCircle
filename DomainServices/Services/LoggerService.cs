@@ -1,7 +1,6 @@
 ﻿using DomainServices.Interfaces.Repositories;
 using DomainServices.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
