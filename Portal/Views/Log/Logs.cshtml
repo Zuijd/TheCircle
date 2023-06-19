@@ -1,0 +1,34 @@
+@model List<Log>
+
+<h1>Logs</h1>
+<form asp-action="Logs" asp-controller="Log" method="post" class="form-inline my-2 my-lg-0" >
+    <input class="form-control mr-sm-2" type="search" name="username" placeholder="Search on user" aria-label="Search">
+    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+</form>
+
+
+@if(Model.Count == 0)
+{
+    <p>No Logs found, try again at a later time!</p>
+} else
+{
+    <table class="table">
+            <th>
+                <tr>
+                    <td>Username</td>
+                    <td>Message</td>
+                    <td>TimeStamp</td>
+                </tr>
+            </th>
+            <tbody>
+            @foreach (var log in Model)
+            {
+                <tr>
+                    <td>@log.Username</td>
+                    <td>@log.Message</td>
+                    <td>@log.Timestamp</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
