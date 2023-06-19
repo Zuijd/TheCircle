@@ -60,17 +60,6 @@ namespace Portal.Controllers
 
                     //verification is succesful ? perform action : throw corresponding error
                     Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
-
-                    //Console.WriteLine(chatViewModel.);
-                    // Message message = new()
-                    // {
-                    //     User = _userService.GetUserByName(User.Identity?.Name!).Result,
-                    //     MessageBody = chatViewModel.Message!
-                    // };
-
-
-                    // await _messageService.CreateMessage(message);
-
                 }
             }
             catch (Exception e)
