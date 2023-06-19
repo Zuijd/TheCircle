@@ -9,7 +9,6 @@ namespace Portal.Controllers
 {
     public class HomeController : Controller
     {
-     
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILoggerService _logger;
 

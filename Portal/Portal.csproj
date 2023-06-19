@@ -23,6 +23,7 @@
     <ProjectReference Include="..\DomainServices\DomainServices.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <None Include="wwwroot\assets\circle.png" />
   </ItemGroup>
 
 </Project>

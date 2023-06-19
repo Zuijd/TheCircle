@@ -6,6 +6,11 @@ const connectionStream = new signalR.HubConnectionBuilder()
 
 let mediaSource;
 let sourceBuffer;
+<<<<<<< HEAD
+=======
+let receivedChunks = [];
+let watcherCount = 0;
+>>>>>>> origin/feature-uiIntegrations
 
 connectionStream.on("ReceiveChunk", (chunk) => {
     const uint8Array = base64ToBytes(chunk);
@@ -17,14 +22,45 @@ connectionStream.on("ReceiveChunk", (chunk) => {
     appendToStream(blob);
 });
 
+<<<<<<< HEAD
 async function appendToStream(blob) {
     if (!sourceBuffer || sourceBuffer.updating) {
         return;
+=======
+connection.on('UpdateWatcherCount', (count) => {
+    watcherCount = count;
+    updateWatcherCountUI();
+})
+
+connection.start()
+    .then(() => {
+        console.log('Connection established.');
+    })
+    .catch(error => {
+        console.error('Error starting the signaling connection:', error);
+    });
+
+function handleSourceOpen() {
+    sourceBuffer = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+    appendNextChunk();
+}
+
+function appendNextChunk() {
+    if (sourceBuffer && !sourceBuffer.updating && receivedChunks.length > 0) {
+        const chunk = receivedChunks.shift();
+        const uint8Array = base64ToBytes(chunk);
+        const chunkData = new Uint8Array(uint8Array.buffer);
+        sourceBuffer.appendBuffer(chunkData);
+>>>>>>> origin/feature-uiIntegrations
     }
 
     const vidBuff = await blob.arrayBuffer();
 
     sourceBuffer.appendBuffer(vidBuff);
+}
+function updateWatcherCountUI() {
+    const watcherCountElement = document.getElementById('watcherCount');
+    watcherCountElement.textContent = (watcherCount - 1).toString();
 }
 
 function base64ToBytes(base64) {

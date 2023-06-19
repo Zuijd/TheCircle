@@ -3,48 +3,28 @@
 }
 
 
-<head>
+﻿<head>
     <meta charset="UTF-8">
     <title>Stream</title>
-    <!-- Include necessary libraries -->
-    <script src="~/js/signalr/dist/browser/signalr.js"></script>
 </head>
 
 <body>
-    <video id="video" width="640" height="480" autoplay></video>
-
+    
+<div class="container">
+    <div class="row">
+        <video></video>
+        <button id="startStreamBtn" class="btn btn-success">Start Streaming</button>
+    </div>
+    
     <button onclick="startStreaming()">Start Streaming</button>
     <button onclick="stopStreaming()">Stop Streaming</button>
-  
-<img src="" alt="">
-  
-@* chat *@
-<div class="container">
-    <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6 text-end">
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <hr />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
+
+    <a>ADD CHAT</a>
 </div>
 
-    <!-- Include the stream.js file -->
-    <script src="/js/stream.js"></script>
 </body>
+
+@section Scripts {
+    <script src="~/js/stream.js" asp-append-version="true"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+}
