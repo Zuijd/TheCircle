@@ -1,76 +1,83 @@
 "use strict";
 
 var chatConnection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-var container = document.getElementById('stream-container');
-var username = container.getAttribute('data-user');
 
-// Get current URL
-var currentUrl = window.location.href;
+var currentUser = document.getElementById('stream-container').getAttribute('data-user');
+var path = window.location.pathname.split("/").pop();
 
-// Create a new URL object
-var url = new URL(currentUrl);
+chatConnection.on("ReceiveMessage", function (message, username, streamUser) {
 
-// Extract the parameter value
-var streamerParam = url.pathname.split('/').pop();
-
-console.log(streamerParam);
-
-chatConnection.on("ReceiveMessage", function (user, message, streamUser) {
-    console.log("Recieved message " + user + " " + message + " " + streamUser);
+    console.log("RECEIVED MESSAGE")
+    if (streamUser == "Stream") {
+        streamUser = path;
+    }
+    
+    console.log("Received message from " + username + ": " + message + " (stream: " + streamUser + ")");
 
     var li = document.createElement("li");
     var messagesList = document.getElementById(`messagesList`);
 
-    console.log(streamerParam + streamUser);
-
-    if (streamerParam === streamUser) {
-        li.innerHTML = `<b>${user}</b>: ${message}`;
-        li.id = 'message';
-        messagesList.appendChild(li)
-    }
+    li.innerHTML = `<b>${username}</b>: ${message}`;
+    li.id = 'message';
+    messagesList.appendChild(li)
 });
-
-chatConnection.start().then(function () {
-    $(`#sendButton`).prop('disabled', false);
-    //document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-});
-
-$(`#sendButton`).prop('disabled', true);
 
 
 $(document).on("click", `#sendButton`, function (event) {
 
+    var streamUser = path == "Stream" ? currentUser : path;
+    
     var message = document.getElementById(`messageInput`).value;
 
-    chatConnection.invoke("JoinGroup", streamerParam).catch(function (err) {
-        return console.error(err.toString());
-    });
-    chatConnection.invoke("SendMessage", username, message, streamerParam).catch(function (err) {
+    console.log("message: ", message);
+    console.log("Currentuser: ", currentUser);
+    console.log("StreamUser: ", streamUser);
+    
+    chatConnection.invoke("SendMessage", message, currentUser, streamUser).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
 
-    var ChatViewModel = {
-        Message: $(`#messageInput`).val(),
-        ViewName: document.getElementById("viewName").value
-    };
+    
+    //var ChatViewModel = {
+    //    Message: $(`#messageInput`).val(),
+    //    ViewName: document.getElementById("viewName").value
+    //};
 
+    //var JSONData = JSON.stringify(ChatViewModel);
 
-    var JSONData = JSON.stringify(ChatViewModel);
-
-    $.ajax({
-        url: '/Chat/Message',
-        data: JSONData,
-        type: "Post",
-        contentType: 'application/json;charset=utf-8',
-        success: function (result) {
-            console.log("d")
-        },
-        error: function (result) {
-            window.alert("oh");
-        }
-    });
+    //$.ajax({
+    //    url: '/Chat/Message',
+    //    data: JSONData,
+    //    type: "Post",
+    //    contentType: 'application/json;charset=utf-8',
+    //    success: function (result) {
+    //        console.log("Succes sending message")
+    //    },
+    //    error: function (result) {
+    //        window.alert("Error sending message");
+    //    }
+    //});
 });
 
+chatConnection.start()
+    .then(() => {
+
+        if (path.toLowerCase() != "stream") {
+            chatConnection.invoke("JoinGroup", path).catch(err => {
+                console.log(err)
+            })
+        } else {
+            chatConnection.invoke("JoinGroup", currentUser).catch(err => {
+                console.log(err)
+            })
+        }
+
+        $(`#sendButton`).prop('disabled', false);
+
+        console.log("Connection established.");
+
+        //document.getElementById("sendButton").disabled = false;
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });

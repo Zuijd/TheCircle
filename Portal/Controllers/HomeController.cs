@@ -21,12 +21,12 @@ public class HomeController : Controller
         _messageService = messageService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         string username = User.Identity?.Name!; // Retrieve the username from the user identity
         ViewBag.Username = username; // Pass the username to the ViewBag
-
-        var users = _userService.GetAllUsers().Result;
+        
+        var users = await _userService.GetAllUsers();
         ViewBag.Users = users;
 
         return View();

@@ -41,6 +41,8 @@ public class StreamController : Controller
         }
         
         _logger.Log($"User has accessed {nameof(Watch)}");
+
+        ViewBag.UserName = User.Identity?.Name!;
         return View();
     }
 

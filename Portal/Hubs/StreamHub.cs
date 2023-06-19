@@ -11,7 +11,6 @@ namespace Portal.Hubs
         {
             var httpContext = Context.GetHttpContext();
             var userName = httpContext!.User.Identity!.Name;
-            Console.WriteLine(userName);
 
             await Clients.Group(userName).SendAsync("ReceiveChunk", chunk);
         }

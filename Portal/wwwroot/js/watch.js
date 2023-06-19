@@ -42,7 +42,7 @@ function base64ToBytes(base64) {
 connectionStream.start()
     .then(() => {
 
-        var userName = window.location.pathname.split("/")[3];
+        var userName = window.location.pathname.split("/").pop();
 
         if (!userName) {
             window.location.replace("/stream/watch/404");

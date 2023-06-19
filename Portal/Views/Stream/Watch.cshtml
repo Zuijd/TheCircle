@@ -8,7 +8,7 @@
     <title>Live Stream Viewer</title>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="stream-container" data-user="@ViewBag.Username">
         <a href="/" class="btn btn-primary mb-3">Terug</a>
         <div class="row g-0">
             <div class="col-md">
@@ -17,7 +17,26 @@
                 </div>
             </div>
             <div class="col-sm bg-secondary">
-                Chat here
+                <div class="row p-1">
+                    <div class="col-1">Message</div>
+                    <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
+                </div>
+                <div class="row p-1">
+                    <div class="col-6 text-end">
+                        <input type="button" id="sendButton" value="Send Message" />
+                    </div>
+                </div>
+                <div class="row p-1">
+                    <div class="col-6">
+                        <hr />
+                    </div>
+                </div>
+                <div class="row p-1">
+                    <div class="col-6">
+                        <ul id="messagesList"></ul>
+                    </div>
+                </div>
+                <input type="hidden" id="viewName" value="Watch">
             </div>
         </div>
     </div>
@@ -28,4 +47,5 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="/js/watch.js"></script>
+    <script src="/js/chat.js"></script>
 }
