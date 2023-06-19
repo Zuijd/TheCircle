@@ -1,40 +1,5 @@
 "use strict";
 
-$(document).ready(function () {
-  $("#startStreamBtn").click(function () {
-    var button = $(this);
-    var streamBox = $("#streamBox");
-    var circleImage = $("#circleImage");
-    var chatBox = $("#chatBox");
-
-    if (button.hasClass("btn-success")) {
-      button
-        .removeClass("btn-success")
-        .addClass("btn-danger")
-        .text("Stop Streaming");
-      streamBox.show();
-      circleImage.hide();
-      startStreaming();
-      chatBox.show();
-    } else {
-      button
-        .removeClass("btn-danger")
-        .addClass("btn-success")
-        .text("Start Streaming");
-      streamBox.hide();
-      circleImage.show();
-      stopStreaming();
-      chatBox.hide();
-    }
-  });
-});
-
-let mediaRecorder;
-let recordedChunks = [];
-let timer;
-const timerInterval = 5000;
-let watcherCount = 0;
-
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 document.getElementById("sendButton").disabled = true;
@@ -54,11 +19,6 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     });
     event.preventDefault();
 });
-
-function updateWatcherCountUI() {
-  const watcherCountElement = document.getElementById("watcherCount");
-  watcherCountElement.textContent = (watcherCount - 1).toString();
-}
 
 connection.start()
     .then(() => {

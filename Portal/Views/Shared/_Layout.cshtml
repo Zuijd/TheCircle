@@ -25,11 +25,15 @@
                     <ul class="navbar-nav flex-grow-1">
 
                         <li class="nav-item">
-                            <img src="./assets/circle.png" style="width: 50px; height: 50px;">
+                            <img src="/assets/circle.png" style="width: 50px; height: 50px;">
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">View streams</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Watch</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Stream" asp-action="Index">Stream</a>
                         </li>
 
                         @if (SignInManager.IsSignedIn(User))
@@ -49,11 +53,6 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Register">Register</a>
                             </li>
                         }
-
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Stream" asp-action="Index">Start streaming</a>
-                        </li>
-                
                     </ul>
                 </div>
             </div>
@@ -65,11 +64,11 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+@*    <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2023
         </div>
-    </footer>
+    </footer>*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     

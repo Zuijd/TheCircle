@@ -1,10 +1,6 @@
-
 @{
-  ViewData["Title"] = "Watch Stream";
+    ViewData["Title"] = "Watch Stream";
 }
-
-@model ChatViewModel
-
 
 <!DOCTYPE html>
 <html>
@@ -12,34 +8,18 @@
     <title>Live Stream Viewer</title>
 </head>
 <body>
-    <h1>Live Stream Viewer</h1>
-     <video id="video" type="video/webm; codecs=vp9" autoplay controls></video>
-
-    @* chat *@
     <div class="container">
-        <div class="row p-1">
-            <div class="col-1">Message</div>
-            <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-        </div>
-        <div class="row p-1">
-            <div class="col-6 text-end">
-                <input type="button" id="sendButton" value="Send Message" />
-            </div>
-        </div>
-        <div class="container">
-            <h1>Chats</h1>
-            <div class="row p-1">
-                <div class="col-6">
-                    <hr />
+        <a href="/" class="btn btn-primary mb-3">Terug</a>
+        <div class="row g-0">
+            <div class="col-md">
+                <div class="ratio ratio-4x3">
+                    <video id="video" height="480" autoplay controls></video>
                 </div>
             </div>
-            <div class="row p-1">
-                <div class="col-6">
-                    <ul id="messagesList"></ul>
-                </div>
+            <div class="col-sm bg-secondary">
+                Chat here
             </div>
         </div>
-        <partial name="_Chat" model="@Model"></partial>
     </div>
 </body>
 </html>
@@ -48,28 +28,4 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="/js/watch.js"></script>
-    <script>
-        $(function () {
-            $("#sendButton").click(function () {
-                var ChatViewModel = {
-                    Message: $("#messageInput").val()
-                };
-
-                var JSONData = JSON.stringify(ChatViewModel);
-
-                $.ajax({
-                    url: "@Url.Action("Message","Stream")",
-                    data: JSONData,
-                    type: "Post",
-                    contentType: 'application/json;charset=utf-8',
-                    succes: function (result) {
-                        console.log("d")
-                    },
-                    error: function (result) {
-                        window.alert("oh");
-                    }
-                });
-            });
-        })
-    </script>
 }

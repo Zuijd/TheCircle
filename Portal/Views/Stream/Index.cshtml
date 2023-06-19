@@ -1,30 +1,40 @@
 @{
-  ViewData["Title"] = "Stream";
+    ViewData["Title"] = "Stream";
 }
 
-
-﻿<head>
+﻿
+<head>
     <meta charset="UTF-8">
     <title>Stream</title>
 </head>
 
 <body>
-    
-<div class="container">
-    <div class="row">
-        <video></video>
-        <button id="startStreamBtn" class="btn btn-success">Start Streaming</button>
-    </div>
-    
-    <button onclick="startStreaming()">Start Streaming</button>
-    <button onclick="stopStreaming()">Stop Streaming</button>
 
-    <a>ADD CHAT</a>
-</div>
+    <div class="container">
+        <div class="row g-0">
+            <h1>Streaming as @ViewBag.UserName </h1>
+            <div class="row g-0">
+                <div class="col-md">
+                    <div class="ratio ratio-4x3">
+                        <video id="video" height="480" autoplay controls></video>
+                    </div>
+                </div>
+                <div class="col-sm bg-secondary">
+                    Chat here
+                </div>
+            </div>
+            <div class="mt-2">
+                <div class="btn-group" role="group">
+                    <button type="button" id="startStreamBtn" onclick="startStreaming()" class="btn btn-success">Start Streaming</button>
+                    <button type="button" id="stopStreamBtn" onclick="stopStreaming()" class="btn btn-danger">Stop Streaming</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 
 @section Scripts {
-    <script src="~/js/stream.js" asp-append-version="true"></script>
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/stream.js" asp-append-version="true"></script>
 }
