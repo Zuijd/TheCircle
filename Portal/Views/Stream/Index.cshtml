@@ -1,5 +1,6 @@
 @{
   ViewData["Title"] = "Stream";
+    var username = User.Identity?.Name;
 }
 
 
@@ -21,11 +22,7 @@
 <img src="" alt="">
   
 @* chat *@
-<div class="container">
-    <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" /></div>
-    </div>
+<div class="container" id="stream-container" data-user="@username">
     <div class="row p-1">
         <div class="col-1">Message</div>
         <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
@@ -45,8 +42,14 @@
             <ul id="messagesList"></ul>
         </div>
     </div>
+    <input type="hidden" id="viewName" value="Stream Index">
 </div>
+</body>
 
+
+@section Scripts{
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="/js/chat.js"></script>
     <!-- Include the stream.js file -->
     <script src="/js/stream.js"></script>
-</body>
+} 

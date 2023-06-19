@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Domain;
 using DomainServices.Interfaces;
@@ -36,35 +37,6 @@ public class StreamController : Controller
     {
         _logger.Log($"User has accessed {nameof(Watch)}");
         return View();
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
-    {
-        try
-        {
-
-            if (ModelState.IsValid)
-            {
-
-                Message message = new()
-                {
-                    User = await _userService.GetUserByName(User.Identity?.Name!),
-                    MessageBody = chatViewModel.Message!
-                };
-
-                await _messageService.CreateMessage(message);
-                _logger.Log("User created message!");
-
-            }
-        }
-        catch (Exception e)
-        {
-
-            ModelState.AddModelError(e.Message, e.Message);
-        }
-
-        return PartialView("_Chat");
     }
 
     // Cals for the stream.js file to save ongoing streams
@@ -135,5 +107,4 @@ public class StreamController : Controller
             return BadRequest(e.Message);
         }
     }
-
 }
