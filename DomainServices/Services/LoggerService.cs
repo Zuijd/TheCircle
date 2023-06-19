@@ -30,8 +30,17 @@ namespace DomainServices.Services
         {
             _loggerRepository.addLog(new Log(_user, message));
         }
+        
+        public async Task<List<Log>> GetAll() {
+            return await _loggerRepository.GetAll();
+        }
 
-        private string GetUserNameFromSession() 
+        public async Task<List<Log>> GetAllFromUsername(string username)
+        {
+            return await _loggerRepository.GetAllFromUsername(username);
+        }
+
+        public string GetUserNameFromSession() 
         {
             var httpContext = _httpContextAccessor.HttpContext;
             if (httpContext != null)

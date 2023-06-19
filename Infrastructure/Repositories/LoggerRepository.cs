@@ -1,13 +1,3 @@
-using Domain;
-using DomainServices.Interfaces.Repositories;
-using Infrastructure.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Infrastructure.Repositories
 {
     public class LoggerRepository : ILoggerRepository
@@ -30,6 +20,27 @@ namespace Infrastructure.Repositories
             {
                 return false;
             }
+        }
+
+        public async Task<List<Log>> GetAll()
+        {
+            return await _context.Log
+                .OrderByDescending(u => u.Timestamp)
+                .ToListAsync();
+        }
+
+        public async Task<List<Log>> GetAllFromUsername(string username)
+        {
+
+            if(username == null)
+            {
+                return await GetAll();
+            }
+
+            return await _context.Log
+                .Where(u => u.Username.Equals(username))
+                .OrderByDescending(u => u.Timestamp)
+                .ToListAsync();
         }
     }
 }
