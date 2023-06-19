@@ -1,37 +1,20 @@
 ﻿@* Former Watch page *@
 @{
-    var username = User.Identity?.Name;
+    var loggedInUser = User.Identity?.Name;
 }
 
-<div class="container" id="stream-container" data-user="@username">
+<div class="container" id="stream-container" data-user="@loggedInUser">
     <div class="row">
         <div id="streamSelectorBox" class="col">
             <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
             <div class="streams-container" id="streams-container" data-user="@ViewBag.Username">
-                <div class="stream">
-                    <input type="checkbox" id="streamer 1" value="streamer 1">
-                    <label for="streamer 1">Streamer 1</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 2" value="streamer 2">
-                    <label for="streamer 2">Streamer 2</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 3" value="streamer 3">
-                    <label for="streamer 3">Streamer 3</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 4" value="streamer 4">
-                    <label for="streamer 4">Streamer 4</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 5" value="streamer 5">
-                    <label for="streamer 5">Streamer 5</label>
-                </div>
-                <div class="stream">
-                    <input type="checkbox" id="streamer 6" value="streamer 6">
-                    <label for="streamer 6">Streamer 6</label>
-                </div>
+                @foreach (var user in @ViewBag.Users)
+                {
+                    <div class="stream">
+                        <input type="radio" name="streamerButton" id="@user.Name" value="@user.Name">
+                        <label for="@user.Name">@user.Name</label>
+                    </div>
+                }
                 <!-- Add more streams as needed -->
             </div>
         </div>

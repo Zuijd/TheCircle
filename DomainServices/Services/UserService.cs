@@ -156,6 +156,8 @@ namespace DomainServices.Services
             return mailRegex.IsMatch(email);
         }
         public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
+        public async Task<List<User>> GetAllUsers() => await _userRepository.GetAllUsers();
+
 
     }
 }

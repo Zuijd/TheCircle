@@ -23,6 +23,10 @@ public class HomeController : Controller
     {
         string username = User.Identity?.Name!; // Retrieve the username from the user identity
         ViewBag.Username = username; // Pass the username to the ViewBag
+
+        var users = _userService.GetAllUsers().Result;
+        ViewBag.Users = users;
+
         return View();
     }
 
