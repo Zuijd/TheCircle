@@ -61,6 +61,7 @@ function switchCamera() {
             endLive = startBreak = new Date();
             stopCamera();
             stopStreaming();
+            startBreakVideo();
             camBool = false;
             console.log('Camera break')
             FetchAddLive();
@@ -74,6 +75,7 @@ function switchCamera() {
         case !camBool && streamBool:
             // Going back live
             endBreak = startLive = new Date();
+            endBreakVideo();
             startStreaming();
             camBool = true;
             console.log('Camera wake up')
@@ -88,6 +90,39 @@ function switchCamera() {
         default:
         // code to be executed if no case matches
     }
+}
+
+async function startBreakVideo() {
+    console.log('startBreakVideo() is called');
+    var breakImageUrl = "/images/break.jpg";
+
+    var videoElement = document.getElementById("video");
+
+    // Set the source of the video element to the break image URL
+    videoElement.src = breakImageUrl;
+
+    // Show the video element
+    videoElement.style.display = "block";
+
+    // Remove any existing image element
+    var imageElement = document.querySelector("img");
+    if (imageElement) {
+        imageElement.remove();
+    }
+}
+
+async function endBreakVideo() {
+    console.log('endBreakVideo() is called');
+    var videoElement = document.getElementById("video");
+
+    // Pause the video
+    videoElement.pause();
+
+    // Reset the source of the video element
+    videoElement.src = "";
+
+    // Hide the video element
+    videoElement.style.display = "none";
 }
 
 function startStreaming() {
