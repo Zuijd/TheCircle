@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Identity
 
-@inject SignInManager<IdentityUser> SignInManager
+@inject SignInManager<UserIdentity> SignInManager
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,6 +29,9 @@
 
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Stream" asp-action="Index">Start streaming</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Stream" asp-action="Index">Stream</a>
                         </li>
                         @if (SignInManager.IsSignedIn(User))
                         {

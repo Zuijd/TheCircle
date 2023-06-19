@@ -1,20 +1,25 @@
-﻿using Domain;
-using DomainServices.Interfaces.Repositories;
-using System.Diagnostics;
+﻿using DomainServices.Interfaces.Repositories;
 
 namespace DomainServices.Services
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<UserIdentity> _userManager;
+        private readonly SignInManager<UserIdentity> _signInManager;
         private readonly IUserRepository _userRepository;
+        private readonly ICertificateService _certificateService;
 
-        public UserService(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUserRepository userRepository)
+        public UserService(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager, IUserRepository userRepository, ICertificateService certificateService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userRepository = userRepository;
+            _certificateService = certificateService;
+        }
+        
+        public async Task<UserIdentity> GetUser(string name)
+        {
+            return await _userManager.FindByNameAsync(name);
         }
 
         public async Task<bool> LoginUserAsync(string username, string password)
@@ -109,17 +114,29 @@ namespace DomainServices.Services
 
             if (exceptions.Count == 0)
             {
-                var user = new IdentityUser
+                var keyPair = _certificateService.CreateKeyPair();
+                var certificate = _certificateService.CreateCertificate(username!, emailAddress!, keyPair!);
+
+                var user = new UserIdentity
                 {
                     UserName = username,
                     Email = emailAddress,
                     EmailConfirmed = true,
+                    Certificate = certificate,
+                    PrivateKey = _certificateService.GetPrivateKey(keyPair),
                 };
 
                 var result = await _userManager.CreateAsync(user, password);
                 if (result.Succeeded)
                 {
                     await _userRepository.CreateUser(new User { Name = username, Email = emailAddress });
+                }
+
+                if (result.Succeeded)
+                {
+                    await _userManager.AddClaimAsync(user, new Claim("PrivateKey", Convert.ToBase64String(_certificateService.GetPrivateKey(keyPair))));
+                    await _userManager.AddClaimAsync(user, new Claim("PublicKey", Convert.ToBase64String(_certificateService.GetPublicKeyOutOfCertificate(certificate))));
+                    await _userManager.AddClaimAsync(user, new Claim("Certificate", Convert.ToBase64String(certificate)));
                 }
 
                 return result.Succeeded;
@@ -155,7 +172,23 @@ namespace DomainServices.Services
 
             return mailRegex.IsMatch(email);
         }
-        public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
 
+        public async Task<string> GetSpecificClaim(string username, string claimType)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            var claim = claims.FirstOrDefault(claim => claim.Type.Equals(claimType));
+
+            if (claim != null)
+            {
+                return claim.Value;
+            }
+
+            throw new KeyException($"No{claimType}Claim", $"No {claimType} claim present");
+        }
+
+        public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
     }
 }

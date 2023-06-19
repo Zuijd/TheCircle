@@ -1,10 +1,33 @@
+
+@{
+  ViewData["Title"] = "Watch Stream";
+}
+
 @model ChatViewModel
 @{
     var username = User.Identity?.Name;
 }
 
-Watch stream
-<video id="gum-local" autoplay playsinline></video>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Stream Viewer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="/js/watch.js"></script>
+    <style>
+        video {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Stream Viewer</h1>
+     <video id="video" type="video/webm; codecs=vp9" autoplay controls></video>
+</body>
+</html>
 
 <img src="" alt="">
 
@@ -44,7 +67,7 @@ Watch stream
 
         "use strict";
 
-        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        var connectionChat = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
         document.getElementById("sendButton").disabled = true;
 
@@ -54,7 +77,7 @@ Watch stream
             li.textContent = `${username} : ${message}`;
         });
 
-        connection.start().then(function () {
+        connectionChat.start().then(function () {
             document.getElementById("sendButton").disabled = false;
         }).catch(function (err) {
             return console.error(err.toString());

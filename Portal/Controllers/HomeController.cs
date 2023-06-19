@@ -1,63 +1,46 @@
 ﻿using System.Diagnostics;
+
 using Domain;
 using DomainServices.Interfaces.Services;
+using DomainServices.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
+using Microsoft.Extensions.Logging;
+using DomainServices.Interfaces.Services;
 
-namespace Portal.Controllers;
-
-public class HomeController : Controller
+namespace Portal.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly IUserService _userService;
-    private readonly IMessageService _messageService;
-
-    public HomeController(ILogger<HomeController> logger, IUserService userService, IMessageService messageService)
+    [TLSAccess]
+    public class HomeController : Controller
     {
-        _logger = logger;
-        _userService = userService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILoggerService _logger;
+
+        public HomeController(IHttpContextAccessor httpContextAccessor, ILoggerService logger, IUserService userService, IMessageService messageService )
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
+             _userService = userService;
         _messageService = messageService;
-    }
+        }
 
-    public IActionResult Index()
-    {
-        string username = User.Identity?.Name!; // Retrieve the username from the user identity
+        public IActionResult Index()
+        {
+                string username = User.Identity?.Name!; // Retrieve the username from the user identity
         ViewBag.Username = username; // Pass the username to the ViewBag
-        return View();
+            _logger.Log("User has accessed the home page!");
+            return View();
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
-
-    //[HttpPost]
-    //public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
-    //{
-    //    try
-    //    {
-
-    //        if (ModelState.IsValid)
-    //        {
-    //            //Console.WriteLine(chatViewModel.);
-    //            Message message = new()
-    //            {
-    //                User = _userService.GetUserByName(User.Identity?.Name!).Result,
-    //                MessageBody = chatViewModel.Message!
-    //            };
-
-
-    //            await _messageService.CreateMessage(message);
-
-    //        }
-    //    }
-    //    catch (Exception e)
-    //    {
-
-    //        ModelState.AddModelError(e.Message, e.Message);
-    //    }
-
-    //    return View("Index");
-    //}
 }

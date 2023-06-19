@@ -1,13 +1,26 @@
 @{
+  ViewData["Title"] = "Stream";
     var username = User.Identity?.Name;
 }
 
-Stream
-<video id="gum-local" autoplay playsinline></video>
 
+<head>
+    <meta charset="UTF-8">
+    <title>Stream</title>
+    <!-- Include necessary libraries -->
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+</head>
+
+<body>
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <button class="btn btn-success" onclick="startButton()">Start Streaming</button>
+    <button class="btn btn-danger" onclick="stopButton()">Stop Streaming</button>
+    <button class="btn btn-info" onclick="switchCamera()">Start/Stop Camera</button>
+
+  
 <img src="" alt="">
-
-
+  
 @* chat *@
 <div class="container" id="stream-container" data-user="@username">
     <div class="row p-1">
@@ -35,34 +48,6 @@ Stream
 @section Scripts{
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="/js/chat.js"></script>
-
-    @*    <script>
-
-        "use strict";
-
-        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-
-        document.getElementById("sendButton").disabled = true;
-
-        connection.on("ReceiveMessage", function (username, message) {
-            var li = document.createElement("li");
-            document.getElementById("messagesList").appendChild(li);
-            li.textContent = `${username} : ${message}`;
-        });
-
-        connection.start().then(function () {
-            document.getElementById("sendButton").disabled = false;
-        }).catch(function (err) {
-            return console.error(err.toString());
-        });
-
-        document.getElementById("sendButton").addEventListener("click", function (event) {
-            var message = document.getElementById("messageInput").value;
-            connection.invoke("SendMessage", '@username', message).catch(function (err) {
-                return console.error(err.toString());
-            });
-            event.preventDefault();
-        });
-    </script>
-*@
+    <!-- Include the stream.js file -->
+    <script src="/js/stream.js"></script>
 } 
