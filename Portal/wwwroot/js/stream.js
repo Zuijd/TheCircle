@@ -9,8 +9,88 @@ const connectionStream = new signalR.HubConnectionBuilder()
     .withUrl('/streamHub')
     .build();
 
-function startStreaming() {
 
+// current Stream after create in DB 
+var streamId
+// Bool if Camera is on/off
+var camBool
+// Bool if stream in on/off
+var streamBool
+// Stream time
+var startStream
+var endStream
+var durationStream
+//  Live moments
+var startLive
+var endLive
+// Break moments
+var startBreak
+var endBreak
+
+// HTML Buttons
+function startButton() {
+    if (!streamBool) {
+        streamBool = camBool = true;
+        startStream = startLive = new Date();
+        startStreaming();
+        FetchAddStream();
+    }
+}
+
+function stopButton() {
+    if (streamBool) {
+        if (camBool) {
+            endStream = endLive = new Date();
+            FetchAddLive()
+        } else {
+            endStream = endBreak = new Date();
+            FetchAddBreak();
+        }
+        stopCamera();
+        stopStreaming();
+        durationStream = endStream - startStream;
+        FetchStopStreaming();
+        streamBool = camBool = false;
+    }
+}
+
+function switchCamera() {
+    switch (true) {
+        case camBool && streamBool:
+            // Pauzing stream when live
+            endLive = startBreak = new Date();
+            stopCamera();
+            stopStreaming();
+            camBool = false;
+            console.log('Camera break')
+            FetchAddLive();
+            break;
+        case camBool && !streamBool:
+            // Not streaming, turn camera off
+            stopCamera()
+            camBool = false
+            console.log('Camera OFF')
+            break;
+        case !camBool && streamBool:
+            // Going back live
+            endBreak = startLive = new Date();
+            startStreaming();
+            camBool = true;
+            console.log('Camera wake up')
+            FetchAddBreak();
+            break;
+        case !camBool && !streamBool:
+            // not streaming, turn camera on
+            startCamera();
+            camBool = true
+            console.log('Camera ON')
+            break;
+        default:
+        // code to be executed if no case matches
+    }
+}
+
+function startStreaming() {
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
         .then(stream => {
             const videoElement = document.getElementById('video');
@@ -40,15 +120,13 @@ function startStreaming() {
             mediaRecorder.start();
             console.log('Recording started.');
 
-            // Trigger the dataavailable event every x seconds
-            timer = setInterval(() => {
-                mediaRecorder.requestData();
-            }, timerInterval);
+            startTimer();
 
         })
         .catch(error => {
             console.error('Error accessing media devices:', error);
         });
+
 }
 
 function stopStreaming() {
@@ -57,7 +135,49 @@ function stopStreaming() {
         clearInterval(timer);
         console.log('Recording stopped.');
     }
+
+    if (camBool) {
+        endStream = endLive = new Date();
+        FetchAddLive()
+    } else {
+        endStream = endBreak = new Date();
+        FetchAddBreak();
+    }
+    durationStream = endStream - startStream;
 }
+
+function startTimer() {
+    mediaRecorder.requestData();
+
+    timer = setInterval(() => {
+        mediaRecorder.requestData();
+    }, timerInterval);
+
+}
+
+function stopCamera() {
+    const videoElement = document.getElementById('video');
+    const mediaStream = videoElement.srcObject;
+
+    if (mediaStream) {
+        const tracks = mediaStream.getTracks();
+
+        tracks.forEach(track => track.stop());
+        videoElement.srcObject = null;
+    }
+}
+
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+            const videoElement = document.getElementById('video');
+            videoElement.srcObject = stream;
+        })
+        .catch(error => {
+            console.error('Error accessing media devices:', error);
+        });
+}
+
 
 function sendBlob(chunk) {
     const reader = new FileReader();
@@ -141,3 +261,153 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     });
     event.preventDefault();
 });
+
+
+// Fetch calls
+function FetchAddStream() {
+    console.log('FetchAddStream: ')
+
+    fetch('/stream/AddStream', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            startStream: startStream
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+                return response.json(); // Parse response data as JSON
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+                throw new Error('Failed to start streaming'); // Throw an error to handle it in the catch block
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            streamId = data;
+            console.log('Response data:', streamId);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+
+
+}
+
+function FetchStopStreaming() {
+    console.log('FetchStopStream: ')
+    console.log('DurationStream: ' + durationStream)
+
+    fetch('/stream/StopStream', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            endStream: endStream,
+            durationStream: durationStream
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+                return response.json(); // Parse response data as JSON
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+                throw new Error('Failed to start streaming'); // Throw an error to handle it in the catch block
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+
+}
+
+function FetchAddBreak() {
+    console.log('FetchAddBreak: ')
+    if (camBool) {
+        console.log('camBool: ' + camBool)
+        console.log('StartLive: ' + startLive)
+
+    } else {
+        console.log('camBool: ' + camBool)
+        console.log('endStream: ' + endStream)
+    }
+    console.log('endBreak : ' + endBreak)
+
+
+    fetch('/stream/AddBreak', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            startBreak: startBreak,
+            endBreak: endBreak
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+}
+
+function FetchAddLive() {
+    console.log('FetchAddLive: ')
+    console.log('camBool: ' + camBool)
+    console.log('endStream: ' + endStream)
+    console.log('endLive : ' + endLive)
+
+    fetch('/stream/AddLive', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            startLive: startLive,
+            endLive: endLive
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+
+}
+
+

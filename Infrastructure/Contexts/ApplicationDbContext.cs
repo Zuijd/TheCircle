@@ -6,6 +6,8 @@
         public DbSet<User> User { get; set; } = null!;
         public DbSet<Log> Log { get; set; } = null!;
 
+        public DbSet<Domain.Streams> Streams { get; set; } = null!;
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
     }
