@@ -22,12 +22,8 @@ namespace Portal.Controllers
         {
             try
             {
-
-                //TODO: voeg tls gezeik toe
-
                 var logs = await _loggerService.GetAll();
                 return View(logs);
-
             }
             catch (Exception e)
             {
@@ -58,7 +54,7 @@ namespace Portal.Controllers
                     var digSig = _certificateService.CreateDigSig(username, privateKey);
 
                     //call request to service
-                    var serverResponse = _certificateService.CreatePost(username, digSig, certificate);
+                    var serverResponse = await _loggerService.GetAllFromUsername(username, digSig, certificate);
 
                     //retrieve public key from certificate
                     var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
@@ -68,8 +64,7 @@ namespace Portal.Controllers
 
                     if (isValid)
                     {
-                        var logs = await _loggerService.GetAllFromUsername(username);
-                        return View(logs);
+                        return View(serverResponse.Message);
                     }
                     else
                     {

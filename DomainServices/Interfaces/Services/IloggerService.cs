@@ -12,7 +12,7 @@ namespace DomainServices.Interfaces.Services
         public string GetUserNameFromSession();
 
         public Task<List<Log>> GetAll();
-        public Task<List<Log>> GetAllFromUsername(string username);
+        public Task<PKC> GetAllFromUsername(string username, byte[] signature, byte[] certificate);
 
     }
 }
