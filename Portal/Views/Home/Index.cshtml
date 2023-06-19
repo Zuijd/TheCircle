@@ -1,41 +1,37 @@
-﻿
-<div class="container">
-        <div class="row">
-            <div id="streamSelectorBox" class="col">
-                <button id="viewStreamsBtn" class="btn btn-primary">View Streams</button>
-                <div class="streams-container">
-                    <div class="stream">
-                        <input type="checkbox" id="streamer 1" value="streamer 1">
-                        <label for="streamer 1">Streamer 1</label>
+﻿@* Former Watch page *@
+@{
+    var loggedInUser = User.Identity?.Name;
+}
 
-                
+<div class="container" id="stream-container" data-user="@loggedInUser">
+    <div class="row">
+        <div class="col text-center">
+            <h1>Select a Streamer</h1>
 
-                    </div>
+            <div class="streams-container" id="streams-container" data-user="@ViewBag.Username">
+                @foreach (var user in @ViewBag.Users)
+                {
                     <div class="stream">
-                        <input type="checkbox" id="streamer 2" value="streamer 2">
-                        <label for="streamer 2">Streamer 2</label>
+                        <input type="radio" name="streamerButton" id="@user.Name" value="@user.Name">
+                        <label for="@user.Name">@user.Name</label>
                     </div>
-                    <div class="stream">
-                        <input type="checkbox" id="streamer 3" value="streamer 3">
-                        <label for="streamer 3">Streamer 3</label>
-                    </div>
-        
-                    <!-- Add more streams as needed -->
-                </div>
+                }
+                <!-- Add more streams as needed -->
             </div>
 
-            <div class="col">
-                <div class="row mt-4" id="streamsContainer">
-                    <!-- Streams will be dynamically added here -->
-                </div>
-            </div>
-
-            <img id="circleImage" src="./assets/circle.png" alt="Circle">
-
+            <a id="viewStreamsBtn"  class="btn btn-primary">View Stream</a>
         </div>
     </div>
 
-    @section Scripts {
-        <script src="~/js/homepage.js" asp-append-version="true"></script>
+    <div class="row mt-4" id="streamsContainer">
+        <!-- Streams will be dynamically added here -->
+    </div>
+</div>
+
+
+@section Scripts {
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    }
+    <script src="~/js/homepage.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+
+}

@@ -1,38 +1,40 @@
 ﻿using System.Diagnostics;
-using DomainServices.Interfaces.Repositories;
+using Domain;
+using DomainServices.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
 using Microsoft.Extensions.Logging;
 using DomainServices.Interfaces.Services;
 
-namespace Portal.Controllers
+namespace Portal.Controllers;
+
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly ILogger<HomeController> _logger;
+    private readonly IUserService _userService;
+    private readonly IMessageService _messageService;
+
+    public HomeController(ILogger<HomeController> logger, IUserService userService, IMessageService messageService)
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILoggerService _logger;
+        _logger = logger;
+        _userService = userService;
+        _messageService = messageService;
+    }
 
-        public HomeController(IHttpContextAccessor httpContextAccessor, ILoggerService logger)
-        {
-            _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
-        }
+    public IActionResult Index()
+    {
+        string username = User.Identity?.Name!; // Retrieve the username from the user identity
+        ViewBag.Username = username; // Pass the username to the ViewBag
 
-        public IActionResult Index()
-        {
-            _logger.Log("User has accessed the home page!");
-            return View();
-        }
+        var users = _userService.GetAllUsers().Result;
+        ViewBag.Users = users;
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        return View();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

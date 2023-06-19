@@ -2,7 +2,6 @@
     ViewData["Title"] = "Stream";
 }
 
-﻿
 <head>
     <meta charset="UTF-8">
     <title>Stream</title>
@@ -20,7 +19,26 @@
                     </div>
                 </div>
                 <div class="col-sm bg-secondary">
-                    Chat here
+    <div class="row p-1">
+        <div class="col-1">Message</div>
+        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
+    </div>
+    <div class="row p-1">
+        <div class="col-6 text-end">
+            <input type="button" id="sendButton" value="Send Message" />
+        </div>
+    </div>
+    <div class="row p-1">
+        <div class="col-6">
+            <hr />
+        </div>
+    </div>
+    <div class="row p-1">
+        <div class="col-6">
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
+    <input type="hidden" id="viewName" value="Stream Index">
                 </div>
             </div>
             <div class="mt-2">

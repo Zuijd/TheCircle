@@ -8,5 +8,7 @@ namespace DomainServices.Interfaces.Services
         Task<bool> RegisterUserAsync(string username, string emailAddress, string password);
         Task<bool> SignUserOutAsync();
         Task<User> GetUserByName(string username);
+        Task<List<User>> GetAllUsers();
+
     }
 }

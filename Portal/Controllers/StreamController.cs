@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Net.Mail;
 using System.Reflection.Metadata.Ecma335;
@@ -43,32 +44,5 @@ public class StreamController : Controller
         return View();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
-    {
-        try
-        {
 
-            if (ModelState.IsValid)
-            {
-
-                Message message = new()
-                {
-                    User = await _userService.GetUserByName(User.Identity?.Name!),
-                    MessageBody = chatViewModel.Message!
-                };
-
-                await _messageService.CreateMessage(message);
-                _logger.Log("User created message!");
-
-            }
-        }
-        catch (Exception e)
-        {
-
-            ModelState.AddModelError(e.Message, e.Message);
-        }
-
-        return PartialView("_Chat");
-    }
 }
