@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(SecurityDbContext))]
-    [Migration("20230606084514_Initial Identity")]
-    partial class InitialIdentity
+    [Migration("20230619123216_Force Update")]
+    partial class ForceUpdate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

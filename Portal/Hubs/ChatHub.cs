@@ -14,7 +14,7 @@ namespace Portal.Hubs
             var httpContext = Context.GetHttpContext();
             var currentUser = httpContext!.User.Identity!.Name;
 
-            await Clients.Group(currentUser).SendAsync("ReceiveMessage", message, username, streamUser);
+            await Clients.Group(streamUser).SendAsync("ReceiveMessage", message, username, streamUser);
         }
         public async Task JoinGroup(string group)
         {

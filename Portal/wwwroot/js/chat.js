@@ -39,25 +39,25 @@ $(document).on("click", `#sendButton`, function (event) {
     event.preventDefault();
 
     
-    //var ChatViewModel = {
-    //    Message: $(`#messageInput`).val(),
-    //    ViewName: document.getElementById("viewName").value
-    //};
+    var ChatViewModel = {
+        Message: $(`#messageInput`).val(),
+        ViewName: document.getElementById("viewName").value
+    };
 
-    //var JSONData = JSON.stringify(ChatViewModel);
+    var JSONData = JSON.stringify(ChatViewModel);
 
-    //$.ajax({
-    //    url: '/Chat/Message',
-    //    data: JSONData,
-    //    type: "Post",
-    //    contentType: 'application/json;charset=utf-8',
-    //    success: function (result) {
-    //        console.log("Succes sending message")
-    //    },
-    //    error: function (result) {
-    //        window.alert("Error sending message");
-    //    }
-    //});
+    $.ajax({
+        url: '/Chat/Message',
+        data: JSONData,
+        type: "Post",
+        contentType: 'application/json;charset=utf-8',
+        success: function (result) {
+            console.log("Succes sending message")
+        },
+        error: function (result) {
+            window.alert("Error sending message");
+        }
+    });
 });
 
 chatConnection.start()
