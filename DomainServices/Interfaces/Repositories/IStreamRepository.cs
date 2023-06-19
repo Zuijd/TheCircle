@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,12 @@ namespace DomainServices.Interfaces.Repositories
 {
     public interface IStreamRepository
     {
-        public interface IStreamRepository
-        {
-            void SaveCompensation(decimal compensation, int streamId);
-        }
+        public Task<int> addStream(Streams stream);
+        public Task<bool> StopStream(int streamId, DateTime endStream, TimeSpan durationStream, decimal satoshi);
+        public Task<bool> saveLiveMoment(Live live,int streamId);
+        public Task<bool> saveBreakMoment(Break pauze, int streamId);
+        public Task<List<Live>> GetLiveMoments(int StreamId);
+
     }
 }
+

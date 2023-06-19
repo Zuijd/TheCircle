@@ -1,3 +1,4 @@
+using DomainServices.Interfaces;
 using DomainServices.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using Portal.Hubs;
@@ -28,13 +29,13 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<ILoggerRepository, LoggerRepository>();
+builder.Services.AddScoped<IStreamRepository,StreamRepository>();
 
-// Services 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
-builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IStreamService, StreamService>();
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -50,11 +51,6 @@ builder.Services.AddSignalR(options =>
     options.MaximumReceiveMessageSize = null;
 });
 
-builder.Services.AddScoped<IStreamRepository>(sp =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
-    return new StreamRepository(connectionString);
-});
 
 // Logging configurations
 builder.Logging.ClearProviders();
