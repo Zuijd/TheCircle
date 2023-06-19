@@ -15,19 +15,21 @@ namespace Portal.Controllers
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILoggerService _logger;
+        private readonly IUserService _userService;
+        private readonly IMessageService _messageService;
 
-        public HomeController(IHttpContextAccessor httpContextAccessor, ILoggerService logger, IUserService userService, IMessageService messageService )
+        public HomeController(IHttpContextAccessor httpContextAccessor, ILoggerService logger, IUserService userService, IMessageService messageService)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
-             _userService = userService;
-        _messageService = messageService;
+            _userService = userService;
+            _messageService = messageService;
         }
 
         public IActionResult Index()
         {
-                string username = User.Identity?.Name!; // Retrieve the username from the user identity
-        ViewBag.Username = username; // Pass the username to the ViewBag
+            string username = User.Identity?.Name!; // Retrieve the username from the user identity
+            ViewBag.Username = username; // Pass the username to the ViewBag
             _logger.Log("User has accessed the home page!");
             return View();
         }
