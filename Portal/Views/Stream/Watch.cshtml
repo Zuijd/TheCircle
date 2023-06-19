@@ -33,11 +33,17 @@ Watch stream
             </div>
         </div>
     </div>
+    <input type="hidden" id="viewName" value="Watch">
+
     @*    <partial name="_Chat" model="@Model"></partial>
     *@
 </div>
 
-@section Scripts {
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js" asp-append-version="true"></script>
+
+
+@*@section Scripts {
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="/js/watch.js"></script>
     <script>
@@ -92,4 +98,4 @@ Watch stream
         })
 
     </script>
-}
+*@
