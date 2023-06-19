@@ -14,7 +14,7 @@ namespace DomainServices.Interfaces.Repositories
         public Task<bool> saveLiveMoment(Live live,int streamId);
         public Task<bool> saveBreakMoment(Break pauze, int streamId);
         public Task<List<Live>> GetLiveMoments(int StreamId);
-
+        public Task<List<Streams>> GetStreams(string username);
     }
 }
 

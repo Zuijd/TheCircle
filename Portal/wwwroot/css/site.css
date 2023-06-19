@@ -21,3 +21,6 @@ body {
   margin-bottom: 60px;
 }
 
+.hidden {
+    display: none;
+}

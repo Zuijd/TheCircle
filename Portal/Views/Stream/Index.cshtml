@@ -1,7 +1,6 @@
 @{
-  ViewData["Title"] = "Stream";
+    ViewData["Title"] = "Stream";
 }
-
 
 <head>
     <meta charset="UTF-8">
@@ -11,41 +10,100 @@
 </head>
 
 <body>
-    <video id="video" width="640" height="480" autoplay></video>
+    <div class="row">
+        <div class="col">
+            <video id="video" width="640" height="480" autoplay></video>
+            <img src="/images/break.jpg" width="640" height="480" alt="" class="hidden">
+        </div>
 
-    <button class="btn btn-success" onclick="startButton()">Start Streaming</button>
-    <button class="btn btn-danger" onclick="stopButton()">Stop Streaming</button>
-    <button class="btn btn-info" onclick="switchCamera()">Start/Stop Camera</button>
+        <div class="col">
+            <div class="row">
+                <button class="btn btn-success" onclick="startButton()">Start Streaming</button>
 
-  
-<img src="" alt="">
-  
-@* chat *@
-<div class="container">
-    <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6 text-end">
-            <input type="button" id="sendButton" value="Send Message" />
+                <button class="btn btn-danger mt-3" onclick="stopButton()">Stop Streaming</button>
+
+                <button class="btn btn-info mt-3" onclick="switchCamera()">Start/Stop Camera</button>
+            </div>
+            <div class="row">
+                <h2>Stream Timer</h2>
+                <span id="streamTimer">00:00:00</span>
+                <!-- Balance Display -->
+                <h2>Stream Balance</h2>
+                <div id="balanceDisplay">0.00000001 Satoshi</div>
+            </div>
         </div>
     </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <hr />
+
+
+
+
+    @* chat *@
+    <div class="container">
+        <div class="row p-1">
+            <div class="col-1">User</div>
+            <div class="col-5"><input type="text" id="userInput" /></div>
+        </div>
+        <div class="row p-1">
+            <div class="col-1">Message</div>
+            <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
+        </div>
+        <div class="row p-1">
+            <div class="col-6 text-end">
+                <input type="button" id="sendButton" value="Send Message" />
+            </div>
+        </div>
+        <div class="row p-1">
+            <div class="col-6">
+                <hr />
+            </div>
+        </div>
+        <div class="row p-1">
+            <div class="col-6">
+                <ul id="messagesList"></ul>
+            </div>
         </div>
     </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
+
+
+    <div class="container">
+
+        <h1>Past Streams</h1>
+
+        <form class="form-inline mb-3" method="get">
+            <div class="form-group mr-2">
+                <label for="filter" class="mr-2">Filter:</label>
+                <input type="text" class="form-control" name="filter" id="filter" value="" />
+            </div>
+            <button type="submit" class="btn btn-primary">Apply</button>
+        </form>
+        <h2>Total Earnings:  Satoshi</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Duration</th>
+                    <th>Breaks</th>
+                    <th>Satoshi</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
     </div>
-</div>
 
     <!-- Include the stream.js file -->
     <script src="/js/stream.js"></script>

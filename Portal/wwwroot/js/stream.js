@@ -32,6 +32,8 @@ function startButton() {
     if (!streamBool) {
         streamBool = camBool = true;
         startStream = startLive = new Date();
+        startSatoshiTimer();
+        startStreamTimer();
         startStreaming();
         FetchAddStream();
     }
@@ -46,6 +48,8 @@ function stopButton() {
             endStream = endBreak = new Date();
             FetchAddBreak();
         }
+        stopSatoshiTimer();
+        stopStreamTimer();
         stopCamera();
         stopStreaming();
         durationStream = endStream - startStream;
@@ -59,6 +63,7 @@ function switchCamera() {
         case camBool && streamBool:
             // Pauzing stream when live
             endLive = startBreak = new Date();
+            stopSatoshiTimer();
             stopCamera();
             stopStreaming();
             startBreakVideo();
@@ -76,6 +81,7 @@ function switchCamera() {
             // Going back live
             endBreak = startLive = new Date();
             endBreakVideo();
+            startSatoshiTimer();
             startStreaming();
             camBool = true;
             console.log('Camera wake up')
@@ -92,37 +98,40 @@ function switchCamera() {
     }
 }
 
+
+
+// Break video
 async function startBreakVideo() {
-    console.log('startBreakVideo() is called');
-    var breakImageUrl = "/images/break.jpg";
+    //console.log('startBreakVideo() is called');
+    //var breakImageUrl = "/images/break.jpg";
 
-    var videoElement = document.getElementById("video");
+    //var videoElement = document.getElementById("video");
 
-    // Set the source of the video element to the break image URL
-    videoElement.src = breakImageUrl;
+    //// Set the source of the video element to the break image URL
+    //videoElement.src = breakImageUrl;
 
-    // Show the video element
-    videoElement.style.display = "block";
+    //// Show the video element
+    //videoElement.style.display = "block";
 
-    // Remove any existing image element
-    var imageElement = document.querySelector("img");
-    if (imageElement) {
-        imageElement.remove();
-    }
+    //// Remove any existing image element
+    //var imageElement = document.querySelector("img");
+    //if (imageElement) {
+    //    imageElement.remove();
+    //}
 }
 
 async function endBreakVideo() {
-    console.log('endBreakVideo() is called');
-    var videoElement = document.getElementById("video");
+    //console.log('endBreakVideo() is called');
+    //var videoElement = document.getElementById("video");
 
-    // Pause the video
-    videoElement.pause();
+    //// Pause the video
+    //videoElement.pause();
 
-    // Reset the source of the video element
-    videoElement.src = "";
+    //// Reset the source of the video element
+    //videoElement.src = "";
 
-    // Hide the video element
-    videoElement.style.display = "none";
+    //// Hide the video element
+    //videoElement.style.display = "none";
 }
 
 function startStreaming() {
@@ -443,6 +452,76 @@ function FetchAddLive() {
             console.error('An error occurred while starting streaming:', error);
         });
 
+}
+
+// Satoshi tracking
+let initialBalance = 0.00000001;
+let earningPerInterval = 0.00000001; // Initial earning per interval
+
+// Timer interval for updating the balance (1 hour = 3600000 milliseconds)
+const timerIntervalS = 5000;
+
+let balance = 0; // Balance starts from 0 initially
+let satoshiTimer;
+let breakSatoshi = false;
+let earningsBeforeBreak = 0;
+
+function startSatoshiTimer() {
+    balance += initialBalance; // Add initial balance when the timer starts
+
+    if (breakSatoshi) {
+        // Reset balance to initial balance after a break
+        balance = initialBalance;
+        breakSatoshi = false;
+        $('#balanceDisplay').text(
+            (balance + earningsBeforeBreak).toFixed(8) + ' Satoshi'
+        )
+    }
+
+    satoshiTimer = setInterval(() => {
+        balance = balance * 2;
+
+        $('#balanceDisplay').text(
+            (balance + earningsBeforeBreak).toFixed(8) + ' Satoshi'
+        );
+    }, timerIntervalS);
+}
+
+function stopSatoshiTimer() {
+    clearInterval(satoshiTimer);
+    earningsBeforeBreak += balance; // Add the current balance to earnings before break
+    breakSatoshi = true;
+}
+
+// StreamTimer
+let streamTimer;
+let streamStartTime;
+
+
+function startStreamTimer() {
+    streamStartTime = new Date().getTime();
+    streamTimer = setInterval(updateStreamTimer, 1000);
+}
+function stopStreamTimer() {
+    clearInterval(streamTimer);
+}
+
+function updateStreamTimer() {
+    const currentTime = new Date().getTime();
+    const elapsedSeconds = Math.floor((currentTime - streamStartTime) / 1000);
+
+    // Format the elapsed time into HH:MM:SS format
+    const hours = Math.floor(elapsedSeconds / 3600);
+    const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+    const seconds = elapsedSeconds % 60;
+    const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+
+    // Update the stream timer display
+    document.getElementById('streamTimer').textContent = formattedTime;
+}
+
+function padZero(number) {
+    return number.toString().padStart(2, '0');
 }
 
 

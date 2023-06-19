@@ -32,6 +32,7 @@ public class StreamController : Controller
         return View();
     }
 
+
     public IActionResult Watch(string id)
     {
         _logger.Log($"User has accessed {nameof(Watch)}");
@@ -131,6 +132,21 @@ public class StreamController : Controller
         }
         catch (Exception e)
         {
+            ModelState.AddModelError(e.Message, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+
+
+    [HttpGet]
+    public async Task<IActionResult> GetStreamsByUser()
+    {
+        try
+        {
+            _logger.Log("User is fetching his past streams");
+            var streams = await _streamService.GetStreams();
+            return Ok(streams);
+        } catch (Exception e) {
             ModelState.AddModelError(e.Message, e.Message);
             return BadRequest(e.Message);
         }

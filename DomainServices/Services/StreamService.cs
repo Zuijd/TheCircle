@@ -105,5 +105,13 @@ namespace DomainServices.Services
             return compensation;
 
         }
+        public async Task<List<Streams>> GetStreams()
+        {
+            var HttpContext = _contextAccessor.HttpContext;
+            var username = HttpContext.Session.GetString("Username");
+            var streams = await _streamRepository.GetStreams(username);
+            return streams;
+        }
+
     }
 }
