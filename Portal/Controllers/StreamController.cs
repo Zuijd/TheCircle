@@ -28,7 +28,7 @@ public class StreamController : Controller
     {
         _logger.Log("User has accessed Stream page!");
 
-        ViewBag.UserName = _httpContextAccessor.HttpContext!.User.Identity!.Name!; 
+        ViewBag.UserName = User.Identity?.Name!; 
         return View();
     }
     
