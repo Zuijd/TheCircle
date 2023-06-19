@@ -31,12 +31,6 @@ namespace Infrastructure.Repositories
 
         public async Task<List<Log>> GetAllFromUsername(string username)
         {
-
-            if(username == null)
-            {
-                return await GetAll();
-            }
-
             return await _context.Log
                 .Where(u => u.Username.Equals(username))
                 .OrderByDescending(u => u.Timestamp)
