@@ -62,7 +62,6 @@
 
 @section Scripts {
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    <script src="/js/watch.js"></script>
     <script>
 
         "use strict";
@@ -71,7 +70,7 @@
 
         document.getElementById("sendButton").disabled = true;
 
-        connection.on("ReceiveMessage", function (username, message) {
+        connectionChat.on("ReceiveMessage", function (username, message) {
             var li = document.createElement("li");
             document.getElementById("messagesList").appendChild(li);
             li.textContent = `${username} : ${message}`;
@@ -85,7 +84,10 @@
 
         document.getElementById("sendButton").addEventListener("click", function (event) {
             var message = document.getElementById("messageInput").value;
-            connection.invoke("SendMessage", '@username', message).catch(function (err) {
+
+            
+
+            connectionChat.invoke("SendMessage", '@username', message, '1').catch(function (err) {
                 return console.error(err.toString());
             });
             event.preventDefault();
@@ -100,15 +102,15 @@
                 var JSONData = JSON.stringify(ChatViewModel);
 
                 $.ajax({
-                    url: "@Url.Action("Message","Stream")",
+                    url: "@Url.Action("Message","Chat")",
                     data: JSONData,
                     type: "Post",
                     contentType: 'application/json;charset=utf-8',
                     succes: function (result) {
-                        console.log("d")
+                        console.log("Success")
                     },
                     error: function (result) {
-                        window.alert("oh");
+                        window.alert("Failed");
                     }
                 });
             });

@@ -55,7 +55,7 @@ namespace DomainServices.Services
         }
 
         //////////////////  -  VALIDATION  -  \\\\\\\\\\\\\\\\\\\\
-        
+
         public byte[] CreateCertificate(string username, string email, RSA rsa)
         {
             //create certificate request with unique user attributes 
@@ -67,7 +67,7 @@ namespace DomainServices.Services
             //convert the certificate to a byte array in the X509ContentType.Cert format
             return certificate.Export(X509ContentType.Cert);
         }
-        
+
         public byte[] CreateDigSig(object content, byte[] privateKey)
         {
             //create new rsa crypto service provider
