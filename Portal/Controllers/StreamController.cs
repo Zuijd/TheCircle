@@ -7,13 +7,15 @@ public class StreamController : Controller
     private readonly IUserService _userService;
     private readonly ILoggerService _logger;
     private readonly IStreamService _streamService;
+    private readonly ICertificateService _certificateService;
 
-    public StreamController(ILoggerService logger, IMessageService messageService, IUserService userService, IStreamService streamService)
+    public StreamController(ILoggerService logger, IMessageService messageService, IUserService userService, IStreamService streamService, ICertificateService certificateService)
     {
         _logger = logger;
         _messageService = messageService;
         _userService = userService;
         _streamService = streamService;
+        _certificateService = certificateService;
     }
 
     [Authorize]
@@ -21,15 +23,15 @@ public class StreamController : Controller
     {
         _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream page!");
 
-        ViewBag.UserName = User.Identity?.Name!; 
+        ViewBag.UserName = User.Identity?.Name!;
         return View();
     }
 
     [Authorize]
     public IActionResult Watch(string id)
     {
-        
-        if(id == "404")
+
+        if (id == "404")
         {
             return View("404");
         }
@@ -111,5 +113,34 @@ public class StreamController : Controller
             ModelState.AddModelError(e.Message, e.Message);
             return BadRequest(e.Message);
         }
+    }
+
+    public async Task<bool> SecurityChunk(Object chunk)
+    {
+
+        ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
+        //retrieve private key
+        var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
+
+        //retrieve certificate
+        var certificate = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "Certificate"));
+
+        //create digital signature
+        var digSig = _certificateService.CreateDigSig(chunk, privateKey);
+
+        //call request to service
+        var serverResponse = _streamService.CreateChunk(chunk, digSig, certificate);
+
+        ///// * VERIFY REQUEST FROM CREATEPOST * /////
+        //retrieve public key from certificate
+        var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
+
+        //verify digital signature
+        var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
+
+        //verification is succesful ? perform action : throw corresponding error
+        Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
+
+        return isValid;
     }
 }
