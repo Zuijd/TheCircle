@@ -54,6 +54,7 @@ function stopButton() {
         stopStreaming();
         durationStream = endStream - startStream;
         FetchStopStreaming();
+        FetchAddSatoshi();
         streamBool = camBool = false;
     }
 }
@@ -452,6 +453,33 @@ function FetchAddLive() {
             console.error('An error occurred while starting streaming:', error);
         });
 
+}
+
+function FetchAddSatoshi() {
+    console.log('FetchAddSatoshi is called!')
+    fetch('/user/AddSatoshi', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            earnedSatoshi: earningsBeforeBreak
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log('AddBalance to user');
+            } else {
+                console.log('Failed to add satoshi balance')
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while adding satoshi:', error);
+        });
 }
 
 // Satoshi tracking

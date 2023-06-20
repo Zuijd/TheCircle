@@ -39,15 +39,20 @@ public class StreamController : Controller
         return View();
     }
 
+    public async Task<IActionResult> History()
+    {
+        _logger.Log("User has accessed Stream page!");
+        var streams = await _streamService.GetStreams();
+        return View(streams);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
     {
         try
         {
-
             if (ModelState.IsValid)
             {
-
                 Message message = new()
                 {
                     User = await _userService.GetUserByName(User.Identity?.Name!),
@@ -56,12 +61,10 @@ public class StreamController : Controller
 
                 await _messageService.CreateMessage(message);
                 _logger.Log("User created message!");
-
             }
         }
         catch (Exception e)
         {
-
             ModelState.AddModelError(e.Message, e.Message);
         }
 
@@ -132,21 +135,6 @@ public class StreamController : Controller
         }
         catch (Exception e)
         {
-            ModelState.AddModelError(e.Message, e.Message);
-            return BadRequest(e.Message);
-        }
-    }
-
-
-    [HttpGet]
-    public async Task<IActionResult> GetStreamsByUser()
-    {
-        try
-        {
-            _logger.Log("User is fetching his past streams");
-            var streams = await _streamService.GetStreams();
-            return Ok(streams);
-        } catch (Exception e) {
             ModelState.AddModelError(e.Message, e.Message);
             return BadRequest(e.Message);
         }

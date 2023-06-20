@@ -1,4 +1,5 @@
-﻿using DomainServices.Interfaces.Services;
+﻿using Domain;
+using DomainServices.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 using Portal.Models.User;
 
@@ -99,5 +100,23 @@ namespace Portal.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddSatoshi([FromBody] dynamic satoshi)
+        {
+            try
+            {
+                var succes = await this._userService.AddSatoshi(satoshi);
+                _logger.Log("User trying to add balance to his account");
+                return Ok(succes);
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(e.Message, e.Message);
+                return BadRequest(e.Message);
+            }
+        }
+
+
     }
 }

@@ -41,7 +41,7 @@ namespace Infrastructure.Repositories
 
             stream.IsLive = false;
             stream.End = endStream;
-            stream.Satoshi = satoshi;
+            stream.Satoshi = Decimal.Round(satoshi, 8);
             stream.Duration = durationStream;
 
             await _context.SaveChangesAsync();
@@ -101,20 +101,29 @@ namespace Infrastructure.Repositories
 
         public async Task<List<Streams>> GetStreams(string username)
         {
-            var streams = await _context.Streams
-                .Include(u => u.BreakList)
-                .Include(u => u.LiveList)
-                .Where(u => u.UserName == username)
-                .OrderByDescending(u => u.Id)
-                .ToListAsync();
-
-            if (streams == null)
+            try
             {
+                var streams = await _context.Streams
+                    .Include(u => u.BreakList)
+                    .Include(u => u.LiveList)
+                    .Where(u => u.UserName == username)
+                    .OrderByDescending(u => u.Id)
+                    .ToListAsync();
+
+                if (streams == null)
+                {
+                    return new List<Streams>();
+                }
+
+                return streams;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
                 return new List<Streams>();
             }
-
-            return streams;
         }
+
 
     }
 }

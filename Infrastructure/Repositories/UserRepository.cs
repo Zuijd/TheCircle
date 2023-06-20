@@ -34,13 +34,20 @@ namespace Infrastructure.Repositories
 
         public async Task<bool> AddSatoshi(string username, decimal satoshi)
         {
-            var user = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
-            if (user == null) { return false; }
 
-            user.Satoshi += satoshi;
-            await _context.SaveChangesAsync();
+            try
+            {
+                var user = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
+                if (user == null) { return false; }
+                user.Satoshi += satoshi;
+                await _context.SaveChangesAsync();
+                return true;
 
-            return true;
+            }catch (Exception e) { 
+                return false;
+            }
+
+
         
         }
     }

@@ -12,7 +12,7 @@ namespace Infrastructure.Migrations.ApplicationDb
             migrationBuilder.AddColumn<decimal>(
                 name: "Satoshi",
                 table: "User",
-                type: "decimal(18,2)",
+                type: "decimal(18,8)",
                 nullable: false,
                 defaultValue: 0m);
 
@@ -22,7 +22,7 @@ namespace Infrastructure.Migrations.ApplicationDb
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Satoshi = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Satoshi = table.Column<decimal>(type: "decimal(18,8)", nullable: false, defaultValue: 0.00000001),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsLive = table.Column<bool>(type: "bit", nullable: false),
                     Start = table.Column<DateTime>(type: "datetime2", nullable: false),
