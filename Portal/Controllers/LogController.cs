@@ -1,6 +1,4 @@
-﻿using Portal.Models;
-
-namespace Portal.Controllers
+﻿namespace Portal.Controllers
 {
     [TLSAccess]
     public class LogController : Controller
@@ -24,6 +22,9 @@ namespace Portal.Controllers
             try
             {
                 var logs = await _loggerService.GetAll();
+
+                _loggerService.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Log page!");
+
                 return View(logs);
             }
             catch (Exception e)
@@ -62,6 +63,8 @@ namespace Portal.Controllers
 
                     //verify digital signature
                     var isValid = _certificateService.VerifyDigSig(serverResponse.Message!, serverResponse.Signature!, publicKey);
+
+                    _loggerService.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has filtered Log page!");
 
                     if (isValid)
                     {

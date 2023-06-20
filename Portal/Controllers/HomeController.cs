@@ -1,24 +1,14 @@
-﻿using System.Diagnostics;
-using Domain;
-using DomainServices.Interfaces.Services;
-using Microsoft.AspNetCore.Mvc;
-using Portal.Models;
-using Microsoft.Extensions.Logging;
-using DomainServices.Interfaces.Services;
-
-namespace Portal.Controllers;
+﻿namespace Portal.Controllers;
 
 [TLSAccess]
 public class HomeController : Controller
 {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILoggerService _logger;
-        private readonly IUserService _userService;
-        private readonly IMessageService _messageService;
+    private readonly ILoggerService _logger;
+    private readonly IUserService _userService;
+    private readonly IMessageService _messageService;
 
-    public HomeController(IHttpContextAccessor httpContextAccessor, ILoggerService logger, IUserService userService, IMessageService messageService)
+    public HomeController(ILoggerService logger, IUserService userService, IMessageService messageService)
     {
-        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
         _userService = userService;
         _messageService = messageService;
@@ -32,6 +22,11 @@ public class HomeController : Controller
         var users = await _userService.GetAllUsers();
         ViewBag.Users = users;
 
+        if(User.Identity.IsAuthenticated)
+        {
+            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Home page!");
+        }
+
         return View();
     }
 
@@ -43,6 +38,8 @@ public class HomeController : Controller
 
         var users = await _userService.GetAllUsers();
         ViewBag.Users = users;
+
+        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page to choose a stream!");
 
         return View();
     }
