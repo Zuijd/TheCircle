@@ -9,6 +9,6 @@ namespace DomainServices.Interfaces.Services
 {
     public interface IMessageService
     {
-        public Task<bool> CreateMessage(Message message);
+        public Task<PKC> CreateMessage(object content, byte[] signature, byte[] certificate);
     }
 }

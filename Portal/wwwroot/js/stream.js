@@ -3,10 +3,10 @@
 let mediaRecorder;
 let recordedChunks = [];
 let timer;
-const timerInterval = 10000;
+const timerInterval = 5000;
 
-const connectionStream = new signalR.HubConnectionBuilder()
-    .withUrl('/streamHub')
+const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/streamHub") // Adjust the URL to match your server endpoint
     .build();
 
 
@@ -67,7 +67,6 @@ function switchCamera() {
             stopSatoshiTimer();
             stopCamera();
             stopStreaming();
-            startBreakVideo();
             camBool = false;
             console.log('Camera break')
             FetchAddLive();
@@ -81,7 +80,6 @@ function switchCamera() {
         case !camBool && streamBool:
             // Going back live
             endBreak = startLive = new Date();
-            endBreakVideo();
             startSatoshiTimer();
             startStreaming();
             camBool = true;
@@ -99,88 +97,52 @@ function switchCamera() {
     }
 }
 
-
-
-// Break video
-async function startBreakVideo() {
-    //console.log('startBreakVideo() is called');
-    //var breakImageUrl = "/images/break.jpg";
-
-    //var videoElement = document.getElementById("video");
-
-    //// Set the source of the video element to the break image URL
-    //videoElement.src = breakImageUrl;
-
-    //// Show the video element
-    //videoElement.style.display = "block";
-
-    //// Remove any existing image element
-    //var imageElement = document.querySelector("img");
-    //if (imageElement) {
-    //    imageElement.remove();
-    //}
-}
-
-async function endBreakVideo() {
-    //console.log('endBreakVideo() is called');
-    //var videoElement = document.getElementById("video");
-
-    //// Pause the video
-    //videoElement.pause();
-
-    //// Reset the source of the video element
-    //videoElement.src = "";
-
-    //// Hide the video element
-    //videoElement.style.display = "none";
-}
-
 function startStreaming() {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-            const videoElement = document.getElementById('video');
+    navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+            const videoElement = document.getElementById("video");
             videoElement.srcObject = stream;
 
             mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
 
-            mediaRecorder.addEventListener('dataavailable', event => {
+            mediaRecorder.addEventListener("dataavailable", (event) => {
+                console.log("New data available: " + event.data.size);
                 recordedChunks.push(event.data);
                 sendBlob(event.data);
             });
 
-            mediaRecorder.addEventListener('stop', () => {
-                const recordedBlob = new Blob(recordedChunks, { type: 'video/webm' });
+            mediaRecorder.addEventListener("stop", () => {
+                const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
                 const url = URL.createObjectURL(recordedBlob);
 
-                // const a = document.createElement('a');
-                // a.href = url;
-                // a.download = 'stream.webm';
-                // document.body.appendChild(a);
-                // a.click();
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "stream.webm";
+                document.body.appendChild(a);
+                a.click();
 
                 recordedChunks = [];
                 URL.revokeObjectURL(url);
             });
 
             mediaRecorder.start();
-            console.log('Recording started.');
+            console.log("Recording started.");
 
+            // Trigger the dataavailable event every x seconds
             startTimer();
-
         })
-        .catch(error => {
-            console.error('Error accessing media devices:', error);
+        .catch((error) => {
+            console.error("Error accessing media devices:", error);
         });
-
 }
 
 function stopStreaming() {
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
         mediaRecorder.stop();
         clearInterval(timer);
-        console.log('Recording stopped.');
+        console.log("Recording stopped.");
     }
-
     if (camBool) {
         endStream = endLive = new Date();
         FetchAddLive()
@@ -223,19 +185,53 @@ function startCamera() {
         });
 }
 
-
 function sendBlob(chunk) {
+
     const reader = new FileReader();
     reader.onloadend = () => {
         const buffer = reader.result;
         const uint8Array = new Uint8Array(buffer);
         const base64String = bytesToBase64(uint8Array);
+        var JSONData = JSON.stringify(base64String);
+
+        // Create a Blob from the byte array
+        const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
+
+        // call to controller
+        $.ajax({
+            url: "/Stream/SecurityChunk",
+            data: JSONData,
+            type: "Post",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                console.log("Succes sending message")
+            },
+            error: function (result) {
+                window.alert("Error sending message");
+            }
+        });
+
+        $.ajax({
+            url: "/Stream/SaveChunk",
+            data: blob, 
+            type: "POST",
+            contentType: "application/octet-stream", 
+            processData: false, 
+            success: function (result) {
+                console.log("Success sending message");
+            },
+            error: function (result) {
+                window.alert("Error sending message");
+            }
+        });
+        
         console.log("Sending chunk: " + base64String);
-        connectionStream.invoke("SendChunk", base64String).catch(error => {
+        connection.invoke("SendChunk", base64String).catch(error => {
             console.error("Error sending Blob: ", error);
         });
     };
     reader.readAsArrayBuffer(chunk);
+
 }
 
 // Function to convert uint8array to base64
@@ -272,46 +268,39 @@ function bytesToBase64(bytes) {
     return result;
 }
 
-connectionStream.start()
+connection.start()
     .then(() => {
         // Connection is established, ready to send/receive signaling messages
-        console.log('ConnectionChat established.');
+        console.log("Connection established.");
     })
-    .catch(error => {
-        console.error('Error starting the signaling connection:', error);
+    .catch((error) => {
+        console.error("Error starting the signaling connection:", error);
     });
 
-var connectionChat = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+//create new signalR Hub connection
+const watcherHubConnection = new signalR.HubConnectionBuilder()
+    .withUrl("/watcherHub")
+    .build();
 
-document.getElementById("sendButton").disabled = true;
-
-connectionChat.on("ReceiveMessage", function (message, user) {
-    var li = document.createElement("li");
-    document.getElementById("messagesList").appendChild(li);
-    //li.textContent = `${user} says ${message}`;
-    li.textContent = `${message}`;
+//when UpdateWatcherCount has been called -> update viewer count
+watcherHubConnection.on("UpdateWatcherCount", (count) => {
+    //adjust innerHTML
+    document.getElementById("watcherCount").textContent = (count).toString() + " people watching the stream.";
 });
 
-connectionChat.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-});
-
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
-    var message = document.getElementById("messageInput").value;
-    connectionChat.invoke("SendMessage", user, message).catch(function (err) {
-        return console.error(err.toString());
+//start stream over Hub connection
+watcherHubConnection.start()
+    .then(() => {
+        // Connection is established, ready to send/receive signaling messages
+        console.log("Connection established.");
+    })
+    .catch((error) => {
+        console.error("Error starting the signaling connection:", error);
     });
-    event.preventDefault();
-});
 
 
 // Fetch calls
 function FetchAddStream() {
-    console.log('FetchAddStream: ')
-
     fetch('/stream/AddStream', {
         method: 'POST',
         headers: {
@@ -340,14 +329,9 @@ function FetchAddStream() {
         .catch(error => {
             console.error('An error occurred while starting streaming:', error);
         });
-
-
 }
 
 function FetchStopStreaming() {
-    console.log('FetchStopStream: ')
-    console.log('DurationStream: ' + durationStream)
-
     fetch('/stream/StopStream', {
         method: 'POST',
         headers: {
@@ -377,22 +361,9 @@ function FetchStopStreaming() {
         .catch(error => {
             console.error('An error occurred while starting streaming:', error);
         });
-
 }
 
 function FetchAddBreak() {
-    console.log('FetchAddBreak: ')
-    if (camBool) {
-        console.log('camBool: ' + camBool)
-        console.log('StartLive: ' + startLive)
-
-    } else {
-        console.log('camBool: ' + camBool)
-        console.log('endStream: ' + endStream)
-    }
-    console.log('endBreak : ' + endBreak)
-
-
     fetch('/stream/AddBreak', {
         method: 'POST',
         headers: {
@@ -422,11 +393,6 @@ function FetchAddBreak() {
 }
 
 function FetchAddLive() {
-    console.log('FetchAddLive: ')
-    console.log('camBool: ' + camBool)
-    console.log('endStream: ' + endStream)
-    console.log('endLive : ' + endLive)
-
     fetch('/stream/AddLive', {
         method: 'POST',
         headers: {
@@ -453,7 +419,6 @@ function FetchAddLive() {
         .catch(error => {
             console.error('An error occurred while starting streaming:', error);
         });
-
 }
 
 function FetchAddSatoshi() {
@@ -552,5 +517,6 @@ function updateStreamTimer() {
 function padZero(number) {
     return number.toString().padStart(2, '0');
 }
+
 
 

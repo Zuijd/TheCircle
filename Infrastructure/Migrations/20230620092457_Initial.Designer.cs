@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(SecurityDbContext))]
-    [Migration("20230613095952_Add Certificate and Keys to IdentityUser")]
-    partial class AddCertificateandKeystoIdentityUser
+    [Migration("20230620092457_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -71,10 +71,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("PrivateKey")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PublicKey")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 

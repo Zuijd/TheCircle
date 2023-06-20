@@ -1,13 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DomainServices.Interfaces.Repositories;
-using Infrastructure.Contexts;
-using Domain;
-using System.IO;
+﻿using System.IO;
 
 namespace Infrastructure.Repositories
 {
@@ -114,6 +105,21 @@ namespace Infrastructure.Repositories
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> SaveChunk(DateTime timestamp, byte[] chunk)
+        {
+            try
+            {
+                await _context.Storage.AddAsync(new Storage(timestamp, chunk));
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.Message);
+                return false;
             }
         }
     }

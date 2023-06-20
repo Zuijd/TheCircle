@@ -9,16 +9,14 @@ namespace Portal.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        private readonly ICertificateService _certificateService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILoggerService _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserController(IUserService userService, ICertificateService certificateService, IHttpContextAccessor httpContextAccessor, ILoggerService logger)
+        public UserController(IUserService userService, ILoggerService logger, IHttpContextAccessor httpContextAccessor)
         {
             _userService = userService;
-            _certificateService = certificateService;
-            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [PreventAccess]
@@ -34,7 +32,7 @@ namespace Portal.Controllers
                     if (user)
                     {
                         HttpContext.Session.SetString("Username", loginViewModel.Username!);
-                        _logger.Log("User has logged in!");
+                        _logger.Log(loginViewModel.Username, $"{loginViewModel.Username} has logged in!");
                         
                         return RedirectToAction("Index", "Home");
                     }
@@ -64,7 +62,7 @@ namespace Portal.Controllers
                 {
                     //Login user
                     await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
-                    _logger.Log($"Registered user: {registerViewModel.Username}");
+                    _logger.Log(registerViewModel.Username, $"Registered user: {registerViewModel.Username}");
                     
                     return RedirectToAction("Index", "Home");
                 }
@@ -87,10 +85,9 @@ namespace Portal.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has logged out");
                     var user = await _userService.SignUserOutAsync();
-                    _logger.Log("User has logged out");
-                    HttpContext.Session.Remove("Username"); 
-                 
+                    HttpContext.Session.Remove("Username");
                 }
             }
             catch (KeyException e)
@@ -107,7 +104,7 @@ namespace Portal.Controllers
             try
             {
                 var succes = await this._userService.AddSatoshi(satoshi);
-                _logger.Log("User trying to add balance to his account");
+                _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} trying to add balance to his account");
                 return Ok(succes);
             }
             catch (Exception e)

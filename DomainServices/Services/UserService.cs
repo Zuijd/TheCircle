@@ -153,7 +153,7 @@ namespace DomainServices.Services
         {
             await _signInManager.SignOutAsync();
 
-            if (_signInManager.Context.User.Identity!.IsAuthenticated)
+            if (!_signInManager.Context.User.Identity!.IsAuthenticated)
             {
                 return true;
             }
@@ -177,6 +177,10 @@ namespace DomainServices.Services
             return mailRegex.IsMatch(email);
         }
 
+        public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
+        
+        public async Task<List<User>> GetAllUsers() => await _userRepository.GetAllUsers();
+
         public async Task<string> GetSpecificClaim(string username, string claimType)
         {
             var user = await _userManager.FindByNameAsync(username);
@@ -193,7 +197,6 @@ namespace DomainServices.Services
             throw new KeyException($"No{claimType}Claim", $"No {claimType} claim present");
         }
 
-        public async Task<User> GetUserByName(string username) => await _userRepository.GetUserByName(username);
 
         public async Task<bool> AddSatoshi(dynamic satoshiInfo)
         {
@@ -206,7 +209,6 @@ namespace DomainServices.Services
             
             return false;
         }
-
 
     }
 }

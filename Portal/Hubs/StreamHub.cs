@@ -11,11 +11,10 @@ namespace Portal.Hubs
 
             await Clients.Group(userName).SendAsync("ReceiveChunk", chunk);
         }
-        
+
         public async Task JoinGroup(string group)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, group);
         }
-
     }
 }

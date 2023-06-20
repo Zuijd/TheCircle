@@ -1,69 +1,67 @@
 @{
     ViewData["Title"] = "Stream";
+    var username = User.Identity?.Name;
 }
 
 <head>
     <meta charset="UTF-8">
     <title>Stream</title>
-    <!-- Include necessary libraries -->
-    <script src="~/js/signalr/dist/browser/signalr.js"></script>
 </head>
 
 <body>
-    <div class="row">
-        <div class="col">
-            <video id="video" width="640" height="480" autoplay></video>
-            <img src="/images/break.jpg" width="640" height="480" alt="" class="hidden">
-        </div>
-
-        <div class="col">
-            <div class="row">
-                <button class="btn btn-success" onclick="startButton()">Start Streaming</button>
-
-                <button class="btn btn-danger mt-3" onclick="stopButton()">Stop Streaming</button>
-
-                <button class="btn btn-info mt-3" onclick="switchCamera()">Start/Stop Camera</button>
+    <div class="container" id="stream-container" data-user="@ViewBag.Username">
+        <div class="row g-0">
+            <h1>Streaming as @ViewBag.UserName </h1>
+            <span id="watcherCount"></span>
+            <div class="row g-0">
+                <div class="col-md">
+                    <div class="ratio ratio-4x3">
+                        <video id="video" height="480" autoplay controls></video>
+                    </div>
+                </div>
+                <div class="col-sm bg-secondary">
+                    <div class="row p-1">
+                        <div class="col-2">Message</div>
+                        <div class="col-4"><input type="text" class="w-100" id="messageInput" /></div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-6 text-end">
+                            <input type="button" id="sendButton" value="Send Message" />
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-6">
+                            <hr />
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-6">
+                            <ul id="messagesList"></ul>
+                        </div>
+                    </div>
+                    <input type="hidden" id="viewName" value="Stream Index">
+                </div>
             </div>
-            <div class="row">
-                <h2>Stream Timer</h2>
-                <span id="streamTimer">00:00:00</span>
-                <!-- Balance Display -->
-                <h2>Stream Balance</h2>
-                <div id="balanceDisplay">0.00000001 Satoshi</div>
-            </div>
-        </div>
-    </div>
-
-
-
-
-    @* chat *@
-    <div class="container">
-        <div class="row p-1">
-            <div class="col-1">User</div>
-            <div class="col-5"><input type="text" id="userInput" /></div>
-        </div>
-        <div class="row p-1">
-            <div class="col-1">Message</div>
-            <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-        </div>
-        <div class="row p-1">
-            <div class="col-6 text-end">
-                <input type="button" id="sendButton" value="Send Message" />
-            </div>
-        </div>
-        <div class="row p-1">
-            <div class="col-6">
-                <hr />
-            </div>
-        </div>
-        <div class="row p-1">
-            <div class="col-6">
-                <ul id="messagesList"></ul>
+            <div class="mt-2">
+                <div class="btn-group" role="group">
+                    <button type="button" id="startStreamBtn" onclick="startButton()" class="btn btn-success">Start Streaming</button>
+                    <button type="button" id="stopStreamBtn" onclick="stopButton()" class="btn btn-danger">Stop Streaming</button>
+                    <button type="button" id="switchCamBtn" onclick="switchCamera()" class="btn btn-info">Start/Stop Camera</button>
+                </div>
+                <div class="row">
+                    <h2>Stream Timer</h2>
+                    <span id="streamTimer">00:00:00</span>
+                    <!-- Balance Display -->
+                    <h2>Stream Balance</h2>
+                    <div id="balanceDisplay">0.00000001 Satoshi</div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Include the stream.js file -->
-    <script src="/js/stream.js"></script>
 </body>
+
+@section Scripts {
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/stream.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+}
