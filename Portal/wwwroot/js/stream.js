@@ -116,11 +116,11 @@ function startStreaming() {
                 const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
                 const url = URL.createObjectURL(recordedBlob);
 
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "stream.webm";
-                document.body.appendChild(a);
-                a.click();
+                //const a = document.createElement("a");
+                //a.href = url;
+                //a.download = "stream.webm";
+                //document.body.appendChild(a);
+                //a.click();
 
                 recordedChunks = [];
                 URL.revokeObjectURL(url);
