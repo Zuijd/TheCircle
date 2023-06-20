@@ -108,8 +108,10 @@ function bytesToBase64(bytes) {
 }
 
 connection.on("UpdateWatcherCount", (count) => {
+    console.log("Count in js: ", count)
     const watcherCountElement = document.getElementById("watcherCount");
-    watcherCountElement.textContent = (count - 1).toString();
+    watcherCountElement.textContent = (count).toString();
+        console.log(watchercountelement.textcontent)
 });
 
 connection.start()
@@ -120,3 +122,4 @@ connection.start()
     .catch((error) => {
         console.error("Error starting the signaling connection:", error);
     });
+

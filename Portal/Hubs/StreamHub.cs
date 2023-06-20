@@ -4,8 +4,6 @@ namespace Portal.Hubs
 {
     public class StreamHub : Hub
     {
-        public int watcherCount = 0;
-
         public async Task SendChunk(byte[] chunk)
         {
             var httpContext = Context.GetHttpContext();
@@ -19,19 +17,21 @@ namespace Portal.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, group);
         }
 
-        public override async Task OnConnectedAsync()
+        public override Task OnConnectedAsync()
         {
-            watcherCount++;
-            await Clients.All.SendAsync("UpdateWatcherCount", watcherCount);
+            Console.WriteLine("OnConnectedAsync called");
+            UserHandler.ConnectedIds.Add(Context.ConnectionId);
 
-            await base.OnConnectedAsync();
+            //Deze volgende line roept de hele methode opnieuw aan waardoor de watchCount +2 wordt gedaan ipv +1
+            Clients.All.SendAsync("UpdateWatcherCount", UserHandler.ConnectedIds.Count);
+            return base.OnConnectedAsync();
         }
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            watcherCount--;
-            await Clients.All.SendAsync("UpdateWatcherCount", watcherCount);
 
-            await base.OnDisconnectedAsync(exception);
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            UserHandler.ConnectedIds.Remove(Context.ConnectionId);
+            Clients.All.SendAsync("UpdateWatcherCount", UserHandler.ConnectedIds.Count);
+            return base.OnDisconnectedAsync(exception);
         }
     }
 }

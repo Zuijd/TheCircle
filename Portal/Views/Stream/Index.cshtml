@@ -14,6 +14,7 @@
     <div class="container" id="stream-container" data-user="@ViewBag.Username">
         <div class="row g-0">
             <h1>Streaming as @ViewBag.UserName </h1>
+                <span id="watcherCount"></span> people watching the stream.
             <div class="row g-0">
                 <div class="col-md">
                     <div class="ratio ratio-4x3">
@@ -58,4 +59,5 @@
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/stream.js" asp-append-version="true"></script>
     <script src="~/js/chat.js" asp-append-version="true"></script>
+    <script src="~/js/watchCount.js" asp-append-version="true"></script>
 }
