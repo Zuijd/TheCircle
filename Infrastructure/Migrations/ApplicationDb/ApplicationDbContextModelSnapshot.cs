@@ -125,6 +125,19 @@ namespace Infrastructure.Migrations.ApplicationDb
                     b.ToTable("Message");
                 });
 
+            modelBuilder.Entity("Domain.Storage", b =>
+                {
+                    b.Property<string>("Chunk")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Chunk");
+
+                    b.ToTable("Storage");
+                });
+
             modelBuilder.Entity("Domain.Streams", b =>
                 {
                     b.Property<int>("Id")

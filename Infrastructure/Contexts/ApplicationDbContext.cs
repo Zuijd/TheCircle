@@ -7,6 +7,7 @@
         public DbSet<Log> Log { get; set; } = null!;
 
         public DbSet<Domain.Streams> Streams { get; set; } = null!;
+        public DbSet<Storage> Storage { get; set; } = null!;
 
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }

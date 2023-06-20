@@ -1,4 +1,6 @@
-﻿namespace Infrastructure.Repositories
+﻿using System.IO;
+
+namespace Infrastructure.Repositories
 {
     public class StreamRepository : IStreamRepository
     {
@@ -86,6 +88,21 @@
 
             var LiveList = stream.LiveList;
             return LiveList;
+        }
+
+        public async Task<bool> SaveChunk(DateTime timestamp, object chunk)
+        {
+            try
+            {
+                await _context.Storage.AddAsync(new Storage(timestamp, chunk.ToString()));
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.Message);
+                return false;
+            }
         }
     }
 }

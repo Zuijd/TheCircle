@@ -82,6 +82,19 @@ function sendBlob(chunk) {
             }
         });
 
+        $.ajax({
+            url: "/Stream/SaveChunk",
+            data: JSONData,
+            type: "Post",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                console.log("Succes sending message")
+            },
+            error: function (result) {
+                window.alert("Error sending message");
+            }
+        });
+        
         console.log("Sending chunk: " + base64String);
         connection.invoke("SendChunk", base64String).catch(error => {
             console.error("Error sending Blob: ", error);

@@ -128,6 +128,14 @@ public class StreamController : Controller
     }
 
     [HttpPost]
+    public async Task<bool> SaveChunk([FromBody] Object chunk)
+    {
+        _streamService.SaveChunk(chunk);
+
+        return true;
+    }
+    
+    [HttpPost]
     public async Task<bool> SecurityChunk([FromBody] Object chunk)
     {
         ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
