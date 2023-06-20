@@ -14,6 +14,7 @@ namespace DomainServices.Interfaces.Services
         public Task<bool> AddLiveMoment(dynamic live);
         public Task<bool> AddBreakMoment(dynamic pauze);
         public Task<decimal> GetSatoshi(int streamId);
+        public PKC CreateChunk(object chunk, byte[] signature, byte[] certificate);
 
 
     }

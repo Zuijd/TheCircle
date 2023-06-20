@@ -6,60 +6,78 @@ let timer;
 const timerInterval = 5000;
 
 const connection = new signalR.HubConnectionBuilder()
-  .withUrl("/streamHub") // Adjust the URL to match your server endpoint
-  .build();
+    .withUrl("/streamHub") // Adjust the URL to match your server endpoint
+    .build();
 
 function startStreaming() {
     navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
         .then((stream) => {
-          const videoElement = document.getElementById("video");
-          videoElement.srcObject = stream;
+            const videoElement = document.getElementById("video");
+            videoElement.srcObject = stream;
 
-          mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
+            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9,opus', timeslice: timerInterval });
 
-          mediaRecorder.addEventListener("dataavailable", (event) => {
-            console.log("New data available: " + event.data.size);
-            recordedChunks.push(event.data);
-            sendBlob(event.data);
-          });
+            mediaRecorder.addEventListener("dataavailable", (event) => {
+                console.log("New data available: " + event.data.size);
+                recordedChunks.push(event.data);
+                sendBlob(event.data);
+            });
 
-          mediaRecorder.addEventListener("stop", () => {
-            const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
-            const url = URL.createObjectURL(recordedBlob);
+            mediaRecorder.addEventListener("stop", () => {
+                const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
+                const url = URL.createObjectURL(recordedBlob);
 
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "stream.webm";
-            document.body.appendChild(a);
-            a.click();
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "stream.webm";
+                document.body.appendChild(a);
+                a.click();
 
-            recordedChunks = [];
-            URL.revokeObjectURL(url);
-          });
+                recordedChunks = [];
+                URL.revokeObjectURL(url);
+            });
 
-          mediaRecorder.start();
-          console.log("Recording started.");
+            mediaRecorder.start();
+            console.log("Recording started.");
 
-          // Trigger the dataavailable event every x seconds
-          timer = setInterval(() => {
-            mediaRecorder.requestData();
-          }, timerInterval);
+            // Trigger the dataavailable event every x seconds
+            timer = setInterval(() => {
+                mediaRecorder.requestData();
+            }, timerInterval);
         })
         .catch((error) => {
-          console.error("Error accessing media devices:", error);
+            console.error("Error accessing media devices:", error);
         });
 }
 
 function stopStreaming() {
-  if (mediaRecorder && mediaRecorder.state !== "inactive") {
-    mediaRecorder.stop();
-    clearInterval(timer);
-    console.log("Recording stopped.");
-  }
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+        clearInterval(timer);
+        console.log("Recording stopped.");
+    }
 }
 
 function sendBlob(chunk) {
+
+    var JSONData = JSON.stringify(chunk);
+
+    // call to controller
+    $.ajax({
+        url: "/Stream/SecurityChunk",
+        data: JSONData,
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        success: function (result) {
+            console.log("Succes sending message")
+        },
+        error: function (result) {
+            window.alert("Error sending message");
+        }
+    });
+
+
     const reader = new FileReader();
     reader.onloadend = () => {
         const buffer = reader.result;
