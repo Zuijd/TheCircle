@@ -356,7 +356,7 @@ function FetchStopStreaming() {
         body: JSON.stringify({
             endStream: endStream,
             durationStream: durationStream,
-            earningsBeforeBreak: earningsBeforeBreak.toFixed(8).toString()
+            earnedSatoshi: earningsBeforeBreak.toFixed(8).toString()
         })
     })
         .then(response => {

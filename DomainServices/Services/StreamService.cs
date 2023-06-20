@@ -40,7 +40,7 @@ namespace DomainServices.Services
             var streamId = (int) HttpContext.Session.GetInt32("StreamId")!;
             var endStream = DateTime.Parse(streamInfo.GetProperty("endStream").GetString());
             var durationStream = streamInfo.GetProperty("durationStream").GetInt32();
-            var satoshi = streamInfo.GetProperty("earningsBeforeBreak").GetString();
+            var satoshi = streamInfo.GetProperty("earnedSatoshi").GetString();
             TimeSpan timeSpan = TimeSpan.FromMilliseconds(durationStream);
             var succes = await this._streamRepository.StopStream(streamId, endStream, timeSpan, satoshi);
             HttpContext.Session.Remove("StreamId");

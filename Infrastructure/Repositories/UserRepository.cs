@@ -32,7 +32,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> AddSatoshi(string username, decimal satoshi)
+        public async Task<bool> AddSatoshi(string username, string satoshi)
         {
             try
             {

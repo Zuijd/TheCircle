@@ -200,13 +200,10 @@ namespace DomainServices.Services
             var HttpContext = _contextAccessor.HttpContext;
             var username = HttpContext.Session.GetString("Username");
 
-            if (satoshiInfo.TryGetProperty("earnedSatoshi", out JsonElement earnedSatoshiElement) && earnedSatoshiElement.ValueKind == JsonValueKind.Number)
-            {
-                decimal earnedSatoshi = earnedSatoshiElement.GetDecimal();
-                var succes = await _userRepository.AddSatoshi(username, earnedSatoshi);
-                if (succes != null) { return  succes; }
-            } 
-
+            var satoshi = satoshiInfo.GetProperty("earnedSatoshi").GetString();
+            var succes = await _userRepository.AddSatoshi(username, satoshi);
+            if (succes != null) { return  succes; }
+            
             return false;
         }
 
