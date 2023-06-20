@@ -24,16 +24,30 @@
             }
         }
 
-        public async Task<bool> AddSatoshi(string username, decimal satoshi)
+        public async Task<bool> AddSatoshi(string username, string satoshi)
         {
-            var user = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
-            if (user == null) { return false; }
+            try
+            {
+                var user = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
+                if (user == null) { return false; }
 
-            user.Satoshi += satoshi;
-            await _context.SaveChangesAsync();
+                // Convert the string values to decimal
+                decimal userSatoshi = decimal.Parse(user.Satoshi);
+                decimal satoshiValue = decimal.Parse(satoshi);
 
-            return true;
-        
+                // Perform the addition
+                decimal totalSatoshi = userSatoshi + satoshiValue;
+
+                // Convert the result back to a string with 8 decimal places
+                user.Satoshi = totalSatoshi.ToString("0.00000000");
+                await _context.SaveChangesAsync();
+
+                var Updated = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
+                return true;
+
+            }catch (Exception e) { 
+                return false;
+            }
         }
     }
 }

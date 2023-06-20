@@ -9,6 +9,94 @@ const connection = new signalR.HubConnectionBuilder()
     .withUrl("/streamHub") // Adjust the URL to match your server endpoint
     .build();
 
+
+// current Stream after create in DB 
+var streamId
+// Bool if Camera is on/off
+var camBool
+// Bool if stream in on/off
+var streamBool
+// Stream time
+var startStream
+var endStream
+var durationStream
+//  Live moments
+var startLive
+var endLive
+// Break moments
+var startBreak
+var endBreak
+
+// HTML Buttons
+function startButton() {
+    if (!streamBool) {
+        streamBool = camBool = true;
+        startStream = startLive = new Date();
+        startSatoshiTimer();
+        startStreamTimer();
+        startStreaming();
+        FetchAddStream();
+    }
+}
+
+function stopButton() {
+    if (streamBool) {
+        if (camBool) {
+            endStream = endLive = new Date();
+            FetchAddLive()
+        } else {
+            endStream = endBreak = new Date();
+            FetchAddBreak();
+        }
+        stopSatoshiTimer();
+        stopStreamTimer();
+        stopCamera();
+        stopStreaming();
+        durationStream = endStream - startStream;
+        FetchStopStreaming();
+        FetchAddSatoshi();
+        streamBool = camBool = false;
+    }
+}
+
+function switchCamera() {
+    switch (true) {
+        case camBool && streamBool:
+            // Pauzing stream when live
+            endLive = startBreak = new Date();
+            stopSatoshiTimer();
+            stopCamera();
+            stopStreaming();
+            camBool = false;
+            console.log('Camera break')
+            FetchAddLive();
+            break;
+        case camBool && !streamBool:
+            // Not streaming, turn camera off
+            stopCamera()
+            camBool = false
+            console.log('Camera OFF')
+            break;
+        case !camBool && streamBool:
+            // Going back live
+            endBreak = startLive = new Date();
+            startSatoshiTimer();
+            startStreaming();
+            camBool = true;
+            console.log('Camera wake up')
+            FetchAddBreak();
+            break;
+        case !camBool && !streamBool:
+            // not streaming, turn camera on
+            startCamera();
+            camBool = true
+            console.log('Camera ON')
+            break;
+        default:
+        // code to be executed if no case matches
+    }
+}
+
 function startStreaming() {
     navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
@@ -42,9 +130,7 @@ function startStreaming() {
             console.log("Recording started.");
 
             // Trigger the dataavailable event every x seconds
-            timer = setInterval(() => {
-                mediaRecorder.requestData();
-            }, timerInterval);
+            startTimer();
         })
         .catch((error) => {
             console.error("Error accessing media devices:", error);
@@ -57,6 +143,46 @@ function stopStreaming() {
         clearInterval(timer);
         console.log("Recording stopped.");
     }
+    if (camBool) {
+        endStream = endLive = new Date();
+        FetchAddLive()
+    } else {
+        endStream = endBreak = new Date();
+        FetchAddBreak();
+    }
+    durationStream = endStream - startStream;
+}
+
+function startTimer() {
+    mediaRecorder.requestData();
+
+    timer = setInterval(() => {
+        mediaRecorder.requestData();
+    }, timerInterval);
+
+}
+
+function stopCamera() {
+    const videoElement = document.getElementById('video');
+    const mediaStream = videoElement.srcObject;
+
+    if (mediaStream) {
+        const tracks = mediaStream.getTracks();
+
+        tracks.forEach(track => track.stop());
+        videoElement.srcObject = null;
+    }
+}
+
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+            const videoElement = document.getElementById('video');
+            videoElement.srcObject = stream;
+        })
+        .catch(error => {
+            console.error('Error accessing media devices:', error);
+        });
 }
 
 function sendBlob(chunk) {
@@ -171,3 +297,226 @@ watcherHubConnection.start()
     .catch((error) => {
         console.error("Error starting the signaling connection:", error);
     });
+
+
+// Fetch calls
+function FetchAddStream() {
+    fetch('/stream/AddStream', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            startStream: startStream
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+                return response.json(); // Parse response data as JSON
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+                throw new Error('Failed to start streaming'); // Throw an error to handle it in the catch block
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            streamId = data;
+            console.log('Response data:', streamId);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+}
+
+function FetchStopStreaming() {
+    fetch('/stream/StopStream', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            endStream: endStream,
+            durationStream: durationStream,
+            earnedSatoshi: earningsBeforeBreak.toFixed(8).toString()
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+                return response.json(); // Parse response data as JSON
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+                throw new Error('Failed to start streaming'); // Throw an error to handle it in the catch block
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+}
+
+function FetchAddBreak() {
+    fetch('/stream/AddBreak', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            startBreak: startBreak,
+            endBreak: endBreak
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+}
+
+function FetchAddLive() {
+    fetch('/stream/AddLive', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            startLive: startLive,
+            endLive: endLive
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                // Streaming started successfully
+                console.log('Streaming started!');
+            } else {
+                // Error occurred
+                console.error('Failed to start streaming:', response.statusText);
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while starting streaming:', error);
+        });
+}
+
+function FetchAddSatoshi() {
+    console.log('FetchAddSatoshi is called!')
+    fetch('/user/AddSatoshi', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            earnedSatoshi: earningsBeforeBreak.toFixed(8).toString()
+        })
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log('AddBalance to user');
+            } else {
+                console.log('Failed to add satoshi balance')
+            }
+        })
+        .then(data => {
+            // Handle the response data here
+            console.log('Response data:', data);
+        })
+        .catch(error => {
+            console.error('An error occurred while adding satoshi:', error);
+        });
+}
+
+// Satoshi tracking
+let initialBalance = 0.00000001;
+let earningPerInterval = 0.00000001; // Initial earning per interval
+
+// Timer interval for updating the balance (1 hour = 3600000 milliseconds)
+const timerIntervalS = 5000;
+
+let balance = 0; // Balance starts from 0 initially
+let satoshiTimer;
+let breakSatoshi = false;
+let earningsBeforeBreak = 0;
+
+function startSatoshiTimer() {
+    balance += initialBalance; // Add initial balance when the timer starts
+
+    if (breakSatoshi) {
+        // Reset balance to initial balance after a break
+        balance = initialBalance;
+        breakSatoshi = false;
+        $('#balanceDisplay').text(
+            (balance + earningsBeforeBreak).toFixed(8) + ' Satoshi'
+        )
+    }
+
+    satoshiTimer = setInterval(() => {
+        balance = balance * 2;
+
+        $('#balanceDisplay').text(
+            (balance + earningsBeforeBreak).toFixed(8) + ' Satoshi'
+        );
+    }, timerIntervalS);
+}
+
+function stopSatoshiTimer() {
+    clearInterval(satoshiTimer);
+    earningsBeforeBreak += balance; // Add the current balance to earnings before break
+    breakSatoshi = true;
+}
+
+// StreamTimer
+let streamTimer;
+let streamStartTime;
+
+
+function startStreamTimer() {
+    streamStartTime = new Date().getTime();
+    streamTimer = setInterval(updateStreamTimer, 1000);
+}
+function stopStreamTimer() {
+    clearInterval(streamTimer);
+}
+
+function updateStreamTimer() {
+    const currentTime = new Date().getTime();
+    const elapsedSeconds = Math.floor((currentTime - streamStartTime) / 1000);
+
+    // Format the elapsed time into HH:MM:SS format
+    const hours = Math.floor(elapsedSeconds / 3600);
+    const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+    const seconds = elapsedSeconds % 60;
+    const formattedTime = `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+
+    // Update the stream timer display
+    document.getElementById('streamTimer').textContent = formattedTime;
+}
+
+function padZero(number) {
+    return number.toString().padStart(2, '0');
+}
+
+
+

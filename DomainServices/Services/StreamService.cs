@@ -44,14 +44,9 @@ namespace DomainServices.Services
             var streamId = (int) HttpContext.Session.GetInt32("StreamId")!;
             var endStream = DateTime.Parse(streamInfo.GetProperty("endStream").GetString());
             var durationStream = streamInfo.GetProperty("durationStream").GetInt32();
+            var satoshi = streamInfo.GetProperty("earnedSatoshi").GetString();
             TimeSpan timeSpan = TimeSpan.FromMilliseconds(durationStream);
-            var satoshi = await this.GetSatoshi(streamId);
             var succes = await this._streamRepository.StopStream(streamId, endStream, timeSpan, satoshi);
-            
-            if(succes) {
-                var username = HttpContext.Session.GetString("Username");
-                await this._userRepository.AddSatoshi(username,satoshi);
-            }
             HttpContext.Session.Remove("StreamId");
             return succes;
         }
@@ -77,6 +72,8 @@ namespace DomainServices.Services
             var newLive = new Live(startLive, endLive, duration);
             return await this._streamRepository.saveLiveMoment(newLive,streamId);
         }
+
+       
 
         // Satoshi
         public async Task<decimal> GetSatoshi(int streamId)
@@ -109,6 +106,13 @@ namespace DomainServices.Services
             return compensation;
 
         }
+        public async Task<List<Streams>> GetStreams()
+        {
+            var HttpContext = _contextAccessor.HttpContext;
+            var username = HttpContext.Session.GetString("Username");
+            return await _streamRepository.GetStreams(username);
+        }
+
 
         public PKC CreateChunk(object chunk, byte[] signature, byte[] certificate)
         {

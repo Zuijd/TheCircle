@@ -55,6 +55,22 @@ public class StreamController : Controller
         return View();
     }
 
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> History()
+    {
+        try
+        {
+            var streams = await _streamService.GetStreams();
+            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream History page!");
+            return View(streams);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
+    }
+
     // Cals for the stream.js file to save ongoing streams
     // Add Stream
     [Authorize]
@@ -141,8 +157,6 @@ public class StreamController : Controller
 
         return true;
     }
-
-
 
     [HttpPost]
     public async Task<bool> SecurityChunk([FromBody] Object chunk)

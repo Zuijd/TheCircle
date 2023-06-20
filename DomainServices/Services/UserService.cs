@@ -1,4 +1,6 @@
 ﻿using DomainServices.Interfaces.Repositories;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace DomainServices.Services
 {
@@ -8,13 +10,15 @@ namespace DomainServices.Services
         private readonly SignInManager<UserIdentity> _signInManager;
         private readonly IUserRepository _userRepository;
         private readonly ICertificateService _certificateService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public UserService(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager, IUserRepository userRepository, ICertificateService certificateService)
+        public UserService(UserManager<UserIdentity> userManager, SignInManager<UserIdentity> signInManager, IUserRepository userRepository, ICertificateService certificateService, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _userRepository = userRepository;
             _certificateService = certificateService;
+            _contextAccessor = httpContextAccessor;
         }
         
         public async Task<UserIdentity> GetUser(string name)
@@ -191,6 +195,19 @@ namespace DomainServices.Services
             }
 
             throw new KeyException($"No{claimType}Claim", $"No {claimType} claim present");
+        }
+
+
+        public async Task<bool> AddSatoshi(dynamic satoshiInfo)
+        {
+            var HttpContext = _contextAccessor.HttpContext;
+            var username = HttpContext.Session.GetString("Username");
+
+            var satoshi = satoshiInfo.GetProperty("earnedSatoshi").GetString();
+            var succes = await _userRepository.AddSatoshi(username, satoshi);
+            if (succes != null) { return  succes; }
+            
+            return false;
         }
 
     }
