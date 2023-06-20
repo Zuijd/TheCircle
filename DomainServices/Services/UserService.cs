@@ -149,7 +149,7 @@ namespace DomainServices.Services
         {
             await _signInManager.SignOutAsync();
 
-            if (_signInManager.Context.User.Identity!.IsAuthenticated)
+            if (!_signInManager.Context.User.Identity!.IsAuthenticated)
             {
                 return true;
             }
