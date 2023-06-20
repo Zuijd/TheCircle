@@ -38,7 +38,16 @@ namespace Infrastructure.Repositories
             {
                 var user = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
                 if (user == null) { return false; }
-                user.Satoshi += satoshi;
+
+                // Convert the string values to decimal
+                decimal userSatoshi = decimal.Parse(user.Satoshi);
+                decimal satoshiValue = decimal.Parse(satoshi);
+
+                // Perform the addition
+                decimal totalSatoshi = userSatoshi + satoshiValue;
+
+                // Convert the result back to a string with 8 decimal places
+                user.Satoshi = totalSatoshi.ToString("0.00000000");
                 await _context.SaveChangesAsync();
 
                 var Updated = await _context.User.SingleOrDefaultAsync(u => u.Name == username);

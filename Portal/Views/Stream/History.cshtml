@@ -6,7 +6,7 @@
 
 <div class="container">
     <h1>Past Streams</h1>
-    <h2>Total Earnings:  Satoshi</h2>
+    <h2>Total Earnings: @CalculateTotalEarnings(Model)  Satoshi</h2>
     <table class="table">
         <thead>
             <tr>
@@ -27,8 +27,24 @@
                     <td>@stream.End.ToString("HH:mm")</td>
                     <td>@stream.Duration.ToString("hh\\:mm\\:ss")</td>
                     <td>@(stream.BreakList?.Count ?? 0)</td>
+                    <td>@stream.Satoshi</td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+@functions {
+    decimal CalculateTotalEarnings(List<Streams> streams)
+    {
+        decimal totalEarnings = 0;
+        foreach (var stream in streams)
+        {
+            if (decimal.TryParse(stream.Satoshi, out decimal earnings))
+            {
+                totalEarnings += earnings;
+            }
+        }
+        return totalEarnings;
+    }
+}
