@@ -1,6 +1,6 @@
-@{
+@*@{
     ViewData["Title"] = "Watch Stream";
-}
+}*@
 
 <!DOCTYPE html>
 <html>
@@ -8,7 +8,7 @@
     <title>Live Stream Viewer</title>
 </head>
 <body>
-    <div class="container" id="stream-container" data-user="@ViewBag.Username">
+    <div class="container" id="stream-container" data-user="@ViewBag.UserName">
         <a href="/" class="btn btn-primary mb-3">Back</a>
         <div class="row g-0">
             <div class="col-md">
@@ -46,6 +46,8 @@
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    <script src="/js/watch.js"></script>
     <script src="/js/chat.js"></script>
+    <script src="/js/stream.js"></script>    
+    <script src="/js/watch.js"></script>
+
 }
