@@ -1,3 +1,15 @@
+using System;
+using System.Diagnostics;
+using System.Net.Mail;
+using System.Reflection.Metadata.Ecma335;
+using System.Text.Json.Nodes;
+using Domain;
+using DomainServices.Interfaces;
+using DomainServices.Interfaces.Services;
+using DomainServices.Services;
+using Microsoft.AspNetCore.Mvc;
+using Portal.Models;
+
 namespace Portal.Controllers;
 
 [TLSAccess]
@@ -115,9 +127,9 @@ public class StreamController : Controller
         }
     }
 
-    public async Task<bool> SecurityChunk(Object chunk)
+    [HttpPost]
+    public async Task<bool> SecurityChunk([FromBody] Object chunk)
     {
-
         ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
         //retrieve private key
         var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
