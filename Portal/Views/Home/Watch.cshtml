@@ -1,0 +1,37 @@
+﻿@* Former Watch page *@
+@{
+    var loggedInUser = User.Identity?.Name;
+}
+
+<div class="container" id="stream-container" data-user="@loggedInUser">
+    <div class="row">
+        <div class="col text-center">
+            <h1>Select a Streamer</h1>
+
+            <div class="streams-container" id="streams-container" data-user="@ViewBag.Username">
+                @foreach (var user in @ViewBag.Users)
+                {
+                    <div class="stream">
+                        <input type="radio" name="streamerButton" id="@user.Name" value="@user.Name">
+                        <label for="@user.Name">@user.Name</label>
+                    </div>
+                }
+                <!-- Add more streams as needed -->
+            </div>
+
+            <a id="viewStreamsBtn"  class="btn btn-primary">View Stream</a>
+        </div>
+    </div>
+
+    <div class="row mt-4" id="streamsContainer">
+        <!-- Streams will be dynamically added here -->
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/homepage.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+
+}

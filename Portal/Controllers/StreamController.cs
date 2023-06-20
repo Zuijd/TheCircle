@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
 namespace Portal.Controllers;
 
+[TLSAccess]
 public class StreamController : Controller
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -26,6 +27,7 @@ public class StreamController : Controller
         _streamService = streamService;
     }
 
+    [Authorize]
     public IActionResult Index()
     {
         _logger.Log("User has accessed Stream page!");
@@ -34,6 +36,7 @@ public class StreamController : Controller
         return View();
     }
 
+    [Authorize]
     public IActionResult Watch(string id)
     {
         
@@ -50,6 +53,7 @@ public class StreamController : Controller
 
     // Cals for the stream.js file to save ongoing streams
     // Add Stream
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddStream([FromBody] dynamic newStreamInfo)
     {
@@ -67,6 +71,7 @@ public class StreamController : Controller
     }
 
     // Stop Stream
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> StopStream([FromBody] dynamic stopStreamInfo)
     {
@@ -84,6 +89,7 @@ public class StreamController : Controller
     }
 
     // Add Break
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddBreak([FromBody] dynamic pauze)
     {
@@ -101,6 +107,7 @@ public class StreamController : Controller
     }
 
     // Add Live
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddLive([FromBody] dynamic live)
     {

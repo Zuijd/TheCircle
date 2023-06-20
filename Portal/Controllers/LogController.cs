@@ -2,6 +2,7 @@
 
 namespace Portal.Controllers
 {
+    [TLSAccess]
     public class LogController : Controller
     {
 

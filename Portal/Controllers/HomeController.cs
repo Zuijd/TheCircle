@@ -35,6 +35,18 @@ public class HomeController : Controller
         return View();
     }
 
+    [Authorize]
+    public async Task<IActionResult> Watch()
+    {
+        string username = User.Identity?.Name!; // Retrieve the username from the user identity
+        ViewBag.Username = username; // Pass the username to the ViewBag
+
+        var users = await _userService.GetAllUsers();
+        ViewBag.Users = users;
+
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

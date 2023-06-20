@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace Portal.Controllers
 {
+    [TLSAccess]
     public class ChatController : Controller
     {
         private readonly IUserService _userService;
@@ -18,6 +19,7 @@ namespace Portal.Controllers
             _certificateService = certificateService;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             return View();
