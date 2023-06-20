@@ -113,8 +113,9 @@ body {
     background-color: white;
     margin-top: 10px;
 }
-
-.messagesList {
+<<<<<<< HEAD
+}*/
+#messagesList {
     list-style-type: none;
     border-radius: 5px;
     padding-left: 0px;
@@ -125,5 +126,5 @@ body {
     background-color: white;
     border-radius: 5px;
     padding: 5px;
-<<<<<<< HEAD
-}*/
+}
+
