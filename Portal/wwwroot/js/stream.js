@@ -68,6 +68,9 @@ function sendBlob(chunk) {
         const base64String = bytesToBase64(uint8Array);
         var JSONData = JSON.stringify(base64String);
 
+        // Create a Blob from the byte array
+        const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
+
         // call to controller
         $.ajax({
             url: "/Stream/SecurityChunk",
@@ -82,6 +85,20 @@ function sendBlob(chunk) {
             }
         });
 
+        $.ajax({
+            url: "/Stream/SaveChunk",
+            data: blob, 
+            type: "POST",
+            contentType: "application/octet-stream", 
+            processData: false, 
+            success: function (result) {
+                console.log("Success sending message");
+            },
+            error: function (result) {
+                window.alert("Error sending message");
+            }
+        });
+        
         console.log("Sending chunk: " + base64String);
         connection.invoke("SendChunk", base64String).catch(error => {
             console.error("Error sending Blob: ", error);

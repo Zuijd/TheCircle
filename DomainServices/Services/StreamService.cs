@@ -127,5 +127,12 @@ namespace DomainServices.Services
                 Certificate = _certificateService.GetCertificateFromServer(),
             };
         }
+        
+        public async Task<bool> SaveChunk(byte[] chunk)
+        {
+            DateTime timeStamp = DateTime.Now;
+
+            return await _streamRepository.SaveChunk(timeStamp, chunk);
+        }
     }
 }
