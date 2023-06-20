@@ -93,9 +93,9 @@ namespace Infrastructure.Repositories
 
             if (stream != null)
             {
-            var LiveList = stream.LiveList;
+                var LiveList = stream.LiveList;
                 if (LiveList != null) return LiveList;
-            } 
+            }
 
             return null;
         }
@@ -104,21 +104,17 @@ namespace Infrastructure.Repositories
         {
             try
             {
-                var streams = await _context.Streams
+
+                return await _context.Streams
                     .Include(u => u.BreakList)
                     .Where(u => u.UserName == username)
                     .OrderByDescending(u => u.Id)
                     .ToListAsync();
-                
-                return streams;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
-                return new List<Streams>();
+                throw new Exception(ex.Message);
             }
         }
-
-
     }
 }

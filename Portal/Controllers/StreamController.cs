@@ -39,11 +39,20 @@ public class StreamController : Controller
         return View();
     }
 
+    [Authorize]
+    [HttpGet]
     public async Task<IActionResult> History()
     {
-        _logger.Log("User has accessed Stream page!");
-        var streams = await _streamService.GetStreams();
-        return View(streams);
+        try
+        {
+            var streams = await _streamService.GetStreams();
+            _logger.Log("User has accessed Stream History page!");
+            return View(streams);
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(ex.Message);
+        }
     }
 
     [HttpPost]
