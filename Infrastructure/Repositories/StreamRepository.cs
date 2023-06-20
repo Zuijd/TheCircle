@@ -90,11 +90,11 @@ namespace Infrastructure.Repositories
             return LiveList;
         }
 
-        public async Task<bool> SaveChunk(DateTime timestamp, object chunk)
+        public async Task<bool> SaveChunk(DateTime timestamp, byte[] chunk)
         {
             try
             {
-                await _context.Storage.AddAsync(new Storage(timestamp, chunk.ToString()));
+                await _context.Storage.AddAsync(new Storage(timestamp, chunk));
                 await _context.SaveChangesAsync();
                 return true;
             }

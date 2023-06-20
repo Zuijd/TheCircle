@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations.ApplicationDb
 {
-    public partial class AddStreamStorage : Migration
+    public partial class chunkStorage : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,12 +13,14 @@ namespace Infrastructure.Migrations.ApplicationDb
                 name: "Storage",
                 columns: table => new
                 {
-                    Chunk = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Chunk = table.Column<string>(type: "varbinary(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Storage", x => x.Chunk);
+                    table.PrimaryKey("PK_Storage", x => x.Id);
                 });
         }
 

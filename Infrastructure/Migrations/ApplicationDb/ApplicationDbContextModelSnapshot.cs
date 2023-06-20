@@ -127,13 +127,20 @@ namespace Infrastructure.Migrations.ApplicationDb
 
             modelBuilder.Entity("Domain.Storage", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<string>("Chunk")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Chunk");
+                    b.HasKey("Id");
 
                     b.ToTable("Storage");
                 });

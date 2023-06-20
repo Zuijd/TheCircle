@@ -128,7 +128,7 @@ namespace DomainServices.Services
             };
         }
         
-        public async Task<bool> SaveChunk(object chunk)
+        public async Task<bool> SaveChunk(byte[] chunk)
         {
             DateTime timeStamp = DateTime.Now;
 

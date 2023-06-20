@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations.ApplicationDb
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230620172154_AddStreamStorage")]
-    partial class AddStreamStorage
+    [Migration("20230620181709_chunkStorage")]
+    partial class chunkStorage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -129,13 +129,20 @@ namespace Infrastructure.Migrations.ApplicationDb
 
             modelBuilder.Entity("Domain.Storage", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<string>("Chunk")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Chunk");
+                    b.HasKey("Id");
 
                     b.ToTable("Storage");
                 });

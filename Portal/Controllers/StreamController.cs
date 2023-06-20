@@ -8,6 +8,7 @@ using DomainServices.Interfaces;
 using DomainServices.Interfaces.Services;
 using DomainServices.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Portal.Models;
 
 namespace Portal.Controllers;
@@ -128,13 +129,21 @@ public class StreamController : Controller
     }
 
     [HttpPost]
-    public async Task<bool> SaveChunk([FromBody] Object chunk)
+    public async Task<bool> SaveChunk()
     {
-        _streamService.SaveChunk(chunk);
+        using (var stream = new MemoryStream())
+        {
+            await Request.Body.CopyToAsync(stream);
+            byte[] chunk = stream.ToArray();
+
+            await _streamService.SaveChunk(chunk);
+        }
 
         return true;
     }
-    
+
+
+
     [HttpPost]
     public async Task<bool> SecurityChunk([FromBody] Object chunk)
     {
