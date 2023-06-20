@@ -22,7 +22,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> StopStream(int streamId, DateTime endStream, TimeSpan durationStream, decimal satoshi)
+        public async Task<bool> StopStream(int streamId, DateTime endStream, TimeSpan durationStream, string satoshi)
         {
             var stream = await _context.Streams.FindAsync(streamId);
             if (stream == null)
@@ -34,8 +34,10 @@ namespace Infrastructure.Repositories
             stream.End = endStream;
             stream.Satoshi = satoshi;
             stream.Duration = durationStream;
-           
+
             await _context.SaveChangesAsync();
+
+            var Updated = await _context.Streams.FindAsync(streamId);
 
             return true;
         }
@@ -61,7 +63,7 @@ namespace Infrastructure.Repositories
         {
             var stream = await _context.Streams.FindAsync(streamId);
             if (stream == null)
-            { 
+            {
                 // Handle the case when the Streams entity with the given streamId doesn't exist
                 return false;
             }
@@ -80,14 +82,30 @@ namespace Infrastructure.Repositories
                 .Include(s => s.LiveList) // Explicitly include the LiveList
                 .FirstOrDefaultAsync(s => s.Id == StreamId);
 
-            if (stream == null)
+            if (stream != null)
             {
-                // Handle the case when the Streams entity with the given streamId doesn't exist
-                return null;
+                var LiveList = stream.LiveList;
+                if (LiveList != null) return LiveList;
             }
 
-            var LiveList = stream.LiveList;
-            return LiveList;
+            return null;
+        }
+
+        public async Task<List<Streams>> GetStreams(string username)
+        {
+            try
+            {
+
+                return await _context.Streams
+                    .Include(u => u.BreakList)
+                    .Where(u => u.UserName == username)
+                    .OrderByDescending(u => u.Id)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<bool> SaveChunk(DateTime timestamp, byte[] chunk)

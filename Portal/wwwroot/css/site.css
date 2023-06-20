@@ -1,4 +1,4 @@
-/*html {
+html {
     font-size: 14px;
 }
 
@@ -21,13 +21,19 @@ body {
     margin-bottom: 60px;
 }
 
+
+.hidden {
+    display: none;
+}
+
 .chatbox-container {
     position: relative;
     background-color: #ededed;
     border-radius: 5px;
     padding: 10px;
-    width: 40%;*/ /* Adjust the width as needed */
-/*}
+    width: 40%;
+    */ /* Adjust the width as needed */
+}
 
 
 
@@ -125,5 +131,6 @@ body {
     background-color: white;
     border-radius: 5px;
     padding: 5px;
-<<<<<<< HEAD
-}*/
+
+}
+

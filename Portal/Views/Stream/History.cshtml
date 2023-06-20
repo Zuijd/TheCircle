@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Stream";
+   
+}
+@model List<Streams>
+
+<div class="container">
+    <h1>Past Streams</h1>
+    <h2>Total Earnings: @CalculateTotalEarnings(Model)  Satoshi</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Duration</th>
+                <th>Breaks</th>
+                <th>Satoshi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var stream in Model)
+            {
+                <tr>
+                    <td>@stream.Start.ToString("yyyy-MM-dd")</td>
+                    <td>@stream.Start.ToString("HH:mm")</td>
+                    <td>@stream.End.ToString("HH:mm")</td>
+                    <td>@stream.Duration.ToString("hh\\:mm\\:ss")</td>
+                    <td>@(stream.BreakList?.Count ?? 0)</td>
+                    <td>@stream.Satoshi</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@functions {
+    decimal CalculateTotalEarnings(List<Streams> streams)
+    {
+        decimal totalEarnings = 0;
+        foreach (var stream in streams)
+        {
+            if (decimal.TryParse(stream.Satoshi, out decimal earnings))
+            {
+                totalEarnings += earnings;
+            }
+        }
+        return totalEarnings;
+    }
+}

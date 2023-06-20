@@ -3,14 +3,12 @@
     var username = User.Identity?.Name;
 }
 
-
 <head>
     <meta charset="UTF-8">
     <title>Stream</title>
 </head>
 
 <body>
-    
     <div class="container" id="stream-container" data-user="@ViewBag.Username">
         <div class="row g-0">
             <h1>Streaming as @ViewBag.UserName </h1>
@@ -46,18 +44,24 @@
             </div>
             <div class="mt-2">
                 <div class="btn-group" role="group">
-                    <button type="button" id="startStreamBtn" onclick="startStreaming()" class="btn btn-success">Start Streaming</button>
-                    <button type="button" id="stopStreamBtn" onclick="stopStreaming()" class="btn btn-danger">Stop Streaming</button>
+                    <button type="button" id="startStreamBtn" onclick="startButton()" class="btn btn-success">Start Streaming</button>
+                    <button type="button" id="stopStreamBtn" onclick="stopButton()" class="btn btn-danger">Stop Streaming</button>
+                    <button type="button" id="switchCamBtn" onclick="switchCamera()" class="btn btn-info">Start/Stop Camera</button>
+                </div>
+                <div class="row">
+                    <h2>Stream Timer</h2>
+                    <span id="streamTimer">00:00:00</span>
+                    <!-- Balance Display -->
+                    <h2>Stream Balance</h2>
+                    <div id="balanceDisplay">0.00000001 Satoshi</div>
                 </div>
             </div>
         </div>
     </div>
-
 </body>
 
 @section Scripts {
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
     <script src="~/js/stream.js" asp-append-version="true"></script>
     <script src="~/js/chat.js" asp-append-version="true"></script>
-    <script src="~/js/watchCount.js" asp-append-version="true"></script>
 }
