@@ -41,10 +41,12 @@ namespace Infrastructure.Repositories
 
             stream.IsLive = false;
             stream.End = endStream;
-            stream.Satoshi = Decimal.Round(satoshi, 8);
+            stream.Satoshi += satoshi;
             stream.Duration = durationStream;
 
             await _context.SaveChangesAsync();
+
+            var Updated = await _context.Streams.FindAsync(streamId);
 
             return true;
         }
@@ -89,14 +91,13 @@ namespace Infrastructure.Repositories
                 .Include(s => s.LiveList) // Explicitly include the LiveList
                 .FirstOrDefaultAsync(s => s.Id == StreamId);
 
-            if (stream == null)
+            if (stream != null)
             {
-                // Handle the case when the Streams entity with the given streamId doesn't exist
-                return null;
-            }
-
             var LiveList = stream.LiveList;
-            return LiveList;
+                if (LiveList != null) return LiveList;
+            } 
+
+            return null;
         }
 
         public async Task<List<Streams>> GetStreams(string username)
@@ -105,16 +106,10 @@ namespace Infrastructure.Repositories
             {
                 var streams = await _context.Streams
                     .Include(u => u.BreakList)
-                    .Include(u => u.LiveList)
                     .Where(u => u.UserName == username)
                     .OrderByDescending(u => u.Id)
                     .ToListAsync();
-
-                if (streams == null)
-                {
-                    return new List<Streams>();
-                }
-
+                
                 return streams;
             }
             catch (Exception ex)
