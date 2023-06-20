@@ -1,5 +1,5 @@
 @{
-  ViewData["Title"] = "Stream";
+    ViewData["Title"] = "Stream";
     var username = User.Identity?.Name;
 }
 
@@ -7,49 +7,55 @@
 <head>
     <meta charset="UTF-8">
     <title>Stream</title>
-    <!-- Include necessary libraries -->
-    <script src="~/js/signalr/dist/browser/signalr.js"></script>
 </head>
 
 <body>
-    <video id="video" width="640" height="480" autoplay></video>
+    
+    <div class="container" id="stream-container" data-user="@ViewBag.Username">
+        <div class="row g-0">
+            <h1>Streaming as @ViewBag.UserName </h1>
+            <div class="row g-0">
+                <div class="col-md">
+                    <div class="ratio ratio-4x3">
+                        <video id="video" height="480" autoplay controls></video>
+                    </div>
+                </div>
+                <div class="col-sm bg-secondary">
+                    <div class="row p-1">
+                        <div class="col-1">Message</div>
+                        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-6 text-end">
+                            <input type="button" id="sendButton" value="Send Message" />
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-6">
+                            <hr />
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-6">
+                            <ul id="messagesList"></ul>
+                        </div>
+                    </div>
+                    <input type="hidden" id="viewName" value="Stream Index">
+                </div>
+            </div>
+            <div class="mt-2">
+                <div class="btn-group" role="group">
+                    <button type="button" id="startStreamBtn" onclick="startStreaming()" class="btn btn-success">Start Streaming</button>
+                    <button type="button" id="stopStreamBtn" onclick="stopStreaming()" class="btn btn-danger">Stop Streaming</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <button class="btn btn-success" onclick="startButton()">Start Streaming</button>
-    <button class="btn btn-danger" onclick="stopButton()">Stop Streaming</button>
-    <button class="btn btn-info" onclick="switchCamera()">Start/Stop Camera</button>
-
-  
-<img src="" alt="">
-  
-@* chat *@
-<div class="container" id="stream-container" data-user="@username">
-    <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6 text-end">
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <hr />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
-    <input type="hidden" id="viewName" value="Stream Index">
-</div>
 </body>
 
-
-@section Scripts{
+@section Scripts {
     <script src="~/js/signalr/dist/browser/signalr.js"></script>
-    <script src="/js/chat.js"></script>
-    <!-- Include the stream.js file -->
-    <script src="/js/stream.js"></script>
-} 
+    <script src="~/js/stream.js" asp-append-version="true"></script>
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+}

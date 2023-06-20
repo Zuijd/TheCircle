@@ -2,6 +2,7 @@
 using DomainServices.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Portal.Controllers
 {
@@ -74,7 +75,10 @@ namespace Portal.Controllers
             {
                 return RedirectToAction("Index", "Stream");
             }
-            else
+            else if (chatViewModel.ViewName == "Watch")
+            {
+                return RedirectToAction("Watch", "Stream");
+            } else
             {
                 return RedirectToAction("Index", "Home");
             }

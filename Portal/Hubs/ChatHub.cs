@@ -4,14 +4,21 @@ namespace Portal.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string username, string message, string streamUserId)
+        public async Task SendMessage(string message, string username, string streamUser)
         {
-            Console.WriteLine("In method SendMessage " + streamUserId);
-            await Clients.Group(streamUserId).SendAsync("ReceiveMessage", username, message, streamUserId);
+            Console.WriteLine("Message in SendMessage!");
+            Console.WriteLine("Message: ", message);
+            Console.WriteLine("Username: ", username);
+            Console.WriteLine("streamUser: ", streamUser);
+            
+            var httpContext = Context.GetHttpContext();
+            var currentUser = httpContext!.User.Identity!.Name;
+
+            await Clients.Group(streamUser).SendAsync("ReceiveMessage", message, username, streamUser);
         }
-        public async Task JoinGroup(string streamUserId)
+        public async Task JoinGroup(string group)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, streamUserId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, group);
         }
     }
 }

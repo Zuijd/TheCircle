@@ -8,5 +8,7 @@
         Task<bool> SignUserOutAsync();
         Task<string> GetSpecificClaim(string username, string claimType);
         Task<User> GetUserByName(string username);
+        Task<List<User>> GetAllUsers();
+
     }
 }

@@ -7,6 +7,8 @@
         public UserRepository(ApplicationDbContext context) => _context = context;
 
         public async Task<User> GetUserByName(string username) => await _context.User.Where(user => user.Name == username).FirstOrDefaultAsync();
+        public async Task<List<User>> GetAllUsers() => await _context.User.ToListAsync();
+
 
         public async Task<bool> CreateUser(User user)
         {
