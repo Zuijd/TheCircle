@@ -9,20 +9,20 @@ using DomainServices.Interfaces.Services;
 using DomainServices.Services;
 using Microsoft.AspNetCore.Mvc;
 using Portal.Models;
+
 namespace Portal.Controllers;
 
+[TLSAccess]
 public class StreamController : Controller
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMessageService _messageService;
     private readonly IUserService _userService;
     private readonly ILoggerService _logger;
     private readonly IStreamService _streamService;
     private readonly ICertificateService _certificateService;
 
-    public StreamController(IHttpContextAccessor httpContextAccessor, ILoggerService logger, IMessageService messageService, IUserService userService, IStreamService streamService, ICertificateService certificateService)
+    public StreamController(ILoggerService logger, IMessageService messageService, IUserService userService, IStreamService streamService, ICertificateService certificateService)
     {
-        _httpContextAccessor = httpContextAccessor;
         _logger = logger;
         _messageService = messageService;
         _userService = userService;
@@ -30,14 +30,16 @@ public class StreamController : Controller
         _certificateService = certificateService;
     }
 
+    [Authorize]
     public IActionResult Index()
     {
-        _logger.Log("User has accessed Stream page!");
+        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream page!");
 
         ViewBag.UserName = User.Identity?.Name!;
         return View();
     }
 
+    [Authorize]
     public IActionResult Watch(string id)
     {
 
@@ -45,8 +47,8 @@ public class StreamController : Controller
         {
             return View("404");
         }
-
-        _logger.Log($"User has accessed {nameof(Watch)}");
+        
+        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page of a stream!");
 
         ViewBag.UserName = User.Identity?.Name!;
         return View();
@@ -54,13 +56,14 @@ public class StreamController : Controller
 
     // Cals for the stream.js file to save ongoing streams
     // Add Stream
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddStream([FromBody] dynamic newStreamInfo)
     {
         try
         {
             var streamId = await this._streamService.AddStream(newStreamInfo);
-            _logger.Log("User started a stream!");
+            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a stream!");
             return Ok(streamId);
         }
         catch (Exception e)
@@ -71,13 +74,14 @@ public class StreamController : Controller
     }
 
     // Stop Stream
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> StopStream([FromBody] dynamic stopStreamInfo)
     {
         try
         {
             var succes = await this._streamService.StopStream(stopStreamInfo);
-            _logger.Log("User ended a stream!");
+            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} ended a stream!");
             return Ok(succes);
         }
         catch (Exception e)
@@ -88,13 +92,14 @@ public class StreamController : Controller
     }
 
     // Add Break
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddBreak([FromBody] dynamic pauze)
     {
         try
         {
             var succes = await this._streamService.AddBreakMoment(pauze);
-            _logger.Log("User is back live after a break!");
+            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} is back live after a break!");
             return Ok(succes);
         }
         catch (Exception e)
@@ -105,13 +110,14 @@ public class StreamController : Controller
     }
 
     // Add Live
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> AddLive([FromBody] dynamic live)
     {
         try
         {
             var succes = await this._streamService.AddLiveMoment(live);
-            _logger.Log("User started a break and is no longer live!");
+            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a break and is no longer live!");
             return Ok(succes);
         }
         catch (Exception e)

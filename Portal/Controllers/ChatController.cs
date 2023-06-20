@@ -1,25 +1,25 @@
-﻿using Domain;
-using DomainServices.Interfaces.Services;
-using Microsoft.AspNetCore.Mvc;
-using Portal.Models;
-using System.Reflection.Metadata.Ecma335;
-
-namespace Portal.Controllers
+﻿namespace Portal.Controllers
 {
+    [TLSAccess]
     public class ChatController : Controller
     {
         private readonly IUserService _userService;
         private readonly IMessageService _messageService;
         private readonly ICertificateService _certificateService;
-        public ChatController(IMessageService messageService, IUserService userService, ICertificateService certificateService)
+        private readonly ILoggerService _logger;
+
+        public ChatController(IMessageService messageService, IUserService userService, ICertificateService certificateService, ILoggerService logger)
         {
             _messageService = messageService;
             _userService = userService;
             _certificateService = certificateService;
+            _logger = logger;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
+            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Chat page!");
             return View();
         }
 
@@ -35,7 +35,7 @@ namespace Portal.Controllers
 
                     Message message = new()
                     {
-                        User = _userService.GetUserByName(User.Identity?.Name!).Result,
+                        User = await _userService.GetUserByName(User.Identity?.Name!),
                         MessageBody = chatViewModel.Message!
                     };
 
@@ -61,6 +61,8 @@ namespace Portal.Controllers
 
                     //verification is succesful ? perform action : throw corresponding error
                     Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
+
+                    _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has posted a message!");
                 }
             }
             catch (Exception e)

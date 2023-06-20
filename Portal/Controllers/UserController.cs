@@ -1,22 +1,14 @@
-﻿using DomainServices.Interfaces.Services;
-using Microsoft.Extensions.Logging;
-using Portal.Models.User;
-
-namespace Portal.Controllers
+﻿namespace Portal.Controllers
 {
     [TLSAccess]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
-        private readonly ICertificateService _certificateService;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILoggerService _logger;
 
-        public UserController(IUserService userService, ICertificateService certificateService, IHttpContextAccessor httpContextAccessor, ILoggerService logger)
+        public UserController(IUserService userService, ILoggerService logger)
         {
             _userService = userService;
-            _certificateService = certificateService;
-            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
 
@@ -32,8 +24,7 @@ namespace Portal.Controllers
 
                     if (user)
                     {
-                        HttpContext.Session.SetString("Username", loginViewModel.Username!);
-                        _logger.Log("User has logged in!");
+                        _logger.Log(loginViewModel.Username, $"{loginViewModel.Username} has logged in!");
                         
                         return RedirectToAction("Index", "Home");
                     }
@@ -63,7 +54,7 @@ namespace Portal.Controllers
                 {
                     //Login user
                     await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
-                    _logger.Log($"Registered user: {registerViewModel.Username}");
+                    _logger.Log(registerViewModel.Username, $"Registered user: {registerViewModel.Username}");
                     
                     return RedirectToAction("Index", "Home");
                 }
@@ -86,10 +77,8 @@ namespace Portal.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has logged out");
                     var user = await _userService.SignUserOutAsync();
-                    _logger.Log("User has logged out");
-                    HttpContext.Session.Remove("Username"); 
-                 
                 }
             }
             catch (KeyException e)
