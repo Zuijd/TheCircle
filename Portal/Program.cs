@@ -88,5 +88,6 @@ app.MapControllerRoute(
 
 app.MapHub<StreamHub>("/streamHub");
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<WatcherHub>("/watcherHub");
 
 app.Run();

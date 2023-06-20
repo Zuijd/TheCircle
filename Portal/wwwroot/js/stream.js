@@ -107,13 +107,6 @@ function bytesToBase64(bytes) {
     return result;
 }
 
-connection.on("UpdateWatcherCount", (count) => {
-    console.log("Count in js: ", count)
-    const watcherCountElement = document.getElementById("watcherCount");
-    watcherCountElement.textContent = (count).toString();
-        console.log(watchercountelement.textcontent)
-});
-
 connection.start()
     .then(() => {
         // Connection is established, ready to send/receive signaling messages
@@ -123,3 +116,23 @@ connection.start()
         console.error("Error starting the signaling connection:", error);
     });
 
+//create new signalR Hub connection
+const watcherHubConnection = new signalR.HubConnectionBuilder()
+    .withUrl("/watcherHub")
+    .build();
+
+//when UpdateWatcherCount has been called -> update viewer count
+watcherHubConnection.on("UpdateWatcherCount", (count) => {
+    //adjust innerHTML
+    document.getElementById("watcherCount").textContent = (count).toString() + " people watching the stream.";
+});
+
+//start stream over Hub connection
+watcherHubConnection.start()
+    .then(() => {
+        // Connection is established, ready to send/receive signaling messages
+        console.log("Connection established.");
+    })
+    .catch((error) => {
+        console.error("Error starting the signaling connection:", error);
+    });
