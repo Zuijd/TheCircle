@@ -1,10 +1,10 @@
 ﻿namespace Portal.Middleware
 {
-    public class PreventAccessFilterAttribute : ActionFilterAttribute
+    public class PreventAccess : ActionFilterAttribute
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (context.HttpContext.User.Identity.IsAuthenticated)
+            if (context.HttpContext.User.Identity!.IsAuthenticated)
             {
                 context.Result = new RedirectResult("/");
             }

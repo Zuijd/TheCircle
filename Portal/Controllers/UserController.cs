@@ -1,15 +1,18 @@
-namespace Portal.Controllers
+﻿namespace Portal.Controllers
 {
+    [TLSAccess]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ILoggerService _logger;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, ILoggerService logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
-        [PreventAccessFilter]
+        [PreventAccess]
         public IActionResult Login() => View();
 
         [HttpPost]
@@ -19,10 +22,12 @@ namespace Portal.Controllers
             {
                 var user = await _userService.LoginUserAsync(loginViewModel.Username!, loginViewModel.Password!);
 
-                if (user)
-                {
-                    return RedirectToAction("Index", "Home");
-                }
+                    if (user)
+                    {
+                        _logger.Log(loginViewModel.Username, $"{loginViewModel.Username} has logged in!");
+                        
+                        return RedirectToAction("Index", "Home");
+                    }
             }
             catch (MultipleExceptions e)
             {
@@ -35,7 +40,7 @@ namespace Portal.Controllers
             return View(loginViewModel);
         }
 
-        [PreventAccessFilter]
+        [PreventAccess]
         public IActionResult Register() => View();
 
         [HttpPost]
@@ -47,7 +52,10 @@ namespace Portal.Controllers
 
                 if (result)
                 {
+                    //Login user
                     await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
+                    _logger.Log(registerViewModel.Username, $"Registered user: {registerViewModel.Username}");
+                    
                     return RedirectToAction("Index", "Home");
                 }
             } catch (MultipleExceptions e)
@@ -69,6 +77,7 @@ namespace Portal.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has logged out");
                     var user = await _userService.SignUserOutAsync();
                 }
             }
