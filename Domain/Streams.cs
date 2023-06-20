@@ -13,8 +13,8 @@ namespace Domain
         public int Id {  get; set; }
         public List<Live>? LiveList { get; set; }
         public List<Break>? BreakList { get; set; }
-        public decimal Satoshi { get; set; }
-        public string UserName { get; set; }
+        public string? Satoshi { get; set; }
+        public string? UserName { get; set; }
         public bool IsLive { get; set; }
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
@@ -41,7 +41,7 @@ namespace Domain
         // Foreign key property
         public int StreamId { get; set; }
         // Navigation property
-        public Streams Stream { get; set; }
+        public Streams? Stream { get; set; }
         //Default Constructor
         public Live() { }
 
@@ -66,7 +66,7 @@ namespace Domain
         // Foreign key property
         public int StreamId { get; set; }
         // Navigation property
-        public Streams Stream { get; set; }
+        public Streams? Stream { get; set; }
         //Default Constructor
         public Break() { }
 

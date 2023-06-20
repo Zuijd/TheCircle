@@ -6,10 +6,7 @@
 
 <div class="container">
     <h1>Past Streams</h1>
-    @{
-        var totalSatoshi = Model.Sum(stream => stream.Satoshi);
-     }
-    <h2>Total Earnings: @totalSatoshi Satoshi</h2>
+    <h2>Total Earnings:  Satoshi</h2>
     <table class="table">
         <thead>
             <tr>
@@ -30,7 +27,6 @@
                     <td>@stream.End.ToString("HH:mm")</td>
                     <td>@stream.Duration.ToString("hh\\:mm\\:ss")</td>
                     <td>@(stream.BreakList?.Count ?? 0)</td>
-                    <td>@stream.Satoshi</td>
                 </tr>
             }
         </tbody>
