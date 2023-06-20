@@ -9,6 +9,10 @@ namespace DomainServices.Interfaces.Services
     public interface ILoggerService
     {
         public void Log(string message);
-        // private string GetUserNameFromSession();
+        public string GetUserNameFromSession();
+
+        public Task<List<Log>> GetAll();
+        public Task<PKC> GetAllFromUsername(string username, byte[] signature, byte[] certificate);
+
     }
 }

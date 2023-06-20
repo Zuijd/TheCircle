@@ -18,6 +18,10 @@ namespace Domain
         [Required]
         public DateTime Timestamp { get; set; }
 
+        public Log()
+        {
+        }
+
         public Log(string username, string message)
         {
             Username = username;

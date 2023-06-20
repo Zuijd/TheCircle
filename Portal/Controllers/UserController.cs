@@ -4,21 +4,23 @@ using Portal.Models.User;
 
 namespace Portal.Controllers
 {
+    [TLSAccess]
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly ICertificateService _certificateService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
         private readonly ILoggerService _logger;
 
-        public UserController(IUserService userService, IHttpContextAccessor httpContextAccessor, ILoggerService logger)
+        public UserController(IUserService userService, ICertificateService certificateService, IHttpContextAccessor httpContextAccessor, ILoggerService logger)
         {
             _userService = userService;
+            _certificateService = certificateService;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
         }
 
-        [PreventAccessFilter]
+        [PreventAccess]
         public IActionResult Login() => View();
 
         [HttpPost]
@@ -47,7 +49,7 @@ namespace Portal.Controllers
             return View(loginViewModel);
         }
 
-        [PreventAccessFilter]
+        [PreventAccess]
         public IActionResult Register() => View();
 
         [HttpPost]
@@ -59,6 +61,7 @@ namespace Portal.Controllers
 
                 if (result)
                 {
+                    //Login user
                     await _userService.LoginUserAsync(registerViewModel.Username!, registerViewModel.Password!);
                     _logger.Log($"Registered user: {registerViewModel.Username}");
                     

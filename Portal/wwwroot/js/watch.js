@@ -46,6 +46,7 @@ connectionStream.start()
 
         if (!userName) {
             window.location.replace("/stream/watch/404");
+
             console.log("No user name provided.");
         }
 

@@ -1,3 +1,4 @@
+using DomainServices.Interfaces;
 using DomainServices.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using Portal.Hubs;
@@ -11,7 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDbContext<SecurityDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SecurityConnectionString")));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<UserIdentity, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedEmail = false;
     options.Password.RequiredLength = 0;
@@ -19,10 +20,8 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
     options.SignIn.RequireConfirmedAccount = false;
-})
-    .AddEntityFrameworkStores<SecurityDbContext>()
-    .AddSignInManager<SignInManager<IdentityUser>>()
-    .AddDefaultTokenProviders();
+}).AddEntityFrameworkStores<SecurityDbContext>().AddSignInManager<SignInManager<UserIdentity>>().AddDefaultTokenProviders();
+
 
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
@@ -30,12 +29,13 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<ILoggerRepository, LoggerRepository>();
+builder.Services.AddScoped<IStreamRepository,StreamRepository>();
 
-// Services 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ISatoshiCompensation, SatoshiCompensation>();
+builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<ILoggerService, LoggerService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IStreamService, StreamService>();
 
 builder.Services.AddAuthentication("CookieAuth")
     .AddCookie("CookieAuth", config =>
@@ -51,11 +51,6 @@ builder.Services.AddSignalR(options =>
     options.MaximumReceiveMessageSize = null;
 });
 
-builder.Services.AddScoped<IStreamRepository>(sp =>
-{
-    var connectionString = builder.Configuration.GetConnectionString("ApplicationConnectionString");
-    return new StreamRepository(connectionString);
-});
 
 // Logging configurations
 builder.Logging.ClearProviders();
@@ -69,22 +64,18 @@ builder.Services.AddDistributedMemoryCache();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error/Error");
-    app.UseHsts();
+    app.UseDeveloperExceptionPage();
 }
 else
 {
     app.UseExceptionHandler("/Error/Error");
-    app.UseDeveloperExceptionPage();
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
 

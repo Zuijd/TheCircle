@@ -1,14 +1,4 @@
-﻿using Domain;
-using DomainServices.Interfaces.Repositories;
-using Infrastructure.Contexts;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Infrastructure.Repositories
+﻿namespace Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
@@ -32,6 +22,18 @@ namespace Infrastructure.Repositories
             {
                 return false;
             }
+        }
+
+        public async Task<bool> AddSatoshi(string username, decimal satoshi)
+        {
+            var user = await _context.User.SingleOrDefaultAsync(u => u.Name == username);
+            if (user == null) { return false; }
+
+            user.Satoshi += satoshi;
+            await _context.SaveChangesAsync();
+
+            return true;
+        
         }
     }
 }

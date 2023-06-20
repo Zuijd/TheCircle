@@ -10,10 +10,12 @@ namespace Portal.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMessageService _messageService;
-        public ChatController(IMessageService messageService, IUserService userService)
+        private readonly ICertificateService _certificateService;
+        public ChatController(IMessageService messageService, IUserService userService, ICertificateService certificateService)
         {
             _messageService = messageService;
             _userService = userService;
+            _certificateService = certificateService;
         }
 
         public IActionResult Index()
@@ -21,6 +23,7 @@ namespace Portal.Controllers
             return View();
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Message([FromBody] ChatViewModel chatViewModel)
         {
@@ -29,16 +32,35 @@ namespace Portal.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    //Console.WriteLine(chatViewModel.);
+
                     Message message = new()
                     {
                         User = _userService.GetUserByName(User.Identity?.Name!).Result,
                         MessageBody = chatViewModel.Message!
                     };
 
+                    ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
+                    //retrieve private key
+                    var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
 
-                    await _messageService.CreateMessage(message);
+                    //retrieve certificate
+                    var certificate = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "Certificate"));
 
+                    //create digital signature
+                    var digSig = _certificateService.CreateDigSig(message, privateKey);
+
+                    //call request to service
+                    var serverResponse = await _messageService.CreateMessage(message, digSig, certificate);
+
+                    ///// * VERIFY REQUEST FROM CREATEPOST * /////
+                    //retrieve public key from certificate
+                    var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
+
+                    //verify digital signature
+                    var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
+
+                    //verification is succesful ? perform action : throw corresponding error
+                    Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
                 }
             }
             catch (Exception e)

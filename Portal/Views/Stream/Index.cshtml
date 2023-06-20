@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "Stream";
+    var username = User.Identity?.Name;
 }
 
 
@@ -9,7 +10,7 @@
 </head>
 
 <body>
-
+    
     <div class="container" id="stream-container" data-user="@ViewBag.Username">
         <div class="row g-0">
             <h1>Streaming as @ViewBag.UserName </h1>
