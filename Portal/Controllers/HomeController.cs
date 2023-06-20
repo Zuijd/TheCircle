@@ -19,9 +19,6 @@ public class HomeController : Controller
         string username = User.Identity?.Name!; // Retrieve the username from the user identity
         ViewBag.Username = username; // Pass the username to the ViewBag
 
-        var users = await _userService.GetAllUsers();
-        ViewBag.Users = users;
-
         if(User.Identity.IsAuthenticated)
         {
             _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Home page!");
