@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> StopStream(int streamId, DateTime endStream, TimeSpan durationStream, decimal satoshi)
+        public async Task<bool> StopStream(int streamId, DateTime endStream, TimeSpan durationStream, string satoshi)
         {
             var stream = await _context.Streams.FindAsync(streamId);
             if (stream == null)
@@ -41,7 +41,7 @@ namespace Infrastructure.Repositories
 
             stream.IsLive = false;
             stream.End = endStream;
-            stream.Satoshi += satoshi;
+            stream.Satoshi = satoshi;
             stream.Duration = durationStream;
 
             await _context.SaveChangesAsync();

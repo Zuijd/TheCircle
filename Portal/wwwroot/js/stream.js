@@ -355,7 +355,8 @@ function FetchStopStreaming() {
         },
         body: JSON.stringify({
             endStream: endStream,
-            durationStream: durationStream
+            durationStream: durationStream,
+            earningsBeforeBreak: earningsBeforeBreak.toFixed(8).toString()
         })
     })
         .then(response => {
@@ -463,7 +464,7 @@ function FetchAddSatoshi() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            earnedSatoshi: earningsBeforeBreak
+            earnedSatoshi: earningsBeforeBreak.toFixed(8).toString()
         })
     })
         .then(response => {
