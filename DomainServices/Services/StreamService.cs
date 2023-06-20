@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
+using DomainServices.Interfaces.Services;
+using System.Reflection.Metadata;
 
 
 namespace DomainServices.Services
@@ -16,12 +18,14 @@ namespace DomainServices.Services
         private readonly IStreamRepository _streamRepository;
         private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ICertificateService _certificateService;
 
-        public StreamService(IStreamRepository streamRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository)
+        public StreamService(IStreamRepository streamRepository, IHttpContextAccessor httpContextAccessor, IUserRepository userRepository, ICertificateService certificateService)
         {
             _streamRepository = streamRepository;
             _contextAccessor = httpContextAccessor;
             _userRepository = userRepository;
+            _certificateService = certificateService;
         }
 
         public async Task<int> AddStream(dynamic newStreamInfo)
@@ -104,6 +108,24 @@ namespace DomainServices.Services
 
             return compensation;
 
+        }
+
+        public PKC CreateChunk(object chunk, byte[] signature, byte[] certificate)
+        {
+            var publicKey = _certificateService.GetPublicKeyOutOfCertificate(certificate);
+
+            //verify digital signature
+            var isValid = _certificateService.VerifyDigSig(chunk, signature, publicKey);
+
+            //verification is succesful ? perform action : throw corresponding error
+            Console.WriteLine(isValid ? "CLIENT PACKET IS VALID" : "CLIENT PACKET IS INVALID");
+
+            return new PKC()
+            {
+                Message = chunk,
+                Signature = _certificateService.CreateDigSig(chunk, _certificateService.GetPrivateKeyFromServer()),
+                Certificate = _certificateService.GetCertificateFromServer(),
+            };
         }
     }
 }
