@@ -100,26 +100,6 @@ namespace DomainServices.Services
             return rsa.VerifyData(messageBytes, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         }
 
-        //////////////////  -  DUMMY FUNCTION  -  \\\\\\\\\\\\\\\\\\\\
-
-        public PKC CreatePost(object content, byte[] signature, byte[] certificate)
-        {
-            var publicKey = GetPublicKeyOutOfCertificate(certificate);
-
-            //verify digital signature
-            var isValid = VerifyDigSig(content, signature, publicKey);
-
-            //verification is succesful ? perform action : throw corresponding error
-            Console.WriteLine(isValid ? "DUMMY - CLIENT PACKET IS VALID" : "DUMMY - CLIENT PACKET IS INVALID");
-
-            return new PKC()
-            {
-                Message = content,
-                Signature = CreateDigSig(content, GetPrivateKeyFromServer()),
-                Certificate = GetCertificateFromServer(),
-            };
-        }
-
         //////////////////  -  HELPER FUNCTION  -  \\\\\\\\\\\\\\\\\\\\
 
         // Serialize object to byte array

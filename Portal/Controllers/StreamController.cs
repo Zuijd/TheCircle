@@ -142,7 +142,7 @@ public class StreamController : Controller
 
             await _streamService.SaveChunk(chunk);
 
-            ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
+            ///// * CREATE DIGSIG FOR VALIDATECHUNK (SERVICE) * /////
             //retrieve private key
             var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
 
@@ -155,7 +155,7 @@ public class StreamController : Controller
             //call request to service
             var serverResponse = _streamService.ValidateChunk(chunk, digSig, certificate);
 
-            ///// * VERIFY REQUEST FROM CREATEPOST * /////
+            ///// * VERIFY REQUEST FROM VALIDATECHUNK * /////
             //retrieve public key from certificate
             var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
 

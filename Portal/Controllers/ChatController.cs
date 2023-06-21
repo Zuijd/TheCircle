@@ -39,7 +39,7 @@
                         MessageBody = chatViewModel.Message!
                     };
 
-                    ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
+                    ///// * CREATE DIGSIG FOR CREATEMESSAGE (SERVICE) * /////
                     //retrieve private key
                     var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
 
@@ -52,7 +52,7 @@
                     //call request to service
                     var serverResponse = await _messageService.CreateMessage(message, digSig, certificate);
 
-                    ///// * VERIFY REQUEST FROM CREATEPOST * /////
+                    ///// * VERIFY REQUEST FROM CREATEMESSAGE * /////
                     //retrieve public key from certificate
                     var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
 
