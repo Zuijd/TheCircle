@@ -18,7 +18,7 @@ connectionStream.on("ReceiveChunk", (chunk) => {
 });
 
 async function appendToStream(blob) {
-    if (!sourceBuffer || sourceBuffer.updating) {
+    if (!sourceBuffer || sourceBuffer.updating || mediaSource.readyState !== 'open') {
         return;
     }
 
