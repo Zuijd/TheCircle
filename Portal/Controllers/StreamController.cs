@@ -113,17 +113,11 @@ public class StreamController : Controller
     [HttpPost]
     public async Task<IActionResult> AddBreak([FromBody] dynamic pauze)
     {
-        try
-        {
+       
             var succes = await this._streamService.AddBreakMoment(pauze);
             await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} is back live after a break!");
             return Ok(succes);
-        }
-        catch (Exception e)
-        {
-            ModelState.AddModelError(e.Message, e.Message);
-            return BadRequest(e.Message);
-        }
+       
     }
 
     // Add Live
@@ -131,17 +125,11 @@ public class StreamController : Controller
     [HttpPost]
     public async Task<IActionResult> AddLive([FromBody] dynamic live)
     {
-        try
-        {
+        
             var succes = await this._streamService.AddLiveMoment(live);
             await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a break and is no longer live!");
             return Ok(succes);
-        }
-        catch (Exception e)
-        {
-            ModelState.AddModelError(e.Message, e.Message);
-            return BadRequest(e.Message);
-        }
+      
     }
 
     [HttpPost]
@@ -153,37 +141,31 @@ public class StreamController : Controller
             byte[] chunk = stream.ToArray();
 
             await _streamService.SaveChunk(chunk);
+
+            ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
+            //retrieve private key
+            var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
+
+            //retrieve certificate
+            var certificate = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "Certificate"));
+
+            //create digital signature
+            var digSig = _certificateService.CreateDigSig(chunk, privateKey);
+
+            //call request to service
+            var serverResponse = _streamService.ValidateChunk(chunk, digSig, certificate);
+
+            ///// * VERIFY REQUEST FROM CREATEPOST * /////
+            //retrieve public key from certificate
+            var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
+
+            //verify digital signature
+            var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
+
+            //verification is succesful ? perform action : throw corresponding error
+            Console.WriteLine(isValid ? "STREAM - SERVER PACKET IS VALID" : "STREAM - SERVER PACKET IS INVALID");
+
+            return isValid;
         }
-
-        return true;
-    }
-
-    [HttpPost]
-    public async Task<bool> SecurityChunk([FromBody] Object chunk)
-    {
-        ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
-        //retrieve private key
-        var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
-
-        //retrieve certificate
-        var certificate = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "Certificate"));
-
-        //create digital signature
-        var digSig = _certificateService.CreateDigSig(chunk, privateKey);
-
-        //call request to service
-        var serverResponse = _streamService.CreateChunk(chunk, digSig, certificate);
-
-        ///// * VERIFY REQUEST FROM CREATEPOST * /////
-        //retrieve public key from certificate
-        var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
-
-        //verify digital signature
-        var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
-
-        //verification is succesful ? perform action : throw corresponding error
-        Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
-
-        return isValid;
     }
 }

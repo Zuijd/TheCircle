@@ -114,7 +114,7 @@ namespace DomainServices.Services
         }
 
 
-        public PKC CreateChunk(object chunk, byte[] signature, byte[] certificate)
+        public PKC ValidateChunk(byte[] chunk, byte[] signature, byte[] certificate)
         {
             var publicKey = _certificateService.GetPublicKeyOutOfCertificate(certificate);
 
@@ -122,7 +122,7 @@ namespace DomainServices.Services
             var isValid = _certificateService.VerifyDigSig(chunk, signature, publicKey);
 
             //verification is succesful ? perform action : throw corresponding error
-            Console.WriteLine(isValid ? "CLIENT PACKET IS VALID" : "CLIENT PACKET IS INVALID");
+            Console.WriteLine(isValid ? "STREAM - CLIENT PACKET IS VALID" : "STREAM - CLIENT PACKET IS INVALID");
 
             return new PKC()
             {

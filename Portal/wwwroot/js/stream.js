@@ -41,13 +41,6 @@ function startButton() {
 
 function stopButton() {
     if (streamBool) {
-        if (camBool) {
-            endStream = endLive = new Date();
-            FetchAddLive()
-        } else {
-            endStream = endBreak = new Date();
-            FetchAddBreak();
-        }
         stopSatoshiTimer();
         stopStreamTimer();
         stopCamera();
@@ -143,6 +136,7 @@ function stopStreaming() {
         clearInterval(timer);
         console.log("Recording stopped.");
     }
+
     if (camBool) {
         endStream = endLive = new Date();
         FetchAddLive()
@@ -197,32 +191,12 @@ function sendBlob(chunk) {
         // Create a Blob from the byte array
         const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
 
-        // call to controller
-        $.ajax({
-            url: "/Stream/SecurityChunk",
-            data: JSONData,
-            type: "Post",
-            contentType: "application/json;charset=utf-8",
-            success: function (result) {
-                console.log("Succes sending message")
-            },
-            error: function (result) {
-                window.alert("Error sending message");
-            }
-        });
-
         $.ajax({
             url: "/Stream/SaveChunk",
             data: blob, 
             type: "POST",
             contentType: "application/octet-stream", 
-            processData: false, 
-            success: function (result) {
-                console.log("Success sending message");
-            },
-            error: function (result) {
-                window.alert("Error sending message");
-            }
+            processData: false
         });
         
         console.log("Sending chunk: " + base64String);
