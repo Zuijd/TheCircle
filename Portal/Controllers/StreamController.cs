@@ -113,17 +113,11 @@ public class StreamController : Controller
     [HttpPost]
     public async Task<IActionResult> AddBreak([FromBody] dynamic pauze)
     {
-        try
-        {
+       
             var succes = await this._streamService.AddBreakMoment(pauze);
             _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} is back live after a break!");
             return Ok(succes);
-        }
-        catch (Exception e)
-        {
-            ModelState.AddModelError(e.Message, e.Message);
-            return BadRequest(e.Message);
-        }
+       
     }
 
     // Add Live
@@ -131,17 +125,11 @@ public class StreamController : Controller
     [HttpPost]
     public async Task<IActionResult> AddLive([FromBody] dynamic live)
     {
-        try
-        {
+        
             var succes = await this._streamService.AddLiveMoment(live);
             _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a break and is no longer live!");
             return Ok(succes);
-        }
-        catch (Exception e)
-        {
-            ModelState.AddModelError(e.Message, e.Message);
-            return BadRequest(e.Message);
-        }
+      
     }
 
     [HttpPost]

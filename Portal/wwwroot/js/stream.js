@@ -41,13 +41,6 @@ function startButton() {
 
 function stopButton() {
     if (streamBool) {
-        if (camBool) {
-            endStream = endLive = new Date();
-            FetchAddLive()
-        } else {
-            endStream = endBreak = new Date();
-            FetchAddBreak();
-        }
         stopSatoshiTimer();
         stopStreamTimer();
         stopCamera();
@@ -143,6 +136,7 @@ function stopStreaming() {
         clearInterval(timer);
         console.log("Recording stopped.");
     }
+
     if (camBool) {
         endStream = endLive = new Date();
         FetchAddLive()
