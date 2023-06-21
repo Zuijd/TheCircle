@@ -32,16 +32,16 @@ public class StreamController : Controller
     }
 
     [Authorize]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream page!");
+        await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream page!");
 
         ViewBag.UserName = User.Identity?.Name!;
         return View();
     }
 
     [Authorize]
-    public IActionResult Watch(string id)
+    public async Task<IActionResult> Watch(string id)
     {
 
         if (id == "404")
@@ -49,7 +49,7 @@ public class StreamController : Controller
             return View("404");
         }
         
-        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page of a stream!");
+        await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page of a stream!");
 
         ViewBag.UserName = User.Identity?.Name!;
         return View();
@@ -62,7 +62,7 @@ public class StreamController : Controller
         try
         {
             var streams = await _streamService.GetStreams();
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream History page!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream History page!");
             return View(streams);
         }
         catch (Exception ex)
@@ -80,7 +80,7 @@ public class StreamController : Controller
         try
         {
             var streamId = await this._streamService.AddStream(newStreamInfo);
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a stream!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a stream!");
             return Ok(streamId);
         }
         catch (Exception e)
@@ -98,7 +98,7 @@ public class StreamController : Controller
         try
         {
             var succes = await this._streamService.StopStream(stopStreamInfo);
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} ended a stream!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} ended a stream!");
             return Ok(succes);
         }
         catch (Exception e)
@@ -116,7 +116,7 @@ public class StreamController : Controller
         try
         {
             var succes = await this._streamService.AddBreakMoment(pauze);
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} is back live after a break!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} is back live after a break!");
             return Ok(succes);
         }
         catch (Exception e)
@@ -134,7 +134,7 @@ public class StreamController : Controller
         try
         {
             var succes = await this._streamService.AddLiveMoment(live);
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a break and is no longer live!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a break and is no longer live!");
             return Ok(succes);
         }
         catch (Exception e)

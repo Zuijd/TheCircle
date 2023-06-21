@@ -17,9 +17,9 @@
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Chat page!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Chat page!");
             return View();
         }
 
@@ -62,7 +62,7 @@
                     //verification is succesful ? perform action : throw corresponding error
                     Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
 
-                    _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has posted a message!");
+                    await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has posted a message!");
                 }
             }
             catch (Exception e)
