@@ -10,6 +10,5 @@
         byte[] CreateCertificate(string username, string email, RSA rsa);
         bool VerifyDigSig(object content, byte[] signature, byte[] publicKey);
         byte[] CreateDigSig(object content, byte[] privateKey);
-        PKC CreatePost(object content, byte[] signature, byte[] certificate);
     }
 }

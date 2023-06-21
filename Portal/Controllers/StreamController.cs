@@ -32,16 +32,16 @@ public class StreamController : Controller
     }
 
     [Authorize]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream page!");
+        await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream page!");
 
         ViewBag.UserName = User.Identity?.Name!;
         return View();
     }
 
     [Authorize]
-    public IActionResult Watch(string id)
+    public async Task<IActionResult> Watch(string id)
     {
 
         if (id == "404")
@@ -49,7 +49,7 @@ public class StreamController : Controller
             return View("404");
         }
         
-        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page of a stream!");
+        await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page of a stream!");
 
         ViewBag.UserName = User.Identity?.Name!;
         return View();
@@ -62,7 +62,7 @@ public class StreamController : Controller
         try
         {
             var streams = await _streamService.GetStreams();
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream History page!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Stream History page!");
             return View(streams);
         }
         catch (Exception ex)
@@ -80,7 +80,7 @@ public class StreamController : Controller
         try
         {
             var streamId = await this._streamService.AddStream(newStreamInfo);
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a stream!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a stream!");
             return Ok(streamId);
         }
         catch (Exception e)
@@ -98,7 +98,7 @@ public class StreamController : Controller
         try
         {
             var succes = await this._streamService.StopStream(stopStreamInfo);
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} ended a stream!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} ended a stream!");
             return Ok(succes);
         }
         catch (Exception e)
@@ -115,7 +115,7 @@ public class StreamController : Controller
     {
        
             var succes = await this._streamService.AddBreakMoment(pauze);
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} is back live after a break!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} is back live after a break!");
             return Ok(succes);
        
     }
@@ -127,7 +127,7 @@ public class StreamController : Controller
     {
         
             var succes = await this._streamService.AddLiveMoment(live);
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a break and is no longer live!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} started a break and is no longer live!");
             return Ok(succes);
       
     }
@@ -141,37 +141,31 @@ public class StreamController : Controller
             byte[] chunk = stream.ToArray();
 
             await _streamService.SaveChunk(chunk);
+
+            ///// * CREATE DIGSIG FOR VALIDATECHUNK (SERVICE) * /////
+            //retrieve private key
+            var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
+
+            //retrieve certificate
+            var certificate = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "Certificate"));
+
+            //create digital signature
+            var digSig = _certificateService.CreateDigSig(chunk, privateKey);
+
+            //call request to service
+            var serverResponse = _streamService.ValidateChunk(chunk, digSig, certificate);
+
+            ///// * VERIFY REQUEST FROM VALIDATECHUNK * /////
+            //retrieve public key from certificate
+            var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
+
+            //verify digital signature
+            var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
+
+            //verification is succesful ? perform action : throw corresponding error
+            Console.WriteLine(isValid ? "STREAM - SERVER PACKET IS VALID" : "STREAM - SERVER PACKET IS INVALID");
+
+            return isValid;
         }
-
-        return true;
-    }
-
-    [HttpPost]
-    public async Task<bool> SecurityChunk([FromBody] Object chunk)
-    {
-        ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
-        //retrieve private key
-        var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
-
-        //retrieve certificate
-        var certificate = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "Certificate"));
-
-        //create digital signature
-        var digSig = _certificateService.CreateDigSig(chunk, privateKey);
-
-        //call request to service
-        var serverResponse = _streamService.CreateChunk(chunk, digSig, certificate);
-
-        ///// * VERIFY REQUEST FROM CREATEPOST * /////
-        //retrieve public key from certificate
-        var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
-
-        //verify digital signature
-        var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
-
-        //verification is succesful ? perform action : throw corresponding error
-        Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
-
-        return isValid;
     }
 }

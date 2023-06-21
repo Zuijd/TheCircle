@@ -17,9 +17,9 @@
         }
 
         [Authorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Chat page!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Chat page!");
             return View();
         }
 
@@ -39,7 +39,7 @@
                         MessageBody = chatViewModel.Message!
                     };
 
-                    ///// * CREATE DIGSIG FOR CREATEPOST (SERVICE) * /////
+                    ///// * CREATE DIGSIG FOR CREATEMESSAGE (SERVICE) * /////
                     //retrieve private key
                     var privateKey = ViewModelHelper.ConvertClaimToKey(await _userService.GetSpecificClaim(User.Identity?.Name!, "PrivateKey"));
 
@@ -52,7 +52,7 @@
                     //call request to service
                     var serverResponse = await _messageService.CreateMessage(message, digSig, certificate);
 
-                    ///// * VERIFY REQUEST FROM CREATEPOST * /////
+                    ///// * VERIFY REQUEST FROM CREATEMESSAGE * /////
                     //retrieve public key from certificate
                     var publicKey = _certificateService.GetPublicKeyOutOfCertificate(serverResponse.Certificate);
 
@@ -60,9 +60,9 @@
                     var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
 
                     //verification is succesful ? perform action : throw corresponding error
-                    Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
+                    Console.WriteLine(isValid ? "MESSAGE - SERVER PACKET IS VALID" : "MESSAGE - SERVER PACKET IS INVALID");
 
-                    _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has posted a message!");
+                    await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has posted a message!");
                 }
             }
             catch (Exception e)

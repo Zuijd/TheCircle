@@ -28,7 +28,7 @@ namespace DomainServices.Services
             var isValid = _certificateService.VerifyDigSig(content, signature, publicKey);
 
             //verification is succesful ? perform action : throw corresponding error
-            Console.WriteLine(isValid ? "CLIENT PACKET IS VALID" : "CLIENT PACKET IS INVALID");
+            Console.WriteLine(isValid ? "MESSAGE - CLIENT PACKET IS VALID" : "MESSAGE - CLIENT PACKET IS INVALID");
 
             var createMessage = await _messageRepository.CreateMessage((Message)content);
 

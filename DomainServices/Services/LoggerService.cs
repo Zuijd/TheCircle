@@ -14,9 +14,9 @@ namespace DomainServices.Services
             _certificateService = certificateService;
         }
 
-        public void Log(string user, string message)
+        public async Task Log(string user, string message)
         {
-            _loggerRepository.addLog(new Log(user, message));
+            await _loggerRepository.addLog(new Log(user, message));
         }
         
         public async Task<List<Log>> GetAll() {
@@ -31,7 +31,7 @@ namespace DomainServices.Services
             var isValid = _certificateService.VerifyDigSig(username, signature, publicKey);
 
             //verification is succesful ? perform action : throw corresponding error
-            Console.WriteLine(isValid ? "CLIENT PACKET IS VALID" : "CLIENT PACKET IS INVALID");
+            Console.WriteLine(isValid ? "LOG - CLIENT PACKET IS VALID" : "LOG - CLIENT PACKET IS INVALID");
 
             var content = await _loggerRepository.GetAllFromUsername(username);
 

@@ -23,7 +23,7 @@
             {
                 var logs = await _loggerService.GetAll();
 
-                _loggerService.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Log page!");
+                await _loggerService.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Log page!");
 
                 return View(logs);
             }
@@ -64,7 +64,10 @@
                     //verify digital signature
                     var isValid = _certificateService.VerifyDigSig(serverResponse.Message!, serverResponse.Signature!, publicKey);
 
-                    _loggerService.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has filtered Log page!");
+                    //verification is succesful ? perform action : throw corresponding error
+                    Console.WriteLine(isValid ? "LOG - SERVER PACKET IS VALID" : "LOG - SERVER PACKET IS INVALID");
+
+                    await _loggerService.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has filtered Log page!");
 
                     if (isValid)
                     {
