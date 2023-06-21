@@ -60,7 +60,7 @@
                     var isValid = _certificateService.VerifyDigSig(serverResponse.Message, serverResponse.Signature, publicKey);
 
                     //verification is succesful ? perform action : throw corresponding error
-                    Console.WriteLine(isValid ? "SERVER PACKET IS VALID" : "SERVER PACKET IS INVALID");
+                    Console.WriteLine(isValid ? "MESSAGE - SERVER PACKET IS VALID" : "MESSAGE - SERVER PACKET IS INVALID");
 
                     _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has posted a message!");
                 }
