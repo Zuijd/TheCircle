@@ -1,0 +1,53 @@
+@*@{
+    ViewData["Title"] = "Watch Stream";
+}*@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Stream Viewer</title>
+</head>
+<body>
+    <div class="container" id="stream-container" data-user="@ViewBag.UserName">
+        <a href="/" class="btn btn-primary mb-3">Back</a>
+        <div class="row g-0">
+            <div class="col-md">
+                <div class="ratio ratio-4x3">
+                    <video id="video" height="480" autoplay controls></video>
+                </div>
+            </div>
+            <div class="col-sm bg-secondary">
+                <h5 class="p-2">Send a message:</h5>
+                <div class="row p-2">
+                    <div class="col"><input type="text" class="w-100" id="messageInput" /></div>
+                </div>
+                <div class="row p-2">
+                    <div class="col text-end">
+                        <input type="button" class="btn btn-light" id="sendButton" value="Send Message" />
+                    </div>
+                </div>
+                <div class="row p-2">
+                    <div class="col">
+                        <hr />
+                    </div>
+                </div>
+                <div class="row p-2">
+                    <div class="col">
+                        <ul id="messagesList"></ul>
+                    </div>
+                </div>
+                <input type="hidden" id="viewName" value="Watch">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script src="/js/chat.js"></script>
+    <script src="/js/stream.js"></script>    
+    <script src="/js/watch.js"></script>
+
+}

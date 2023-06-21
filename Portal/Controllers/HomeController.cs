@@ -1,25 +1,43 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Portal.Models;
+﻿namespace Portal.Controllers;
 
-namespace Portal.Controllers;
-
+[TLSAccess]
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
+    private readonly ILoggerService _logger;
+    private readonly IUserService _userService;
+    private readonly IMessageService _messageService;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILoggerService logger, IUserService userService, IMessageService messageService)
     {
         _logger = logger;
+        _userService = userService;
+        _messageService = messageService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        string username = User.Identity?.Name!; // Retrieve the username from the user identity
+        ViewBag.Username = username; // Pass the username to the ViewBag
+
+        if(User.Identity.IsAuthenticated)
+        {
+            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Home page!");
+        }
+
         return View();
     }
 
-    public IActionResult Privacy()
+    [Authorize]
+    public async Task<IActionResult> Watch()
     {
+        string username = User.Identity?.Name!; // Retrieve the username from the user identity
+        ViewBag.Username = username; // Pass the username to the ViewBag
+
+        var users = await _userService.GetAllUsers();
+        ViewBag.Users = users;
+
+        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page to choose a stream!");
+
         return View();
     }
 
