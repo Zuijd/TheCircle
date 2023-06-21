@@ -21,7 +21,7 @@ public class HomeController : Controller
 
         if(User.Identity.IsAuthenticated)
         {
-            _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Home page!");
+            await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Home page!");
         }
 
         return View();
@@ -36,7 +36,7 @@ public class HomeController : Controller
         var users = await _userService.GetAllUsers();
         ViewBag.Users = users;
 
-        _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page to choose a stream!");
+        await _logger.Log(User.Identity!.Name!, $"{User.Identity!.Name!} has accessed Watch page to choose a stream!");
 
         return View();
     }

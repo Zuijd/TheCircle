@@ -14,9 +14,9 @@ namespace DomainServices.Services
             _certificateService = certificateService;
         }
 
-        public void Log(string user, string message)
+        public async Task Log(string user, string message)
         {
-            _loggerRepository.addLog(new Log(user, message));
+            await _loggerRepository.addLog(new Log(user, message));
         }
         
         public async Task<List<Log>> GetAll() {
