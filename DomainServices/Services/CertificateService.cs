@@ -110,7 +110,7 @@ namespace DomainServices.Services
             var isValid = VerifyDigSig(content, signature, publicKey);
 
             //verification is succesful ? perform action : throw corresponding error
-            Console.WriteLine(isValid ? "CLIENT PACKET IS VALID" : "CLIENT PACKET IS INVALID");
+            Console.WriteLine(isValid ? "DUMMY - CLIENT PACKET IS VALID" : "DUMMY - CLIENT PACKET IS INVALID");
 
             return new PKC()
             {

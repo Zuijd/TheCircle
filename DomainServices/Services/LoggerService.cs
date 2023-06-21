@@ -31,7 +31,7 @@ namespace DomainServices.Services
             var isValid = _certificateService.VerifyDigSig(username, signature, publicKey);
 
             //verification is succesful ? perform action : throw corresponding error
-            Console.WriteLine(isValid ? "CLIENT PACKET IS VALID" : "CLIENT PACKET IS INVALID");
+            Console.WriteLine(isValid ? "USER - CLIENT PACKET IS VALID" : "USER - CLIENT PACKET IS INVALID");
 
             var content = await _loggerRepository.GetAllFromUsername(username);
 
